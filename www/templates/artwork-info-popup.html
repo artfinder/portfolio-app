@@ -1,0 +1,52 @@
+<ion-modal-view>
+    <ion-header-bar>
+      <h1 class="title">Artwork details</h1>
+      <button class="button button-icon icon ion-close" ng-click="closeArtworkInfo();"></button>
+    </ion-header-bar>
+    <ion-content class="padding padding-vertical" has-bouncing="false">
+
+        <div class="list card">
+
+          <div class="item item-text-wrap">
+            <h1>{{ artwork.title }}</h1>
+            <p>
+              Screen print and Linocut<br/><br/>
+              This is one of a variable edition of 30.  Every print has a unique screen printed background over layed with a linocut.<br/><br/>
+              This print was inspired by an Autumn walk from Holkham to Wells next Sea where I collected lots of berries, leaves and seed heads.
+            </p>
+          </div>
+
+          <div class="item">
+            <h2>Category</h2>
+            <p>{{ artwork.category }}</p>
+          </div>
+
+          <div class="item">
+            <h2>Style</h2>
+            <p>Graphic, illustrative &amp; typographic</p>
+          </div>
+
+          <div class="item">
+            <h2>Size</h2>
+            <p>40.64 × 40.64 cm (unframed)  /  30.48 × 30.48 cm (actual image size)</p>
+          </div>
+
+          <div class="item">
+            <h2>Subject</h2>
+            <p>Animals &amp; Birds</p>
+          </div>
+
+          <div class="item">
+            <h2>Price</h2>
+            <p>{{ artwork.currency }}GBP {{ artwork.price }}</p>
+          </div>
+
+          <a class="item item-icon-left calm" href="#">
+            <i class="icon ion-share"></i>
+            Share
+          </a>
+
+        </div>
+
+    </ion-content>
+</ion-modal-view>

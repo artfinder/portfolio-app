@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.zoyalab.artfinder.portfolio.ionic"
+        version="0.0.1"
+        xmlns="http://www.w3.org/ns/widgets"
+        xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Artfinder Portfolio (ionic)</name>
+    <description>
+        Artfinder Portfolio mobile application
+    </description>
+    <author email="hello@zoyalab.com" href="http://zoyalab.com/">
+        zoya.lab, the web software company
+    </author>
+
+    <content src="index.html" />
+    <icon src="www/assets/icon/icon-artfinder-175x175.png" />
+
+    <preference name="webviewbounce" value="false" />
+    <preference name="UIWebViewBounce" value="false" />
+    <preference name="DisallowOverscroll" value="true" />
+    <preference name="BackupWebStorage" value="none" />
+
+    <feature name="StatusBar">
+      <param name="ios-package" value="CDVStatusBar" onload="true" />
+    </feature>
+
+    <access origin="*" />
+
+</widget>

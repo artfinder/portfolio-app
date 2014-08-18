@@ -1,0 +1,20 @@
+<ion-view>
+  <ion-content>
+    <h1>Let's get started!</h1>
+    <p>Once you will log in to your Artfinder account we'll begin downloading your entire Portfolio.</p>
+    <p id="info-data-charges">* Data charges may apply (check with your operator)</p>
+    <fieldset style="text-align: left; margin: 1em 0;">
+        <legend>Login</legend>
+        <form ng-submit="loginUser(user)">
+            <label for="input_login_email">Your email</label>
+            <input id="input_login_email" type="text" placeholder="Type user's slug here... (DEMO)" name="email">
+            <label for="input_login_password">Password</label>
+            <input id="input_login_password" type="password" placeholder="your password">
+        </form>
+    </fieldset>
+    <div id="cellular_warning"></div>
+    <a ng-href="#/intro/fetch" class="button icon-right ion-chevron-right button-calm">Login</a>
+    <p>or</p>
+    <a ng-href="#/facebook-login" class="button icon-left ion-social-facebook button-calm">Continue with Facebook</a>
+  </ion-content>
+</ion-view>

@@ -1,0 +1,5 @@
+hooks/*
+merges/*
+platforms/*
+*sublime-project
+*sublime-workspace
