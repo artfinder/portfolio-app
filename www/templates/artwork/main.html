@@ -1,17 +1,18 @@
 <ion-view title="{{artwork.title}}">
+  <ion-nav-buttons side="left">
+    <button class="button button-icon ion-ios7-arrow-back" ng-click="goBack();"> Back</button>
+  </ion-nav-buttons>
   <ion-nav-buttons side="right">
     <button class="button button-icon icon ion-information-circled" ng-click="displayArtworkInfo();"></button>
   </ion-nav-buttons>
   <ion-content class="has-header artwork-slidebox" has-bouncing="false">
 
-    <ion-slide-box>
+    <ion-slide-box on-swipe-up="loadPrev();" on-swipe-down="loadNext();" on-slide-changed="fitArtwork();">
       <ion-slide>
-        <div class="box blue">
-        <img src="{{ artwork.images.fluid }}">
-        </div>
+        <img ng-src="{{ artwork.images.fluid }}">
       </ion-slide>
       <ion-slide>
-        <img src="{{ artwork.images.grid }}">
+        <img ng-src="{{ artwork.images.grid }}">
       </ion-slide>
     </ion-slide-box>
 

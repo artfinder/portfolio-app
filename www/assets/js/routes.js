@@ -24,16 +24,6 @@ angular.module('portfolio.routes', [])
       }
     })
 
-    .state('portfolio.artwork', {
-      url: '/artwork/:artId',
-      views: {
-        'main-content': {
-            templateUrl: 'templates/artwork.html',
-            controller: 'ArtworkDetailsCtrl'
-        }
-      }
-    })
-
     .state('portfolio.collections', {
       url: '/collections',
       views: {
@@ -60,6 +50,28 @@ angular.module('portfolio.routes', [])
         }
       }
     })
+
+    /*
+     * Single artwork route
+     */
+
+    .state('artwork', {
+        url: '/artwork',
+        abstract: true,
+        templateUrl: 'templates/abstract/artwork.html',
+        controller: 'AppCtrl'
+    })
+
+    .state('artwork.artwork', {
+      url: '/:artId',
+      views: {
+        'artwork-content': {
+            templateUrl: 'templates/artwork/main.html',
+            controller: 'ArtworkDetailsCtrl'
+        }
+      }
+    })
+
 
     /*
      * User introduction routes (new/logged out user)

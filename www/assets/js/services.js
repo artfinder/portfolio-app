@@ -84,6 +84,13 @@ angular.module('portfolio.services', [])
         }
     ];
 
+    var ids = [];
+    var currentIdx = null;
+
+    arts.map(function(a){
+        ids.push(a.id);
+    });
+
     return {
         all: function() {
             return arts;
@@ -94,9 +101,28 @@ angular.module('portfolio.services', [])
             arts.map(function(a) {
                 if (a.id == id) {
                     art = a;
+                    currentIdx = ids.indexOf(Number(id));
                 }
             });
             return art;
+        },
+
+        nextId: function() {
+            nextIdx = ids.length == currentIdx+1 ? 0 : currentIdx+1;
+            return ids[nextIdx];
+        },
+
+        prevId: function() {
+            prevIdx = currentIdx === 0 ? ids.length-1 : currentIdx-1;
+            return ids[prevIdx];
+        },
+
+        next: function() {
+            return this.findById(this.nextId);
+        },
+
+        prev: function() {
+            return this.findById(this.prevId);
         }
     };
 });

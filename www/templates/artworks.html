@@ -9,11 +9,11 @@
 
         <div class="artwork-box" ng-repeat="art in artworks">
 
-            <a href="#/portfolio/artwork/{{ art.id }}">
-                <img src="{{ art.images.fluid }}" />
+            <a href="#/artwork/{{ art.id }}">
+                <img ng-src="{{ art.images.fluid }}" />
             </a>
 
-            <div class="artwork-description">
+            <div class="artwork-description" delegate-handle="art_7">
                 <h4 class="title">{{ art.title }}</h4>
                 {{ art.category }}<br/>
                 <span class="price">&pound;{{ art.price }}</span>
