@@ -1,6 +1,6 @@
 angular.module('portfolio.controllers', [])
 
-.controller('AppCtrl', function($scope, $state) {
+.controller('AppController', function($scope, $state) {
 
     $scope.logout = function() {
         $state.go('intro.welcome');
@@ -8,49 +8,79 @@ angular.module('portfolio.controllers', [])
 
 })
 
-.controller('ArtworksCtrl', function($scope, Artworks) {
-    $scope.artworks = Artworks.all();
+.controller('ArtworksController', function($scope, $stateParams, ArtworkProvider, CollectionProvider) {
+  $scope.viewTitle = 'Artworks';
+  $scope.ref = 'artworks';
+  $scope.refId = 0;
+  if ($stateParams.collectionId) {
+    var collection = CollectionProvider.findById($stateParams.collectionId);
+    $scope.artworks = ArtworkProvider.allByCollection(collection);
+    $scope.viewTitle = collection.name;
+    $scope.ref = 'collection';
+    $scope.refId = collection.id;
+  } else {
+    $scope.artworks = ArtworkProvider.all();
+  }
 })
 
-.controller('ArtworkDetailsCtrl', function($scope, $state, $stateParams, $ionicModal, $ionicGesture, Artworks) {
+.controller('CollectionsController', function($scope, CollectionProvider) {
+    $scope.collections = CollectionProvider.all();
+})
 
-    $scope.artwork = Artworks.findById($stateParams.artId);
+.controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider) {
 
-    $ionicModal.fromTemplateUrl('templates/artwork/modal.html', {
-      scope: $scope,
-      animation: 'slide-in-up'
-    }).then(function(modal) {
-      $scope.modal = modal;
-    });
+  $scope.artwork = ArtworkProvider.findById($stateParams.artId);
 
-    $scope.$on('$destroy', function() {
-      $scope.modal.remove();
-    });
+  var artworkSet = [];
+  if ($stateParams.ref == 'collection') {
+    var collection = CollectionProvider.findById($stateParams.refId);
+    artworkSet = ArtworkProvider.allByCollection(collection);
+  } else {
+    artworkSet = ArtworkProvider.all();
+  }
 
-    $scope.displayArtworkInfo = function($event) {
-      $scope.modal.show($event);
-    };
+  // Handle browsing through multiple artworks within given context
+  ArtworkIteratorProvider.init(artworkSet, $stateParams.artId);
 
-    $scope.closeArtworkInfo = function() {
-      $scope.modal.hide();
-    };
+  $scope.loadPrev = function() {
+    $state.go('artwork.artwork', {artId: ArtworkIteratorProvider.prevId()});
+  };
 
-    $scope.loadPrev = function() {
-      // $scope.artwork = Artworks.findById(Artworks.prevId());
-      $state.go('artwork.artwork', {artId: Artworks.prevId()});
-    };
+  $scope.loadNext = function() {
+    $state.go('artwork.artwork', {artId: ArtworkIteratorProvider.nextId()});
+  };
 
-    $scope.loadNext = function() {
-      // $scope.artwork = Artworks.findById(Artworks.nextId());
-      $state.go('artwork.artwork', {artId: Artworks.nextId()});
-    };
-
-    $scope.goBack = function() {
+  // Handle "Back" button
+  $scope.goBack = function() {
+    if ($stateParams.ref == 'collection') {
+      $state.go('portfolio.bycollection', {collectionId: $stateParams.refId});
+    } else {
       $state.go('portfolio.artworks');
-    };
+    }
+  };
+
+  // Handle modal overlay with artwork details
+  $ionicModal.fromTemplateUrl('templates/artwork/modal.html', {
+    scope: $scope,
+    animation: 'slide-in-up'
+  }).then(function(modal) {
+    $scope.modal = modal;
+  });
+
+  $scope.$on('$destroy', function() {
+    $scope.modal.remove();
+  });
+
+  $scope.displayArtworkInfo = function($event) {
+    $scope.modal.show($event);
+  };
+
+  $scope.closeArtworkInfo = function() {
+    $scope.modal.hide();
+  };
 
 })
 
-.controller('IntroCtrl', function($scope) {
+.controller('IntroController', function($scope) {
 
 });

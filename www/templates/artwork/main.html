@@ -7,12 +7,9 @@
   </ion-nav-buttons>
   <ion-content class="has-header artwork-slidebox" has-bouncing="false">
 
-    <ion-slide-box on-swipe-up="loadPrev();" on-swipe-down="loadNext();" on-slide-changed="fitArtwork();">
-      <ion-slide>
-        <img ng-src="{{ artwork.images.fluid }}">
-      </ion-slide>
-      <ion-slide>
-        <img ng-src="{{ artwork.images.grid }}">
+    <ion-slide-box on-swipe-up="loadNext();" on-swipe-down="loadPrev();">
+      <ion-slide ng-repeat="image in artwork.images">
+        <img ng-src="{{ image.local_path }}">
       </ion-slide>
     </ion-slide-box>
 

@@ -1,4 +1,4 @@
-<ion-view title="Artworks">
+<ion-view title="{{ viewTitle }}">
   <ion-nav-buttons side="left">
     <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
@@ -9,8 +9,8 @@
 
         <div class="artwork-box" ng-repeat="art in artworks">
 
-            <a href="#/artwork/{{ art.id }}">
-                <img ng-src="{{ art.images.fluid }}" />
+            <a href="#/artwork/{{ art.id }}/{{ ref }}/{{ refId }}">
+                <img ng-src="{{ art.cover_image.local_path }}" />
             </a>
 
             <div class="artwork-description" delegate-handle="art_7">

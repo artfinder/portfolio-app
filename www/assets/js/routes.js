@@ -11,7 +11,7 @@ angular.module('portfolio.routes', [])
         url: '/portfolio',
         abstract: true,
         templateUrl: 'templates/abstract/sidemenu.html',
-        controller: 'AppCtrl'
+        controller: 'AppController'
     })
 
     .state('portfolio.artworks', {
@@ -19,7 +19,7 @@ angular.module('portfolio.routes', [])
       views: {
         'main-content': {
             templateUrl: 'templates/artworks.html',
-            controller: 'ArtworksCtrl'
+            controller: 'ArtworksController'
         }
       }
     })
@@ -28,10 +28,23 @@ angular.module('portfolio.routes', [])
       url: '/collections',
       views: {
         'main-content': {
-            templateUrl: 'templates/collections.html'
+            templateUrl: 'templates/collections.html',
+            controller: 'CollectionsController'
         }
       }
     })
+
+    .state('portfolio.bycollection', {
+      url: '/by-collection/:collectionId',
+      views: {
+        'main-content': {
+            templateUrl: 'templates/artworks.html',
+            controller: 'ArtworksController'
+        }
+      }
+    })
+
+
 
     .state('portfolio.subscriber', {
       url: '/subscriber',
@@ -59,15 +72,15 @@ angular.module('portfolio.routes', [])
         url: '/artwork',
         abstract: true,
         templateUrl: 'templates/abstract/artwork.html',
-        controller: 'AppCtrl'
+        controller: 'AppController'
     })
 
     .state('artwork.artwork', {
-      url: '/:artId',
+      url: '/:artId/:ref/:refId',
       views: {
         'artwork-content': {
             templateUrl: 'templates/artwork/main.html',
-            controller: 'ArtworkDetailsCtrl'
+            controller: 'ArtworkDetailsController'
         }
       }
     })
@@ -81,7 +94,7 @@ angular.module('portfolio.routes', [])
         url: '/intro',
         abstract: true,
         templateUrl: 'templates/abstract/intro.html',
-        controller: 'IntroCtrl'
+        controller: 'IntroController'
     })
 
     .state('intro.welcome', {
