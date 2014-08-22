@@ -44,13 +44,12 @@ angular.module('portfolio.routes', [])
       }
     })
 
-
-
     .state('portfolio.subscriber', {
       url: '/subscriber',
       views: {
         'main-content': {
-            templateUrl: 'templates/subscriber.html'
+            templateUrl: 'templates/subscriber.html',
+            controller: 'AppController'
         }
       }
     })

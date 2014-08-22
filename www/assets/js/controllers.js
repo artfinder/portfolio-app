@@ -1,10 +1,18 @@
 angular.module('portfolio.controllers', [])
 
-.controller('AppController', function($scope, $state) {
+.controller('AppController', function($scope, $state, $ionicPopup) {
 
-    $scope.logout = function() {
-        $state.go('intro.welcome');
-    };
+  $scope.logout = function() {
+    $state.go('intro.welcome');
+  };
+
+  $scope.submitSubscriber = function() {
+    // TODO: Do the subscription logic
+    var alertPopup = $ionicPopup.alert({
+      title: 'Add subscriber',
+      template: 'Thank you for subscription'
+    });
+  };
 
 })
 

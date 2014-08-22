@@ -3,8 +3,34 @@
     <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
 
-  <ion-content has-header="true">
-    <h2 class="title">Add Subscriber</h2>
-    add subscriber
+  <ion-content has-header="true" padding="true" class="">
+    <p>Person added below will automatically follow you on Artfinder and will receive updates on new work added, sales and offers.</p>
+
+    <div class="list list-inset">
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">First Name (optional)</span>
+        <input type="text" placeholder="James">
+      </label>
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">Last Name (optional)</span>
+        <input type="text" placeholder="Smith">
+      </label>
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">Email</span>
+        <input type="email" placeholder="james@smith.com">
+      </label>
+    </div>
+
+    <ion-toggle toggle-class="toggle-calm">
+        The above person gave me explicit permission to add to my Artfinder followers
+    </ion-toggle>
+
+    <ion-toggle toggle-class="toggle-calm">
+        Also subscribe to Artinder's Inspirations newsletter<br/>
+        (definitely no spam + stop emails at any time!)
+    </ion-toggle>
+{{ costam }}
+    <button class="button button-block button-calm activated" ng-click="submitSubscriber();">Submit</button>
+
   </ion-content>
 </ion-view>
