@@ -91,4 +91,15 @@ angular.module('portfolio.controllers', [])
 
 .controller('IntroController', function($scope) {
 
+})
+
+.controller('LoginController', function($scope, RemoteDataProvider) {
+  $scope.login = function(user) {
+    if (user) {
+      RemoteDataProvider.fetchArtworksForUser(user.email);
+    } else {
+      console.log('Fetching data for kate-heiss');
+      RemoteDataProvider.fetchArtworksForUser('kate-heiss');
+    }
+  };
 });

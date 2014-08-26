@@ -277,4 +277,29 @@ angular.module('portfolio.services', [])
         }
 
     };
+})
+
+.factory('RemoteDataProvider', function remoteDataProvider($http) {
+
+    var apikey = '19957ec02e669s11e3ab523a0800270f67ea';
+    var artworks_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/?api_key=' + apikey;
+    //var collections_webservice_url = 'https://www.artfinder.com/api/v1/collection/$USER$/?api_key=' + apikey;
+
+    var artworks = null;
+
+    return {
+        fetchArtworksForUser: function(username) {
+            var url = artworks_webservice_url.replace('$USER$', username);
+            $http.get(url).success(function(data, status, headers, config) {
+                console.log(data);
+                artworks = data.objects;
+            }).error(function(data, status, headers,config) {
+                console.log('Request error!');
+            }).then(function(data) {
+                console.log(artworks);
+                console.log(artworks[0].name);
+            });
+        }
+    };
+
 });

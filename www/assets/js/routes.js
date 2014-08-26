@@ -100,7 +100,8 @@ angular.module('portfolio.routes', [])
         url: '/welcome',
         views: {
             'intro-content': {
-                templateUrl: 'templates/intro/01-welcome.html'
+                templateUrl: 'templates/intro/01-welcome.html',
+                controller: 'LoginController'
             }
         }
     })
