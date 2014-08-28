@@ -279,26 +279,42 @@ angular.module('portfolio.services', [])
     };
 })
 
-.factory('RemoteDataProvider', function remoteDataProvider($http) {
+.factory('RemoteDataProvider', function remoteDataProvider($http, LocalStorageProvider) {
 
     var apikey = '19957ec02e669s11e3ab523a0800270f67ea';
     var artworks_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/?api_key=' + apikey;
     //var collections_webservice_url = 'https://www.artfinder.com/api/v1/collection/$USER$/?api_key=' + apikey;
 
-    var artworks = null;
+    // var artworks = null;
 
     return {
         fetchArtworksForUser: function(username) {
             var url = artworks_webservice_url.replace('$USER$', username);
-            $http.get(url).success(function(data, status, headers, config) {
-                console.log(data);
-                artworks = data.objects;
+            $http.get(url)/*success(function(data, status, headers, config) {
+                console.log('success!')
             }).error(function(data, status, headers,config) {
                 console.log('Request error!');
-            }).then(function(data) {
-                console.log(artworks);
-                console.log(artworks[0].name);
+            })*/.then(function(data) {
+                LocalStorageProvider.saveUsername(username);
+                LocalStorageProvider.saveArtworksData(data.data.objects);
             });
+        }
+    };
+
+})
+
+.factory('LocalStorageProvider', function storageProvider() {
+
+    var USER_KEY = 'username';
+    var ARTWORKS_INDEX_KEY = 'artworks';
+
+    return {
+        saveUsername: function(username) {
+            window.localStorage.setItem(USER_KEY, username);
+        },
+        saveArtworksData: function(data) {
+            window.localStorage.setItem(ARTWORKS_INDEX_KEY, JSON.stringify(data));
+            console.log(JSON.parse(window.localStorage.getItem(ARTWORKS_INDEX_KEY))[0].name);
         }
     };
 
