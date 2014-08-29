@@ -281,23 +281,20 @@ angular.module('portfolio.services', [])
 
 .factory('RemoteDataProvider', function remoteDataProvider($http, LocalStorageProvider) {
 
+    // var username = null;
     var apikey = '19957ec02e669s11e3ab523a0800270f67ea';
     var artworks_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/?api_key=' + apikey;
-    //var collections_webservice_url = 'https://www.artfinder.com/api/v1/collection/$USER$/?api_key=' + apikey;
-
-    // var artworks = null;
+    var collections_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/?api_key=' + apikey;
+    // var collections_webservice_url = 'https://www.artfinder.com/api/v1/collection/$USER$/?api_key=' + apikey;
 
     return {
         fetchArtworksForUser: function(username) {
             var url = artworks_webservice_url.replace('$USER$', username);
-            $http.get(url)/*success(function(data, status, headers, config) {
-                console.log('success!')
-            }).error(function(data, status, headers,config) {
-                console.log('Request error!');
-            })*/.then(function(data) {
-                LocalStorageProvider.saveUsername(username);
-                LocalStorageProvider.saveArtworksData(data.data.objects);
-            });
+            return $http.get(url);
+        },
+        fetchCollectionsForUser: function(username) {
+            var url = collections_webservice_url.replace('$USER$', username);
+            return $http.get(url);
         }
     };
 
@@ -306,7 +303,8 @@ angular.module('portfolio.services', [])
 .factory('LocalStorageProvider', function storageProvider() {
 
     var USER_KEY = 'username';
-    var ARTWORKS_INDEX_KEY = 'artworks';
+    var ARTWORKS_RAW_INDEX_KEY = 'raw_artworks';
+    var COLLECTIONS_RAW_INDEX_KEY = 'raw_collections';
 
     return {
         saveUsername: function(username) {
@@ -315,6 +313,12 @@ angular.module('portfolio.services', [])
         saveArtworksData: function(data) {
             window.localStorage.setItem(ARTWORKS_INDEX_KEY, JSON.stringify(data));
             console.log(JSON.parse(window.localStorage.getItem(ARTWORKS_INDEX_KEY))[0].name);
+        },
+        saveRawArtworksData: function(data) {
+            window.localStorage.setItem(ARTWORKS_RAW_INDEX_KEY, JSON.stringify(data));
+        },
+        saveRawCollectionsData: function(data) {
+            window.localStorage.setItem(COLLECTIONS_RAW_INDEX_KEY, JSON.stringify(data));
         }
     };
 

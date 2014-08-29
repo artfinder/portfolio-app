@@ -93,9 +93,36 @@ angular.module('portfolio.controllers', [])
 
 })
 
-.controller('LoginController', function($scope, RemoteDataProvider) {
+.controller('LoginController', function($scope, $ionicPopup, RemoteDataProvider, LocalStorageProvider) {
+
+  var errorAlert = function(message, title) {
+    $ionicPopup.alert({
+      title: title ? title : 'Oops',
+      template: message //
+    });
+  };
+
   $scope.login = function(user) {
     var u = user ? user.email : 'kate-heiss';
-    RemoteDataProvider.fetchArtworksForUser(u);
+
+    // Fetch artworks
+    RemoteDataProvider.fetchArtworksForUser(u).then(function(data_arts){
+      if (!data_arts.data.objects || data_arts.data.objects.length === 0) {
+        errorAlert('It appears that you have no artworks in your portfolio.');
+      } else {
+        LocalStorageProvider.saveUsername(u);
+        LocalStorageProvider.saveRawArtworksData(data_arts.data.objects);
+
+        // Fetch collections
+        RemoteDataProvider.fetchCollectionsForUser(u).then(function(data_cols){
+          if (data_cols.data.objects && data_cols.data.objects.length > 0) {
+            LocalStorageProvider.saveRawCollectionsData(data_cols.data.objects);
+            console.log('seems legit, redirect!');
+          }
+        });
+      }
+    }, function(err){
+      errorAlert(err, 'Unexpected error');
+    });
   };
 });
