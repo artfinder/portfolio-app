@@ -282,18 +282,24 @@ angular.module('portfolio.services', [])
 .factory('RemoteDataProvider', function remoteDataProvider($http, LocalStorageProvider) {
 
     var apikey = '19957ec02e669s11e3ab523a0800270f67ea';
-    var artworks_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/?api_key=' + apikey;
-    var collections_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/?api_key=' + apikey;
-    // var collections_webservice_url = 'https://www.artfinder.com/api/v1/collection/$USER$/?api_key=' + apikey;
+    var artworks_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/';
+    var collections_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/'; // Temporary URL until proper webservice is in place
+    // var collections_webservice_url = 'https://www.artfinder.com/api/v1/collection/$USER$/';
+
+    var getUrl = function(url, username) {
+        return url.replace('$USER$', username);
+    };
 
     return {
         fetchArtworksForUser: function(username) {
-            var url = artworks_webservice_url.replace('$USER$', username);
-            return $http.get(url);
+            return $http.get(getUrl(artworks_webservice_url, username), {
+                params: { api_key: apikey }
+            });
         },
         fetchCollectionsForUser: function(username) {
-            var url = collections_webservice_url.replace('$USER$', username);
-            return $http.get(url);
+            return $http.get(getUrl(collections_webservice_url, username), {
+                params: { api_key: apikey }
+            });
         }
     };
 
