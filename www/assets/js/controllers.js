@@ -133,7 +133,7 @@ angular.module('portfolio.controllers', [])
   };
 })
 
-.controller('FetcherController', function($scope, $state, LocalStorageProvider, RemoteDataProvider) {
+.controller('FetcherController', function($scope, $state, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider) {
 
   var rawArts = JSON.parse(LocalStorageProvider.getRawArtworksData());
   var numOfArtworks = rawArts.length;
@@ -142,6 +142,11 @@ angular.module('portfolio.controllers', [])
   // Helper method to update progress status
   var updateStatus = function(count) {
     $scope.statusTxt = count + '/' + numOfArtworks;
+  };
+
+  // Helper method to generate filename
+  var filename = function(type, artIdx, imgIdx) {
+    return type + '-' + artIdx + '-' + imgIdx + '.jpg';
   };
 
   // Recursive function to fetch binary images and save in persistent storage
@@ -153,8 +158,7 @@ angular.module('portfolio.controllers', [])
       updateStatus(artIdx+1);
       var img = rawArts[artIdx].images[imgIdx];
       RemoteDataProvider.fetchBlob(img.grid_medium.url).then(function(data){
-        console.log('save grid_medium ' + artIdx + '-' + imgIdx);
-        // rawArts[artIdx].images[imgIdx].grid_medium.local_path = 'grid_medium.jpg';
+        rawArts[artIdx].images[imgIdx].grid_medium.local_path = PersistentStorageProvider.saveBlob(data.data, filename('grid_medium', artIdx, imgIdx));
 
         RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data){
           console.log('save fluid_large ' + artIdx + '-' + imgIdx);
@@ -189,6 +193,6 @@ angular.module('portfolio.controllers', [])
   };
 
   fetchAndSave(0, 0);
-  // console.log(rawArts);
+  console.log(rawArts);
 
 });

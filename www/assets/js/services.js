@@ -342,4 +342,10 @@ angular.module('portfolio.services', [])
 
 .factory('PersistentStorageProvider', function persistentStorageProvider() {
 
+    return {
+        saveBlob: function(data, filename) {
+            return '/file/path.jpg';
+        }
+    };
+
 });
