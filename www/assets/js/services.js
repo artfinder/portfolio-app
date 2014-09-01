@@ -281,7 +281,6 @@ angular.module('portfolio.services', [])
 
 .factory('RemoteDataProvider', function remoteDataProvider($http, LocalStorageProvider) {
 
-    // var username = null;
     var apikey = '19957ec02e669s11e3ab523a0800270f67ea';
     var artworks_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/?api_key=' + apikey;
     var collections_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/?api_key=' + apikey;
@@ -300,11 +299,13 @@ angular.module('portfolio.services', [])
 
 })
 
-.factory('LocalStorageProvider', function storageProvider() {
+.factory('LocalStorageProvider', function localStorageProvider() {
 
     var USER_KEY = 'username';
     var ARTWORKS_RAW_INDEX_KEY = 'raw_artworks';
+    var ARTWORKS_INDEX_KEY = 'artworks';
     var COLLECTIONS_RAW_INDEX_KEY = 'raw_collections';
+    var COLLECTIONS_INDEX_KEY = 'collections';
 
     return {
         saveUsername: function(username) {
@@ -319,7 +320,14 @@ angular.module('portfolio.services', [])
         },
         saveRawCollectionsData: function(data) {
             window.localStorage.setItem(COLLECTIONS_RAW_INDEX_KEY, JSON.stringify(data));
+        },
+        getRawArtworksData: function() {
+            return window.localStorage.getItem(ARTWORKS_RAW_INDEX_KEY);
         }
     };
+
+})
+
+.factory('PersistentStorageProvider', function persistentStorageProvider() {
 
 });
