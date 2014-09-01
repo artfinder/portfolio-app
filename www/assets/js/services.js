@@ -300,6 +300,13 @@ angular.module('portfolio.services', [])
             return $http.get(getUrl(collections_webservice_url, username), {
                 params: { api_key: apikey }
             });
+        },
+        fetchBlob: function(url) {
+            return $http.get(url, {
+                responseType: 'blob'
+            }).error(function(data, status) {
+                console.log('err');
+            });
         }
     };
 

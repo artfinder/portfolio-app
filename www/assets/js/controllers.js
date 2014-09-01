@@ -133,47 +133,62 @@ angular.module('portfolio.controllers', [])
   };
 })
 
-.controller('FetcherController', function($scope, $state, LocalStorageProvider) {
+.controller('FetcherController', function($scope, $state, LocalStorageProvider, RemoteDataProvider) {
 
   var rawArts = JSON.parse(LocalStorageProvider.getRawArtworksData());
-  var artworks = [];
   var numOfArtworks = rawArts.length;
-  var counter = 1;
+  var artworks = [];
 
+  // Helper method to update progress status
   var updateStatus = function(count) {
     $scope.statusTxt = count + '/' + numOfArtworks;
   };
 
-  // Iterate through artworks
-  for (var a in rawArts) {
-    var art = rawArts[a];
+  // Recursive function to fetch binary images and save in persistent storage
+  var fetchAndSave = function(artIdx, imgIdx) {
 
-    updateStatus(counter++);
+    console.log(artIdx, imgIdx);
 
-    // Iterate through images in each artwork
-    if (art.images.length > 0) {
-      for (var i in art.images) {
-        var img = art.images[i];
+    if (rawArts[artIdx] && rawArts[artIdx].images.length > 0) {
+      updateStatus(artIdx+1);
+      var img = rawArts[artIdx].images[imgIdx];
+      RemoteDataProvider.fetchBlob(img.grid_medium.url).then(function(data){
+        console.log('save grid_medium ' + artIdx + '-' + imgIdx);
+        // rawArts[artIdx].images[imgIdx].grid_medium.local_path = 'grid_medium.jpg';
 
-        // Fetch each image's version to persistent storage and add local_path
-        // attribute to the JS object for later use.
-        img.grid_medium.local_path = 'LOCAL_' + img.grid_medium.url;
-        img.fluid_large.local_path = 'LOCAL_' + img.fluid_large.url;
-        img.fluid_medium.local_path = 'LOCAL_' + img.fluid_medium.url;
-        img.fluid_small.local_path = 'LOCAL_' + img.fluid_small.url;
+        RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data){
+          console.log('save fluid_large ' + artIdx + '-' + imgIdx);
 
-        // Preserve cover/main image for given artwork
-        if (i === 0) {
-          art.cover_image = img;
-        }
+          RemoteDataProvider.fetchBlob(img.fluid_medium.url).then(function(data){
+            console.log('save fluid_medium ' + artIdx + '-' + imgIdx);
 
-        // Overwrite original image data
-        art.images[i] = img;
-      }
+            RemoteDataProvider.fetchBlob(img.fluid_small.url).then(function(data){
+              console.log('save fluid_small ' + artIdx + '-' + imgIdx);
+              if (rawArts[artIdx].images.length-1 > imgIdx) {
+                fetchAndSave(artIdx, imgIdx+1);
+              } else {
+                fetchAndSave(artIdx+1, 0);
+              }
+            });
+          });
+        });
+      });
+
+      // RemoteDataProvider.fetchBlob(rawArts[artIdx].images[imgIdx].grid_medium.url).then(function(data){
+      //   console.log('save data');
+      //   if (rawArts[artIdx].images.length-1 > imgIdx) {
+      //     fetchAndSave(artIdx, imgIdx+1);
+      //   } else {
+      //     // updateStatus(artIdx+1);
+      //     // if (rawArts.length-1 > artIdx) fetchAndSave(artIdx+1, 0);
+      //     fetchAndSave(artIdx+1, 0);
+      //   }
+      // });
     }
-    artworks.push(art);
-  }
 
-  LocalStorageProvider.saveArtworksData(artworks);
+  };
+
+  fetchAndSave(0, 0);
+  // console.log(rawArts);
 
 });
