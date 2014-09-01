@@ -134,6 +134,12 @@ angular.module('portfolio.controllers', [])
 
 .controller('FetcherController', function($scope, $state, LocalStorageProvider) {
 
-  console.log('hello fetcher controller');
+  var raw_artworks = LocalStorageProvider.getRawArtworksData();
+  var arts = JSON.parse(raw_artworks);
+
+  for (var i in arts) {
+    var art = arts[i];
+    console.log(art.name);
+  }
 
 });
