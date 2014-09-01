@@ -93,36 +93,47 @@ angular.module('portfolio.controllers', [])
 
 })
 
-.controller('LoginController', function($scope, $ionicPopup, RemoteDataProvider, LocalStorageProvider) {
+.controller('LoginController', function($scope, $state, $ionicPopup, RemoteDataProvider, LocalStorageProvider) {
 
+  // A simple function to handle popup alerts
   var errorAlert = function(message, title) {
     $ionicPopup.alert({
       title: title ? title : 'Oops',
-      template: message //
+      template: message
     });
   };
 
+
   $scope.login = function(user) {
+    // Temporary solution used for testing purposes only
+    // until proper authorisation solution is in place
     var u = user ? user.email : 'kate-heiss';
 
-    // Fetch artworks
-    RemoteDataProvider.fetchArtworksForUser(u).then(function(data_arts){
+    // Fetch artworks and save response to local storage
+    RemoteDataProvider.fetchArtworksForUser(u).then(function(data_arts) {
       if (!data_arts.data.objects || data_arts.data.objects.length === 0) {
         errorAlert('It appears that you have no artworks in your portfolio.');
       } else {
         LocalStorageProvider.saveUsername(u);
         LocalStorageProvider.saveRawArtworksData(data_arts.data.objects);
 
-        // Fetch collections
+        // Fetch collections and save response to local storate
         RemoteDataProvider.fetchCollectionsForUser(u).then(function(data_cols){
           if (data_cols.data.objects && data_cols.data.objects.length > 0) {
             LocalStorageProvider.saveRawCollectionsData(data_cols.data.objects);
-            console.log('seems legit, redirect!');
           }
+          // Redirect to intro.fetch view to begin artwork/collections fetching
+          $state.go('intro.fetch');
         });
       }
     }, function(err){
       errorAlert(err, 'Unexpected error');
     });
   };
+})
+
+.controller('FetcherController', function($scope, $state, LocalStorageProvider) {
+
+  console.log('hello fetcher controller');
+
 });

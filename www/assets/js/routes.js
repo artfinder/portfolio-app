@@ -86,7 +86,7 @@ angular.module('portfolio.routes', [])
 
 
     /*
-     * User introduction routes (new/logged out user)
+     * User introduction/login routes
      */
 
     .state('intro', {
@@ -106,6 +106,8 @@ angular.module('portfolio.routes', [])
         }
     })
 
+    // TODO: Possibly obsolete route/view since intro.welcome is now a slider view
+    // handling two pages at once.
     .state('intro.login', {
         url: '/login',
         views: {
@@ -119,7 +121,8 @@ angular.module('portfolio.routes', [])
         url: '/fetch',
         views: {
             'intro-content': {
-                templateUrl: 'templates/intro/03-fetch.html'
+                templateUrl: 'templates/intro/03-fetch.html',
+                controller: 'FetcherController'
             }
         }
     })
