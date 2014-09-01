@@ -122,6 +122,7 @@ angular.module('portfolio.controllers', [])
           if (data_cols.data.objects && data_cols.data.objects.length > 0) {
             LocalStorageProvider.saveRawCollectionsData(data_cols.data.objects);
           }
+
           // Redirect to intro.fetch view to begin artwork/collections fetching
           $state.go('intro.fetch');
         });
@@ -134,12 +135,45 @@ angular.module('portfolio.controllers', [])
 
 .controller('FetcherController', function($scope, $state, LocalStorageProvider) {
 
-  var raw_artworks = LocalStorageProvider.getRawArtworksData();
-  var arts = JSON.parse(raw_artworks);
+  var rawArts = JSON.parse(LocalStorageProvider.getRawArtworksData());
+  var artworks = [];
+  var numOfArtworks = rawArts.length;
+  var counter = 1;
 
-  for (var i in arts) {
-    var art = arts[i];
-    console.log(art.name);
+  var updateStatus = function(count) {
+    $scope.statusTxt = count + '/' + numOfArtworks;
+  };
+
+  // Iterate through artworks
+  for (var a in rawArts) {
+    var art = rawArts[a];
+
+    updateStatus(counter++);
+
+    // Iterate through images in each artwork
+    if (art.images.length > 0) {
+      for (var i in art.images) {
+        var img = art.images[i];
+
+        // Fetch each image's version to persistent storage and add local_path
+        // attribute to the JS object for later use.
+        img.grid_medium.local_path = 'LOCAL_' + img.grid_medium.url;
+        img.fluid_large.local_path = 'LOCAL_' + img.fluid_large.url;
+        img.fluid_medium.local_path = 'LOCAL_' + img.fluid_medium.url;
+        img.fluid_small.local_path = 'LOCAL_' + img.fluid_small.url;
+
+        // Preserve cover/main image for given artwork
+        if (i === 0) {
+          art.cover_image = img;
+        }
+
+        // Overwrite original image data
+        art.images[i] = img;
+      }
+    }
+    artworks.push(art);
   }
+
+  LocalStorageProvider.saveArtworksData(artworks);
 
 });

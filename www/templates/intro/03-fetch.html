@@ -2,16 +2,14 @@
   <ion-content padding="true" has-bouncing="false" class="center">
     <h3>Please wait...</h3>
     <p>Your Artfinder portfolio is now being downloaded to the device for offline access.<br/>This may take some time...</p>
-    <div style="border: 2px solid black;">
-        <div id="hold_on_progressbar" style="background-color: green; height: 40px; width: 0%"></div>
-    </div>
-    <p id="progress_bar_span">Downloading...</p>
+
+    <span class="icon ion-looping"></span>
+
+    <p>Fetching... {{ statusTxt }} artworks</p>
 
     <button id="cancel_download_button" class="button button-calm">
         Finish later
     </button>
-    </br>
-    </br>
     <a ng-href="#/intro/complete" class="button icon-right ion-chevron-right button-calm">
         Skip
     </a>

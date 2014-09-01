@@ -319,7 +319,6 @@ angular.module('portfolio.services', [])
         },
         saveArtworksData: function(data) {
             window.localStorage.setItem(ARTWORKS_INDEX_KEY, JSON.stringify(data));
-            console.log(JSON.parse(window.localStorage.getItem(ARTWORKS_INDEX_KEY))[0].name);
         },
         saveRawArtworksData: function(data) {
             window.localStorage.setItem(ARTWORKS_RAW_INDEX_KEY, JSON.stringify(data));
