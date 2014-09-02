@@ -141,9 +141,9 @@ angular.module('portfolio.controllers', [])
   var killswitch = 0;
 
   // Set the killswitch flag to cancel ongoing, recursive fetch process before redirecting
-  // TODO: skipping fetching process should not be allowed -- redirect back to login screen instead
   $scope.skipFetching = function() {
     killswitch = 1;
+    // TODO: skipping fetching process should not be allowed -- redirect back to login screen instead
     $state.go('intro.complete');
   };
 
@@ -160,6 +160,7 @@ angular.module('portfolio.controllers', [])
   // Recursive function to fetch binary images and save in persistent storage
   var fetchAndSave = function(artIdx, imgIdx) {
 
+    // Stop recursion when kill switch is on
     if (killswitch > 0) {
       // TODO: cleanup downloaded files after cancelling fetching process
       return;
@@ -175,27 +176,27 @@ angular.module('portfolio.controllers', [])
         // Fetch grid_medium...
         RemoteDataProvider.fetchBlob(img.grid_medium.url).then(function(data){
 
-          // ...save grid_medium to persistent storage...
+          // ...save grid_medium to persistent storage.
           console.log('save grid_medium ' + artIdx + '-' + imgIdx);
           PersistentStorageProvider.saveBlob(data.data, filename('grid_medium', artIdx, imgIdx), function(file) {
             rawArts[artIdx].images[imgIdx].grid_medium.local_path = file.toURL();
 
-            // ...fetch fluid_large...
+            // Fetch fluid_large...
             RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data){
 
-              // ...save fluid_large to persistent storage ...
+              // ...save fluid_large to persistent storage.
               console.log('save fluid_large ' + artIdx + '-' + imgIdx);
               PersistentStorageProvider.saveBlob(data.data, filename('fluid_large', artIdx, imgIdx), function(file) {
                 rawArts[artIdx].images[imgIdx].fluid_large.local_path = file.toURL();
 
-                // ...continue to the next image in the current artwork
+                // Carry on to the next image in the current artwork
                 fetchAndSave(artIdx, imgIdx+1);
 
               });
 
             }, function(error){
               console.log('error while fetching fluid_large');
-              // TODO: handle errors nicely
+              // TODO: handle errors nicely - stop and display alerts rather than moving on
               fetchAndSave(artIdx, imgIdx+1);
             });
 
@@ -203,57 +204,9 @@ angular.module('portfolio.controllers', [])
 
         }, function(error){
           console.log('error while fetching grid_medium');
-          // TODO: handle errors nicely
+          // TODO: handle errors nicely - stop and display alerts rather than moving on
           fetchAndSave(artIdx, imgIdx+1);
         });
-
-        /*
-        RemoteDataProvider.fetchBlob(img.grid_medium.url).then(function(data){
-          console.log('save grid_medium ' + artIdx + '-' + imgIdx);
-          PersistentStorageProvider.saveBlob(data.data, filename('grid_medium', artIdx, imgIdx), function(file) {
-            rawArts[artIdx].images[imgIdx].grid_medium.local_path = file.toURL();
-          });
-
-          RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data){
-            console.log('save fluid_large ' + artIdx + '-' + imgIdx);
-            PersistentStorageProvider.saveBlob(data.data, filename('fluid_large', artIdx, imgIdx), function(file) {
-              rawArts[artIdx].images[imgIdx].fluid_large.local_path = file.toURL();
-            });
-
-            RemoteDataProvider.fetchBlob(img.fluid_medium.url).then(function(data){
-              console.log('save fluid_medium ' + artIdx + '-' + imgIdx);
-              PersistentStorageProvider.saveBlob(data.data, filename('fluid_medium', artIdx, imgIdx), function(file) {
-                rawArts[artIdx].images[imgIdx].fluid_medium.local_path = file.toURL();
-              });
-
-              RemoteDataProvider.fetchBlob(img.fluid_small.url).then(function(data){
-                console.log('save fluid_small ' + artIdx + '-' + imgIdx);
-                PersistentStorageProvider.saveBlob(data.data, filename('fluid_small', artIdx, imgIdx), function(file) {
-                  rawArts[artIdx].images[imgIdx].fluid_small.local_path = file.toURL();
-                });
-
-                fetchAndSave(artIdx, imgIdx+1);
-
-              }, function(error){
-                console.log('error while fetching fluid_small');
-                fetchAndSave(artIdx, imgIdx+1);
-              });
-
-            }, function(error){
-              console.log('error while fetching fluid_medium');
-              fetchAndSave(artIdx, imgIdx+1);
-            });
-
-          }, function(error){
-            console.log('error while fetching fluid_large');
-            fetchAndSave(artIdx, imgIdx+1);
-          });
-
-        }, function(error){
-          console.log('error while fetching grid_medium');
-          fetchAndSave(artIdx, imgIdx+1);
-        });
-        */
 
       } else {
         // Carry on to the next artwork
