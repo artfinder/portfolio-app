@@ -1,8 +1,9 @@
 angular.module('portfolio.controllers', [])
 
-.controller('AppController', function($scope, $state, $ionicPopup) {
+.controller('AppController', function($scope, $state, $ionicPopup, LocalStorageProvider) {
 
   $scope.logout = function() {
+    LocalStorageProvider.purge();
     $state.go('intro.welcome');
   };
 
@@ -135,7 +136,7 @@ angular.module('portfolio.controllers', [])
 
 .controller('FetcherController', function($scope, $state, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider) {
 
-  var rawArts = JSON.parse(LocalStorageProvider.getRawArtworksData());
+  var rawArts = LocalStorageProvider.getRawArtworksData();
   var numOfArtworks = rawArts.length;
   var artworks = [];
   var killswitch = 0;
@@ -190,7 +191,7 @@ angular.module('portfolio.controllers', [])
                 rawArts[artIdx].images[imgIdx].fluid_large.local_path = file.toURL();
 
                 if (imgIdx === 0) {
-                  rawArts[artIdx].cover_image = rawArts[artIdx].images[imgIdx];
+                  rawArts[artIdx].cover_image = rawArts[artIdx].images[imgIdx].fluid_large;
                 }
 
                 // Carry on to the next image in the current artwork

@@ -1,4 +1,4 @@
-<ion-view title="{{artwork.title}}">
+<ion-view title="{{ artwork.name }}">
   <ion-nav-buttons side="left">
     <button class="button button-icon ion-ios7-arrow-back" ng-click="goBack();"> Back</button>
   </ion-nav-buttons>
@@ -9,7 +9,7 @@
 
     <ion-slide-box on-swipe-up="loadNext();" on-swipe-down="loadPrev();">
       <ion-slide ng-repeat="image in artwork.images">
-        <img ng-src="{{ image.local_path }}">
+        <img ng-src="{{ image.fluid_large.local_path }}">
       </ion-slide>
     </ion-slide-box>
 

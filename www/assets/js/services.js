@@ -1,7 +1,7 @@
 angular.module('portfolio.services', [])
 
-.factory('ArtworkProvider', function artworkProviderFactory() {
-
+.factory('ArtworkProvider', function artworkProviderFactory(LocalStorageProvider) {
+/*
     // Temporary set of artwork models
     var artsToBeFetchedFromStorage = [
         {
@@ -165,12 +165,11 @@ angular.module('portfolio.services', [])
             price: '666'
         }
     ];
-
+*/
     var arts = [];
 
     // Initialize artworks
-    // TODO: Fetch from storage provider
-    arts = artsToBeFetchedFromStorage;
+    arts = LocalStorageProvider.getArtworksData();
 
     return {
         all: function() {
@@ -290,6 +289,7 @@ angular.module('portfolio.services', [])
         return url.replace('$USER$', username);
     };
 
+    // Temporary cache workaround
     var $httpDefaultCache = $cacheFactory.get('$http');
     $httpDefaultCache.removeAll();
 
@@ -345,15 +345,22 @@ angular.module('portfolio.services', [])
             return window.localStorage.getItem(USER_KEY);
         },
         getArtworksData: function() {
-            return window.localStorage.getItem(ARTWORKS_INDEX_KEY);
+            return JSON.parse(window.localStorage.getItem(ARTWORKS_INDEX_KEY));
         },
         getRawArtworksData: function() {
-            return window.localStorage.getItem(ARTWORKS_RAW_INDEX_KEY);
+            return JSON.parse(window.localStorage.getItem(ARTWORKS_RAW_INDEX_KEY));
         },
 
         // Removers
         removeRawArtworksData: function() {
             window.localStorage.removeItem(ARTWORKS_RAW_INDEX_KEY);
+        },
+        purge: function() {
+            window.localStorage.removeItem(USER_KEY);
+            window.localStorage.removeItem(ARTWORKS_INDEX_KEY);
+            window.localStorage.removeItem(ARTWORKS_RAW_INDEX_KEY);
+            window.localStorage.removeItem(COLLECTIONS_INDEX_KEY);
+            window.localStorage.removeItem(COLLECTIONS_RAW_INDEX_KEY);
         }
     };
 
@@ -366,7 +373,8 @@ angular.module('portfolio.services', [])
     // Request persistent storage the old-fashined way - useful for in-browser testing
     // TODO: Refactor this later to use proper Cordova File plugin methods
     var requestStorage = function(callback) {
-        window.webkitStorageInfo.requestQuota(window.PERSISTENT, 15*1024*1024, function(grantedBytes) {
+        // Watch out for quota!
+        window.webkitStorageInfo.requestQuota(window.PERSISTENT, 50*1024*1024, function(grantedBytes) {
             // window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem) {
             window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
             window.requestFileSystem(window.PERSISTENT, grantedBytes, function(fileSystem) {
@@ -374,7 +382,7 @@ angular.module('portfolio.services', [])
                     callback,
                     function(e) { console.log('getDirectory error: ' + e.name); }
                 );
-            }, function(e) { console.log('requestFileSystem error ', e); });
+            }, function(e) { console.log('requestFileSystem error ' + e.name); });
         });
     };
 
@@ -389,7 +397,7 @@ angular.module('portfolio.services', [])
                         };
                         writer.write(data);
                     });
-                });
+                }, function(e) { console.log('getFile error: ' + e.name); });
             });
         }
     };
