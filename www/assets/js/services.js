@@ -304,8 +304,6 @@ angular.module('portfolio.services', [])
         fetchBlob: function(url) {
             return $http.get(url, {
                 responseType: 'blob'
-            }).error(function(data, status) {
-                console.log('err');
             });
         }
     };

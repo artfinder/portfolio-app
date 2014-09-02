@@ -138,6 +138,13 @@ angular.module('portfolio.controllers', [])
   var rawArts = JSON.parse(LocalStorageProvider.getRawArtworksData());
   var numOfArtworks = rawArts.length;
   var artworks = [];
+  var killswitch = 0;
+
+  // Set the killswitch flag to cancel ongoing, recursive fetch process before redirecting
+  $scope.skipFetching = function() {
+    killswitch = 1;
+    $state.go('intro.complete');
+  };
 
   // Helper method to update progress status
   var updateStatus = function(count) {
@@ -152,47 +159,60 @@ angular.module('portfolio.controllers', [])
   // Recursive function to fetch binary images and save in persistent storage
   var fetchAndSave = function(artIdx, imgIdx) {
 
-    console.log(artIdx, imgIdx);
-
-    if (rawArts[artIdx] && rawArts[artIdx].images.length > 0) {
-      updateStatus(artIdx+1);
-      var img = rawArts[artIdx].images[imgIdx];
-      RemoteDataProvider.fetchBlob(img.grid_medium.url).then(function(data){
-        rawArts[artIdx].images[imgIdx].grid_medium.local_path = PersistentStorageProvider.saveBlob(data.data, filename('grid_medium', artIdx, imgIdx));
-
-        RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data){
-          console.log('save fluid_large ' + artIdx + '-' + imgIdx);
-
-          RemoteDataProvider.fetchBlob(img.fluid_medium.url).then(function(data){
-            console.log('save fluid_medium ' + artIdx + '-' + imgIdx);
-
-            RemoteDataProvider.fetchBlob(img.fluid_small.url).then(function(data){
-              console.log('save fluid_small ' + artIdx + '-' + imgIdx);
-              if (rawArts[artIdx].images.length-1 > imgIdx) {
-                fetchAndSave(artIdx, imgIdx+1);
-              } else {
-                fetchAndSave(artIdx+1, 0);
-              }
-            });
-          });
-        });
-      });
-
-      // RemoteDataProvider.fetchBlob(rawArts[artIdx].images[imgIdx].grid_medium.url).then(function(data){
-      //   console.log('save data');
-      //   if (rawArts[artIdx].images.length-1 > imgIdx) {
-      //     fetchAndSave(artIdx, imgIdx+1);
-      //   } else {
-      //     // updateStatus(artIdx+1);
-      //     // if (rawArts.length-1 > artIdx) fetchAndSave(artIdx+1, 0);
-      //     fetchAndSave(artIdx+1, 0);
-      //   }
-      // });
+    if (killswitch > 0) {
+      // TODO: cleanup downloaded files after cancelling fetching process
+      return;
     }
+
+    if (rawArts[artIdx]) {
+
+      if (rawArts[artIdx].images[imgIdx]) {
+
+        updateStatus(artIdx+1);
+        var img = rawArts[artIdx].images[imgIdx];
+
+        RemoteDataProvider.fetchBlob(img.grid_medium.url).then(function(data){
+          console.log('save grid_medium ' + artIdx + '-' + imgIdx);
+          // rawArts[artIdx].images[imgIdx].grid_medium.local_path = PersistentStorageProvider.saveBlob(data.data, filename('grid_medium', artIdx, imgIdx));
+
+          RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data){
+            console.log('save fluid_large ' + artIdx + '-' + imgIdx);
+
+            RemoteDataProvider.fetchBlob(img.fluid_medium.url).then(function(data){
+              console.log('save fluid_medium ' + artIdx + '-' + imgIdx);
+
+              RemoteDataProvider.fetchBlob(img.fluid_small.url).then(function(data){
+                console.log('save fluid_small ' + artIdx + '-' + imgIdx);
+                fetchAndSave(artIdx, imgIdx+1);
+
+              }, function(error){
+                console.log('error while fetching fluid_small', error);
+                fetchAndSave(artIdx, imgIdx+1);
+              });
+
+            }, function(error){
+              console.log('error while fetching fluid_medium', error);
+              fetchAndSave(artIdx, imgIdx+1);
+            });
+
+          }, function(error){
+            console.log('error while fetching fluid_large', error);
+            fetchAndSave(artIdx, imgIdx+1);
+          });
+
+        }, function(error){
+          console.log('error while fetching grid_medium', error);
+          fetchAndSave(artIdx, imgIdx+1);
+        });
+
+      } else {
+        fetchAndSave(artIdx+1, 0);
+      } // if (rawArts[artIdx].images[imgIdx])
+
+    } // if (rawArts[artIdx])
 
   };
 
   fetchAndSave(0, 0);
-  console.log(rawArts);
 
 });
