@@ -279,7 +279,7 @@ angular.module('portfolio.services', [])
     };
 })
 
-.factory('RemoteDataProvider', function remoteDataProvider($http, LocalStorageProvider) {
+.factory('RemoteDataProvider', function remoteDataProvider($http, $cacheFactory, LocalStorageProvider) {
 
     var apikey = '19957ec02e669s11e3ab523a0800270f67ea';
     var artworks_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/';
@@ -289,6 +289,9 @@ angular.module('portfolio.services', [])
     var getUrl = function(url, username) {
         return url.replace('$USER$', username);
     };
+
+    var $httpDefaultCache = $cacheFactory.get('$http');
+    $httpDefaultCache.removeAll();
 
     return {
         fetchArtworksForUser: function(username) {
@@ -302,8 +305,12 @@ angular.module('portfolio.services', [])
             });
         },
         fetchBlob: function(url) {
+            // Dirty workaround for access-origin errors
+            url = url.replace('d30dcznuokq8w8.cloudfront.net', 's3.amazonaws.com/artfinder');
+            console.log(url);
             return $http.get(url, {
-                responseType: 'blob'
+                responseType: 'blob',
+                cache: false
             });
         }
     };
@@ -340,9 +347,36 @@ angular.module('portfolio.services', [])
 
 .factory('PersistentStorageProvider', function persistentStorageProvider() {
 
+    var DATADIR = 'artp';
+
+    // Request persistent storage the old-fashined way - useful for in-browser testing
+    // TODO: Refactor this later to use proper Cordova File plugin methods
+    var requestStorage = function(callback) {
+        window.webkitStorageInfo.requestQuota(window.PERSISTENT, 15*1024*1024, function(grantedBytes) {
+            // window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem) {
+            window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+            window.requestFileSystem(window.PERSISTENT, grantedBytes, function(fileSystem) {
+                fileSystem.root.getDirectory(DATADIR, { create: true },
+                    callback,
+                    function(e) { console.log('getDirectory error: ' + e.name); }
+                );
+            }, function(e) { console.log('requestFileSystem error ', e); });
+        });
+    };
+
     return {
-        saveBlob: function(data, filename) {
-            return '/file/path.jpg';
+        saveBlob: function(data, filename, callback) {
+            requestStorage(function(dir) {
+                dir.getFile(filename, { create: true }, function(file) {
+                    file.createWriter(function(writer) {
+                        writer.onwriteend = function(e) {
+                            console.log(file.toURL());
+                            callback(file);
+                        };
+                        writer.write(data);
+                    });
+                });
+            });
         }
     };
 
