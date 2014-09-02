@@ -326,6 +326,7 @@ angular.module('portfolio.services', [])
     var COLLECTIONS_INDEX_KEY = 'collections';
 
     return {
+        // Setters
         saveUsername: function(username) {
             window.localStorage.setItem(USER_KEY, username);
         },
@@ -338,8 +339,21 @@ angular.module('portfolio.services', [])
         saveRawCollectionsData: function(data) {
             window.localStorage.setItem(COLLECTIONS_RAW_INDEX_KEY, JSON.stringify(data));
         },
+
+        // Getters
+        getUsername: function() {
+            return window.localStorage.getItem(USER_KEY);
+        },
+        getArtworksData: function() {
+            return window.localStorage.getItem(ARTWORKS_INDEX_KEY);
+        },
         getRawArtworksData: function() {
             return window.localStorage.getItem(ARTWORKS_RAW_INDEX_KEY);
+        },
+
+        // Removers
+        removeRawArtworksData: function() {
+            window.localStorage.removeItem(ARTWORKS_RAW_INDEX_KEY);
         }
     };
 
