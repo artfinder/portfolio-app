@@ -189,6 +189,10 @@ angular.module('portfolio.controllers', [])
               PersistentStorageProvider.saveBlob(data.data, filename('fluid_large', artIdx, imgIdx), function(file) {
                 rawArts[artIdx].images[imgIdx].fluid_large.local_path = file.toURL();
 
+                if (imgIdx === 0) {
+                  rawArts[artIdx].cover_image = rawArts[artIdx].images[imgIdx];
+                }
+
                 // Carry on to the next image in the current artwork
                 fetchAndSave(artIdx, imgIdx+1);
 
@@ -218,6 +222,7 @@ angular.module('portfolio.controllers', [])
       // Fetching process finished:
       // - save json artworks data to local storage
       // - redirect
+      console.log('fetch process done');
       LocalStorageProvider.saveArtworksData(rawArts);
       $state.go('intro.complete');
 
