@@ -1,5 +1,8 @@
 angular.module('portfolio.controllers', [])
 
+/**
+ * Generic application controller
+ */
 .controller('AppController', function($scope, $state, $ionicPopup, LocalStorageProvider, PersistentStorageProvider) {
 
   $scope.logout = function() {
@@ -18,7 +21,7 @@ angular.module('portfolio.controllers', [])
   };
 
   $scope.submitSubscriber = function() {
-    // TODO: Do the subscription logic
+    // TODO: Implement the subscription logic
     var alertPopup = $ionicPopup.alert({
       title: 'Add subscriber',
       template: 'Thank you for subscription'
@@ -27,29 +30,43 @@ angular.module('portfolio.controllers', [])
 
 })
 
+/**
+ * Handles artworks listing
+ */
 .controller('ArtworksController', function($scope, $stateParams, ArtworkProvider, CollectionProvider) {
   $scope.viewTitle = 'Artworks';
   $scope.ref = 'artworks';
   $scope.refId = 0;
+
+  // Display artworks that belong to collection...
   if ($stateParams.collectionId) {
     var collection = CollectionProvider.findById($stateParams.collectionId);
     $scope.artworks = ArtworkProvider.allByCollection(collection);
     $scope.viewTitle = collection.name;
     $scope.ref = 'collection';
     $scope.refId = collection.id;
+
+  // ...or display them all
   } else {
     $scope.artworks = ArtworkProvider.all();
   }
 })
 
+/**
+ * Handles collections listing
+ */
 .controller('CollectionsController', function($scope, CollectionProvider) {
     $scope.collections = CollectionProvider.all();
 })
 
+/**
+ * A single artwork view controller
+ */
 .controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider) {
 
   $scope.artwork = ArtworkProvider.findById($stateParams.artId);
 
+  // Define artwork set to help browsing
   var artworkSet = [];
   if ($stateParams.ref == 'collection') {
     var collection = CollectionProvider.findById($stateParams.refId);
@@ -69,7 +86,7 @@ angular.module('portfolio.controllers', [])
     $state.go('artwork.artwork', {artId: ArtworkIteratorProvider.nextId()});
   };
 
-  // Handle "Back" button
+  // Handle "Back" button depending whether we're in collections or artworks context
   $scope.goBack = function() {
     if ($stateParams.ref == 'collection') {
       $state.go('portfolio.bycollection', {collectionId: $stateParams.refId});
@@ -104,10 +121,16 @@ angular.module('portfolio.controllers', [])
 
 })
 
+/**
+ * Controller which handles initial user login action
+ * - fetches json data from webservice
+ * - saves data into local storage
+ * - redirects to the next step (FetcherController)
+ */
 .controller('LoginController', function($scope, $state, $ionicPopup, $ionicLoading, RemoteDataProvider, LocalStorageProvider) {
 
   // A simple function to handle errors using friendly popup message
-  var alert = function(message, title) {
+  var alertPopup = function(message, title) {
     $ionicPopup.alert({
       title: title ? title : 'Oops',
       template: message,
@@ -119,7 +142,7 @@ angular.module('portfolio.controllers', [])
 
     var u = user ? user.slug : null;
     if (!u) {
-      return alert('Please provide username/slug');
+      return alertPopup('Please provide username/slug');
     }
 
     $ionicLoading.show({
@@ -129,7 +152,7 @@ angular.module('portfolio.controllers', [])
     // Fetch artworks and save response to local storage
     RemoteDataProvider.fetchArtworksForUser(u).then(function(data_arts) {
       if (!data_arts.data.objects || data_arts.data.objects.length === 0) {
-        alert('It appears that you have no artworks in your portfolio.');
+        alertPopup('It appears that you have no artworks in your portfolio.');
       } else {
         LocalStorageProvider.saveUsername(u);
         LocalStorageProvider.saveRawArtworksData(data_arts.data.objects);
@@ -146,11 +169,17 @@ angular.module('portfolio.controllers', [])
         });
       }
     }, function(err){
-      alert(err, 'Unexpected error');
+      alertPopup(err, 'Unexpected error');
     });
   };
 })
 
+/**
+ * A controller which handles actual artworks fetching to local persistent storage
+ * - reads json data from local storage (saved at the login step)
+ * - recursively fetches artworks images and passes to storage service to save locally
+ * - updates artworks json dada with paths leading to locally stored images
+ */
 .controller('FetcherController', function($scope, $state, $ionicLoading, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider) {
 
   var rawArts = LocalStorageProvider.getRawArtworksData();
@@ -158,7 +187,8 @@ angular.module('portfolio.controllers', [])
   var username = LocalStorageProvider.getUsername();
   var killswitch = 0;
 
-  // Set the killswitch flag to cancel ongoing, recursive fetch process before redirecting
+  // Cancel ongoing, recursive fetch process
+  // Sets the killswitch to tell recursive function that process needs to stop
   $scope.cancel = function() {
     killswitch = 1;
     $ionicLoading.show({
@@ -179,7 +209,7 @@ angular.module('portfolio.controllers', [])
   // Recursive function to fetch binary images and save in persistent storage
   var fetchAndSave = function(artIdx, imgIdx) {
 
-    // Stop recursion when kill switch is on
+    // Abort execution grecefully when killswitch is on
     if (killswitch > 0) {
       PersistentStorageProvider.purge(function() {
         LocalStorageProvider.purge();
@@ -253,7 +283,7 @@ angular.module('portfolio.controllers', [])
 
   };
 
-  // Start fetching process
+  // Start recursive fetching process
   fetchAndSave(0, 0);
 
 });
