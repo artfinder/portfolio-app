@@ -7,11 +7,8 @@
 
     <p>Fetching... {{ statusTxt }} artworks</p>
 
-    <button id="cancel_download_button" class="button button-calm">
+    <button class="button button-calm" ng-click="cancel();">
         Finish later
-    </button>
-    <button ng-click="skipFetching();" class="button icon-right ion-chevron-right button-calm">
-        Skip
     </button>
   </ion-content>
 </ion-view>

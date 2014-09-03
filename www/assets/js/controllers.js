@@ -98,8 +98,8 @@ angular.module('portfolio.controllers', [])
 
 .controller('LoginController', function($scope, $state, $ionicPopup, $ionicLoading, RemoteDataProvider, LocalStorageProvider) {
 
-  // A simple function to handle popup alerts
-  var errorAlert = function(message, title) {
+  // A simple function to handle errors using friendly popup message
+  var alert = function(message, title) {
     $ionicPopup.alert({
       title: title ? title : 'Oops',
       template: message,
@@ -107,12 +107,11 @@ angular.module('portfolio.controllers', [])
     });
   };
 
-
   $scope.login = function(user) {
 
     var u = user ? user.slug : null;
     if (!u) {
-      return errorAlert('Please provide username/slug');
+      return alert('Please provide username/slug');
     }
 
     $ionicLoading.show({
@@ -122,12 +121,12 @@ angular.module('portfolio.controllers', [])
     // Fetch artworks and save response to local storage
     RemoteDataProvider.fetchArtworksForUser(u).then(function(data_arts) {
       if (!data_arts.data.objects || data_arts.data.objects.length === 0) {
-        errorAlert('It appears that you have no artworks in your portfolio.');
+        alert('It appears that you have no artworks in your portfolio.');
       } else {
         LocalStorageProvider.saveUsername(u);
         LocalStorageProvider.saveRawArtworksData(data_arts.data.objects);
 
-        // Fetch collections and save response to local storate
+        // Fetch collections and save response to local storage
         RemoteDataProvider.fetchCollectionsForUser(u).then(function(data_cols){
           if (data_cols.data.objects && data_cols.data.objects.length > 0) {
             LocalStorageProvider.saveRawCollectionsData(data_cols.data.objects);
@@ -139,12 +138,12 @@ angular.module('portfolio.controllers', [])
         });
       }
     }, function(err){
-      errorAlert(err, 'Unexpected error');
+      alert(err, 'Unexpected error');
     });
   };
 })
 
-.controller('FetcherController', function($scope, $state, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider) {
+.controller('FetcherController', function($scope, $state, $ionicLoading, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider) {
 
   var rawArts = LocalStorageProvider.getRawArtworksData();
   var numOfArtworks = rawArts.length;
@@ -152,10 +151,11 @@ angular.module('portfolio.controllers', [])
   var killswitch = 0;
 
   // Set the killswitch flag to cancel ongoing, recursive fetch process before redirecting
-  $scope.skipFetching = function() {
+  $scope.cancel = function() {
     killswitch = 1;
-    // TODO: skipping fetching process should not be allowed -- redirect back to login screen instead
-    $state.go('intro.complete');
+    $ionicLoading.show({
+      template: 'Aborting dowload process, please wait...'
+    });
   };
 
   // Helper method to update progress status
@@ -173,7 +173,11 @@ angular.module('portfolio.controllers', [])
 
     // Stop recursion when kill switch is on
     if (killswitch > 0) {
-      // TODO: cleanup downloaded files after cancelling fetching process
+      PersistentStorageProvider.purge(function() {
+        LocalStorageProvider.purge();
+        $ionicLoading.hide();
+        $state.go('intro.welcome');
+      });
       return;
     }
 
