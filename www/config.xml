@@ -23,6 +23,11 @@
       <param name="ios-package" value="CDVStatusBar" onload="true" />
     </feature>
 
+    <plugins>
+        <plugin name="Device" value="org.apache.cordova.device"/>
+        <plugin name="File" value="org.apache.cordova.file"/>
+    </plugins>
+
     <access origin="*" />
 
 </widget>
