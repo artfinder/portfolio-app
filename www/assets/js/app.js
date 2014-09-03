@@ -11,7 +11,7 @@ angular.module('portfolio', [
   'portfolio.services'
 ])
 
-.run(function($ionicPlatform, $location) {
+.run(function($ionicPlatform, $state, LocalStorageProvider) {
 
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -22,6 +22,10 @@ angular.module('portfolio', [
     if (window.StatusBar) {
       StatusBar.styleDefault();
     }
-    // $location.path('/intro/welcome');
+
+    // Redirect to intro when no user data detected
+    if (LocalStorageProvider.getUsername() === null) {
+      $state.go('intro.welcome');
+    }
   });
 });
