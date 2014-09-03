@@ -96,21 +96,28 @@ angular.module('portfolio.controllers', [])
 
 })
 
-.controller('LoginController', function($scope, $state, $ionicPopup, RemoteDataProvider, LocalStorageProvider) {
+.controller('LoginController', function($scope, $state, $ionicPopup, $ionicLoading, RemoteDataProvider, LocalStorageProvider) {
 
   // A simple function to handle popup alerts
   var errorAlert = function(message, title) {
     $ionicPopup.alert({
       title: title ? title : 'Oops',
-      template: message
+      template: message,
+      onTap: $ionicLoading.hide()
     });
   };
 
 
   $scope.login = function(user) {
-    // Temporary solution used for testing purposes only
-    // until proper authorisation solution is in place
-    var u = user ? user.email : 'kate-heiss';
+
+    var u = user ? user.slug : null;
+    if (!u) {
+      return errorAlert('Please provide username/slug');
+    }
+
+    $ionicLoading.show({
+      template: 'Logging in...'
+    });
 
     // Fetch artworks and save response to local storage
     RemoteDataProvider.fetchArtworksForUser(u).then(function(data_arts) {
@@ -127,6 +134,7 @@ angular.module('portfolio.controllers', [])
           }
 
           // Redirect to intro.fetch view to begin artwork/collections fetching
+          $ionicLoading.hide();
           $state.go('intro.fetch');
         });
       }
