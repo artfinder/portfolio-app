@@ -3,10 +3,18 @@ angular.module('portfolio.controllers', [])
 .controller('AppController', function($scope, $state, $ionicPopup, LocalStorageProvider, PersistentStorageProvider) {
 
   $scope.logout = function() {
-    PersistentStorageProvider.purge(function(){
-      LocalStorageProvider.purge();
-      $state.go('intro.welcome');
+    $ionicPopup.confirm({
+      title: 'Logout',
+      template: 'Logging out will remove all artworks from your device. Are you sure?'
+    }).then(function(response) {
+      if (response) {
+        PersistentStorageProvider.purge(function(){
+          LocalStorageProvider.purge();
+          $state.go('intro.welcome');
+        });
+      }
     });
+
   };
 
   $scope.submitSubscriber = function() {
