@@ -379,10 +379,14 @@ angular.module('portfolio.services', [])
             window.requestFileSystem(window.PERSISTENT, grantedBytes, function(fileSystem) {
                 fileSystem.root.getDirectory(DATADIR, { create: true },
                     callback,
-                    function(e) { console.log('getDirectory error: ' + e.name); }
+                    errorHandler
                 );
-            }, function(e) { console.log('requestFileSystem error ' + e.name); });
+            }, errorHandler);
         });
+    };
+
+    var errorHandler = function(error) {
+        console.log('requestFileSystem error ' + e.name);
     };
 
     return {
