@@ -1,10 +1,12 @@
 angular.module('portfolio.controllers', [])
 
-.controller('AppController', function($scope, $state, $ionicPopup, LocalStorageProvider) {
+.controller('AppController', function($scope, $state, $ionicPopup, LocalStorageProvider, PersistentStorageProvider) {
 
   $scope.logout = function() {
-    LocalStorageProvider.purge();
-    $state.go('intro.welcome');
+    PersistentStorageProvider.purge(function(){
+      LocalStorageProvider.purge();
+      $state.go('intro.welcome');
+    });
   };
 
   $scope.submitSubscriber = function() {

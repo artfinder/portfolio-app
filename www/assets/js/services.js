@@ -374,10 +374,12 @@ angular.module('portfolio.services', [])
     // TODO: Refactor this later to use proper Cordova File plugin methods
     var requestStorage = function(callback) {
         // Watch out for quota!
-        window.webkitStorageInfo.requestQuota(window.PERSISTENT, 50*1024*1024, function(grantedBytes) {
+        // window.webkitStorageInfo.requestQuota(window.PERSISTENT, 50*1024*1024, function(grantedBytes) {
+        navigator.webkitPersistentStorage.requestQuota.requestQuota(PERSISTENT, 50*1024*1024, function(grantedBytes) {
             // window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem) {
-            window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-            window.requestFileSystem(window.PERSISTENT, grantedBytes, function(fileSystem) {
+            // window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+            // window.requestFileSystem(window.PERSISTENT, grantedBytes, function(fileSystem) {
+            navigator.webkitRequestFileSystem(PERSISTENT, grantedBytes, function(fileSystem) {
                 fileSystem.root.getDirectory(DATADIR, { create: true },
                     callback,
                     function(e) { console.log('getDirectory error: ' + e.name); }
@@ -398,6 +400,13 @@ angular.module('portfolio.services', [])
                         writer.write(data);
                     });
                 }, function(e) { console.log('getFile error: ' + e.name); });
+            });
+        },
+        purge: function(callback) {
+            requestStorage(function(dir) {
+                dir.removeRecursively(callback, function(error) {
+                    console.log('Error while purging storage: ' + error);
+                });
             });
         }
     };
