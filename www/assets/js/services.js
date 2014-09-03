@@ -123,7 +123,7 @@ angular.module('portfolio.services', [])
 /**
  * A service that fetches and returns data from remote http locations
  */
-.factory('RemoteDataProvider', function remoteDataProvider($http, $cacheFactory, LocalStorageProvider) {
+.factory('RemoteDataProvider', function remoteDataProvider($http, LocalStorageProvider) {
 
     var apikey = '19957ec02e669s11e3ab523a0800270f67ea';
     var artworks_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/';
@@ -133,10 +133,6 @@ angular.module('portfolio.services', [])
     var getUrl = function(url, username) {
         return url.replace('$USER$', username);
     };
-
-    // Temporary cache workaround
-    var $httpDefaultCache = $cacheFactory.get('$http');
-    $httpDefaultCache.removeAll();
 
     return {
         fetchArtworksForUser: function(username) {
