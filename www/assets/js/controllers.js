@@ -140,7 +140,7 @@ angular.module('portfolio.controllers', [])
 
   var rawArts = LocalStorageProvider.getRawArtworksData();
   var numOfArtworks = rawArts.length;
-  var artworks = [];
+  var username = LocalStorageProvider.getUsername();
   var killswitch = 0;
 
   // Set the killswitch flag to cancel ongoing, recursive fetch process before redirecting
@@ -157,7 +157,7 @@ angular.module('portfolio.controllers', [])
 
   // Helper method to generate filename
   var filename = function(type, artIdx, imgIdx) {
-    return type + '-' + artIdx + '-' + imgIdx + '.jpg';
+    return username + '-' + type + '-' + artIdx + '-' + imgIdx + '.jpg';
   };
 
   // Recursive function to fetch binary images and save in persistent storage
