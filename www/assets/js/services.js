@@ -237,7 +237,8 @@ angular.module('portfolio.services', [])
     };
 
     var errorHandler = function(error) {
-        console.log('requestFileSystem error ' + e.name);
+        console.log('Persistent storage error: ' + error.name);
+        console.log(error);
     };
 
     return {
@@ -251,14 +252,12 @@ angular.module('portfolio.services', [])
                         };
                         writer.write(data);
                     });
-                }, function(e) { console.log('getFile error: ' + e.name); });
+                }, errorHandler);
             });
         },
         purge: function(callback) {
             requestStorage(function(dir) {
-                dir.removeRecursively(callback, function(error) {
-                    console.log('Error while purging storage: ' + error);
-                });
+                dir.removeRecursively(callback, errorHandler);
             });
         }
     };
