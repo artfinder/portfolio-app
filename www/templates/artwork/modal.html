@@ -8,11 +8,9 @@
         <div class="list card">
 
           <div class="item item-text-wrap">
-            <h1>{{ artwork.title }}</h1>
+            <h1>{{ artwork.name }}</h1>
             <p>
-              Screen print and Linocut<br/><br/>
-              This is one of a variable edition of 30.  Every print has a unique screen printed background over layed with a linocut.<br/><br/>
-              This print was inspired by an Autumn walk from Holkham to Wells next Sea where I collected lots of berries, leaves and seed heads.
+              {{ artwork.description }}
             </p>
           </div>
 
@@ -22,23 +20,33 @@
           </div>
 
           <div class="item">
-            <h2>Style</h2>
-            <p>Graphic, illustrative &amp; typographic</p>
-          </div>
-
-          <div class="item">
-            <h2>Size</h2>
-            <p>40.64 × 40.64 cm (unframed)  /  30.48 × 30.48 cm (actual image size)</p>
-          </div>
-
-          <div class="item">
             <h2>Subject</h2>
-            <p>Animals &amp; Birds</p>
+            <p>{{ artwork.subject }}</p>
+          </div>
+
+          <div class="item">
+            <h2>Style</h2>
+            <p>{{ artwork.style }}</p>
+          </div>
+
+          <div class="item">
+            <h2>Size (cm)</h2>
+            <p>{{ artwork.size_cm }}</p>
+          </div>
+
+          <div class="item">
+            <h2>Size (in)</h2>
+            <p>{{ artwork.size_in }}</p>
+          </div>
+
+          <div class="item">
+            <h2>Substrate</h2>
+            <p>{{ artwork.substrate }}</p>
           </div>
 
           <div class="item">
             <h2>Price</h2>
-            <p>{{ artwork.currency }}GBP {{ artwork.price }}</p>
+            <p>{{ artwork.currency }} {{ artwork.price }}</p>
           </div>
 
           <a class="item item-icon-left calm" href="#">
