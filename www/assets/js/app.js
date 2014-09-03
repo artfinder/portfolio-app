@@ -24,8 +24,8 @@ angular.module('portfolio', [
     }
 
     // Redirect to intro when no user data detected
-    if (LocalStorageProvider.getUsername() === null) {
-      $state.go('intro.welcome');
+    if (LocalStorageProvider.getUsername()) {
+      $state.go('portfolio.artworks');
     }
   });
 });

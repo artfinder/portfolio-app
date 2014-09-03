@@ -137,5 +137,5 @@ angular.module('portfolio.routes', [])
     });
 
   // Default route
-  $urlRouterProvider.otherwise("/portfolio/artworks");
+  $urlRouterProvider.otherwise("/intro/welcome");
 });
