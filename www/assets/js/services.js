@@ -1,5 +1,8 @@
 angular.module('portfolio.services', [])
 
+/**
+ * Artworks respository
+ */
 .factory('ArtworkProvider', function artworkProviderFactory(LocalStorageProvider) {
 
     var arts = LocalStorageProvider.getArtworksData();
@@ -28,6 +31,9 @@ angular.module('portfolio.services', [])
     };
 })
 
+/**
+ * A service that helps iterating through artworks in single artwork view
+ */
 .factory('ArtworkIteratorProvider', function artworkIteratorProvider() {
 
     var artsIndex = [];
@@ -41,7 +47,6 @@ angular.module('portfolio.services', [])
                 artsIndex.push(a.id);
             });
             currentIndex = artsIndex.indexOf(Number(currentId));
-            console.log(artsIndex);
             return this;
         },
         nextId: function() {
@@ -55,8 +60,12 @@ angular.module('portfolio.services', [])
     };
 })
 
+/**
+ * Collections repository
+ */
 .factory('CollectionProvider', function collectionProviderFactory() {
 
+    // TODO: Collections to be fetched from local storage once API allows it
     var collections = [
         {
             id: 1,
@@ -111,6 +120,9 @@ angular.module('portfolio.services', [])
     };
 })
 
+/**
+ * A service that fetches and returns data from remote http locations
+ */
 .factory('RemoteDataProvider', function remoteDataProvider($http, $cacheFactory, LocalStorageProvider) {
 
     var apikey = '19957ec02e669s11e3ab523a0800270f67ea';
@@ -150,6 +162,9 @@ angular.module('portfolio.services', [])
 
 })
 
+/**
+ * A service that manipulates with local storage
+ */
 .factory('LocalStorageProvider', function localStorageProvider() {
 
     var USER_KEY = 'username';
@@ -199,6 +214,9 @@ angular.module('portfolio.services', [])
 
 })
 
+/**
+ * A service that manipulates with persistent storage
+ */
 .factory('PersistentStorageProvider', function persistentStorageProvider() {
 
     var DATADIR = 'artp';
