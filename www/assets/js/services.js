@@ -127,8 +127,8 @@ angular.module('portfolio.services', [])
 
     var apikey = '19957ec02e669s11e3ab523a0800270f67ea';
     var artworks_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/';
-    var collections_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/'; // Temporary URL until proper webservice is in place
-    // var collections_webservice_url = 'https://www.artfinder.com/api/v1/collection/$USER$/';
+    // TODO: Replace collections API URL when proper webservice is in place
+    var collections_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/';
 
     var getUrl = function(url, username) {
         return url.replace('$USER$', username);
