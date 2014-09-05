@@ -211,6 +211,7 @@ angular.module('portfolio.controllers', [])
 
     // Abort execution grecefully when killswitch is on
     if (killswitch > 0) {
+      console.log('Aborting - killswitch: ' + killswitch);
       PersistentStorageProvider.purge(function() {
         LocalStorageProvider.purge();
         $ionicLoading.hide();
@@ -230,7 +231,7 @@ angular.module('portfolio.controllers', [])
         RemoteDataProvider.fetchBlob(img.grid_medium.url).then(function(data){
 
           // ...save grid_medium to persistent storage.
-          console.log('save grid_medium ' + artIdx + '-' + imgIdx);
+          console.log('save grid_medium ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
           PersistentStorageProvider.saveBlob(data.data, filename('grid_medium', artIdx, imgIdx), function(file) {
             rawArts[artIdx].images[imgIdx].grid_medium.local_path = file.toURL();
 
@@ -238,7 +239,7 @@ angular.module('portfolio.controllers', [])
             RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
 
               // ...save fluid_large to persistent storage.
-              console.log('save fluid_large ' + artIdx + '-' + imgIdx);
+              console.log('save fluid_large ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
 
               PersistentStorageProvider.saveBlob(data.data, filename('fluid_large', artIdx, imgIdx), function(file) {
                 rawArts[artIdx].images[imgIdx].fluid_large.local_path = file.toURL();
