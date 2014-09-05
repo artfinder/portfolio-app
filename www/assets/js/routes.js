@@ -134,8 +134,14 @@ angular.module('portfolio.routes', [])
                 templateUrl: 'templates/intro/04-complete.html'
             }
         }
+    })
+
+    .state('start', {
+        url: '/start',
+        templateUrl: 'templates/splash-screen.html',
+        controller: 'SplashScreenController'
     });
 
   // Default route
-  $urlRouterProvider.otherwise("/intro/welcome");
+  $urlRouterProvider.otherwise("/start");
 });

@@ -211,6 +211,7 @@ angular.module('portfolio.controllers', [])
 
     // Abort execution grecefully when killswitch is on
     if (killswitch > 0) {
+      console.log('Aborting - killswitch: ' + killswitch);
       PersistentStorageProvider.purge(function() {
         LocalStorageProvider.purge();
         $ionicLoading.hide();
@@ -230,15 +231,16 @@ angular.module('portfolio.controllers', [])
         RemoteDataProvider.fetchBlob(img.grid_medium.url).then(function(data){
 
           // ...save grid_medium to persistent storage.
-          console.log('save grid_medium ' + artIdx + '-' + imgIdx);
+          console.log('save grid_medium ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
           PersistentStorageProvider.saveBlob(data.data, filename('grid_medium', artIdx, imgIdx), function(file) {
             rawArts[artIdx].images[imgIdx].grid_medium.local_path = file.toURL();
 
             // Fetch fluid_large...
-            RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data){
+            RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
 
               // ...save fluid_large to persistent storage.
-              console.log('save fluid_large ' + artIdx + '-' + imgIdx);
+              console.log('save fluid_large ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
+
               PersistentStorageProvider.saveBlob(data.data, filename('fluid_large', artIdx, imgIdx), function(file) {
                 rawArts[artIdx].images[imgIdx].fluid_large.local_path = file.toURL();
 
@@ -248,21 +250,20 @@ angular.module('portfolio.controllers', [])
 
                 // Carry on to the next image in the current artwork
                 fetchAndSave(artIdx, imgIdx+1);
-
               });
 
             }, function(error){
-              console.log('error while fetching fluid_large');
-              // TODO: handle errors nicely - stop and display alerts rather than moving on
-              fetchAndSave(artIdx, imgIdx+1);
+            	alert('Error getting file no: ' + imgIdx + '. Aborting...');
+            	$scope.cancel();
+            	fetchAndSave(artIdx, imgIdx); //handle for error
             });
 
           });
 
         }, function(error){
-          console.log('error while fetching grid_medium');
-          // TODO: handle errors nicely - stop and display alerts rather than moving on
-          fetchAndSave(artIdx, imgIdx+1);
+        	alert('Error getting file no: ' + imgIdx + '. Aborting...');
+        	$scope.cancel();
+        	fetchAndSave(artIdx, imgIdx); //handle for error
         });
 
       } else {
@@ -286,4 +287,22 @@ angular.module('portfolio.controllers', [])
   // Start recursive fetching process
   fetchAndSave(0, 0);
 
+})
+
+.controller('SplashScreenController', function($state, $timeout, LocalStorageProvider) {
+  var handleRedirect = function() {
+	console.log('Exceuted handle redirect');
+
+    $timeout(function() {
+      if (LocalStorageProvider.getUsername() === null) {
+        // Redirect to intro when no user data detected
+        $state.go('intro.welcome');
+      }
+      else {
+        $state.go('portfolio.artworks');
+      }
+    }, 2000, false);
+  } 
+  
+  handleRedirect();
 });

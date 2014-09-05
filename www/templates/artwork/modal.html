@@ -49,10 +49,10 @@
             <p>{{ artwork.currency }} {{ artwork.price }}</p>
           </div>
 
-          <a class="item item-icon-left calm" href="#">
+          <button class="item item-icon-left calm" onclick="window.plugins.socialsharing.share('Hi there, check out my artwork!', null, '{{ artwork.images[0].fluid_large.local_path }}', 'http://www.artfinder.com');">
             <i class="icon ion-share"></i>
             Share
-          </a>
+          </button>
 
         </div>
 

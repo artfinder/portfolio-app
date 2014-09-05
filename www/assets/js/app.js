@@ -22,10 +22,5 @@ angular.module('portfolio', [
     if (window.StatusBar) {
       StatusBar.styleDefault();
     }
-
-    // Redirect to intro when no user data detected
-    if (LocalStorageProvider.getUsername()) {
-      $state.go('portfolio.artworks');
-    }
   });
 });
