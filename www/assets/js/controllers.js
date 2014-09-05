@@ -115,6 +115,10 @@ angular.module('portfolio.controllers', [])
     $scope.modal.hide();
   };
 
+  $scope.shareArtwork = function(artworkUrl) {
+    window.plugins.socialsharing.share('Hi there, check out my artwork!', null, artworkUrl, 'http://www.artfinder.com');
+  };
+
 })
 
 .controller('IntroController', function($scope) {
@@ -169,7 +173,7 @@ angular.module('portfolio.controllers', [])
         });
       }
     }, function(err){
-      alertPopup(err, 'Unexpected error');
+      alertPopup('An unexpected error occurred while logging in. Perhaps you are not connected to the internet?');
     });
   };
 })
@@ -253,17 +257,17 @@ angular.module('portfolio.controllers', [])
               });
 
             }, function(error){
-            	alert('Error getting file no: ' + imgIdx + '. Aborting...');
-            	$scope.cancel();
-            	fetchAndSave(artIdx, imgIdx); //handle for error
+              alert('Error getting file no: ' + imgIdx + '. Aborting...');
+              $scope.cancel();
+              fetchAndSave(artIdx, imgIdx); //handle for error
             });
 
           });
 
         }, function(error){
-        	alert('Error getting file no: ' + imgIdx + '. Aborting...');
-        	$scope.cancel();
-        	fetchAndSave(artIdx, imgIdx); //handle for error
+          alert('Error getting file no: ' + imgIdx + '. Aborting...');
+          $scope.cancel();
+          fetchAndSave(artIdx, imgIdx); //handle for error
         });
 
       } else {
@@ -291,7 +295,7 @@ angular.module('portfolio.controllers', [])
 
 .controller('SplashScreenController', function($state, $timeout, LocalStorageProvider) {
   var handleRedirect = function() {
-	console.log('Exceuted handle redirect');
+  console.log('Exceuted handle redirect');
 
     $timeout(function() {
       if (LocalStorageProvider.getUsername() === null) {
@@ -302,7 +306,7 @@ angular.module('portfolio.controllers', [])
         $state.go('portfolio.artworks');
       }
     }, 2000, false);
-  } 
-  
+  }
+
   handleRedirect();
 });
