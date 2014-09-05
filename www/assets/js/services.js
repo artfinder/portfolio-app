@@ -216,20 +216,34 @@ angular.module('portfolio.services', [])
 .factory('PersistentStorageProvider', function persistentStorageProvider() {
 
     var DATADIR = 'artp';
+    
+    var generallRequestFileSystem = function(storageType, grantedBytes, callback) {
+    	window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+        window.requestFileSystem(storageType, grantedBytes, function(fileSystem) {
+            fileSystem.root.getDirectory(DATADIR, { create: true },
+                callback,
+                errorHandler
+            );
+        }, errorHandler);
+    }
 
-    // Request persistent storage the old-fashined way - useful for in-browser testing
-    // TODO: Refactor this later to use proper Cordova File plugin methods
     var requestStorage = function(callback) {
-        // Watch out for quota!
-        window.webkitStorageInfo.requestQuota(window.PERSISTENT, 50*1024*1024, function(grantedBytes) {
-            window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-            window.requestFileSystem(window.PERSISTENT, grantedBytes, function(fileSystem) {
-                fileSystem.root.getDirectory(DATADIR, { create: true },
-                    callback,
-                    errorHandler
-                );
-            }, errorHandler);
-        });
+    	if (window.cordova) {
+    		window.resolveLocalFileSystemURL(window.cordova.file.dataDirectory, function(dir){
+    		    console.log('resolved file system by Cordova: ', dir)
+    		}, errorHandler);
+    	}
+    	else {
+    		if (window.webkitPersistentStorage) {
+    	        // Watch out for quota!
+    			window.webkitPersistentStorage.requestQuota(window.PERSISTENT, 50*1024*1024, function(grantedBytes) {
+    				generallRequestFileSystem(window.PERSISTENT, grantedBytes, callback);
+    			});
+    		}
+    		else {
+    			generallRequestFileSystem(window.PERSISTENT, 50*1024*1024, callback);
+    		}
+    	}
     };
 
     var errorHandler = function(error) {
