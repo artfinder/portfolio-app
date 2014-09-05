@@ -287,4 +287,22 @@ angular.module('portfolio.controllers', [])
   // Start recursive fetching process
   fetchAndSave(0, 0);
 
+})
+
+.controller('SplashScreenController', function($state, $timeout, LocalStorageProvider) {
+  var handleRedirect = function() {
+	console.log('Exceuted handle redirect');
+
+    $timeout(function() {
+      if (LocalStorageProvider.getUsername() === null) {
+        // Redirect to intro when no user data detected
+        $state.go('intro.welcome');
+      }
+      else {
+        $state.go('portfolio.artworks');
+      }
+    }, 2000, false);
+  } 
+  
+  handleRedirect();
 });
