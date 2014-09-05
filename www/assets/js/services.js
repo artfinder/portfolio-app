@@ -216,34 +216,28 @@ angular.module('portfolio.services', [])
 .factory('PersistentStorageProvider', function persistentStorageProvider() {
 
     var DATADIR = 'artp';
-    
-    var generallRequestFileSystem = function(storageType, grantedBytes, callback) {
-    	window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+    var QUOTA = 50*1024*1024; // 50MB
+
+    var requestStorageUsingFileStorageApi = function(storageType, grantedBytes, callback) {
+        window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
         window.requestFileSystem(storageType, grantedBytes, function(fileSystem) {
             fileSystem.root.getDirectory(DATADIR, { create: true },
                 callback,
                 errorHandler
             );
         }, errorHandler);
-    }
+    };
 
     var requestStorage = function(callback) {
-    	if (window.cordova) {
-    		window.resolveLocalFileSystemURL(window.cordova.file.dataDirectory, function(dir){
-    		    console.log('resolved file system by Cordova: ', dir)
-    		}, errorHandler);
-    	}
-    	else {
-    		if (window.webkitPersistentStorage) {
-    	        // Watch out for quota!
-    			window.webkitPersistentStorage.requestQuota(window.PERSISTENT, 50*1024*1024, function(grantedBytes) {
-    				generallRequestFileSystem(window.PERSISTENT, grantedBytes, callback);
-    			});
-    		}
-    		else {
-    			generallRequestFileSystem(window.PERSISTENT, 50*1024*1024, callback);
-    		}
-    	}
+        if (window.cordova) {
+            window.resolveLocalFileSystemURL(window.cordova.file.dataDirectory, callback, errorHandler);
+        } else if (window.webkitPersistentStorage) {
+            window.webkitPersistentStorage.requestQuota(window.PERSISTENT, QUOTA, function(grantedBytes) {
+                requestStorageUsingFileStorageApi(window.PERSISTENT, grantedBytes, callback);
+            });
+        } else {
+            requestStorageUsingFileStorageApi(window.PERSISTENT, QUOTA, callback);
+        }
     };
 
     var errorHandler = function(error) {
@@ -257,7 +251,7 @@ angular.module('portfolio.services', [])
                 dir.getFile(filename, { create: true }, function(file) {
                     file.createWriter(function(writer) {
                         writer.onwriteend = function(e) {
-                            console.log(file.toURL());
+                            // console.log(file.toURL());
                             callback(file);
                         };
                         writer.write(data);
