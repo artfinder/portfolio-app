@@ -49,7 +49,7 @@
             <p>{{ artwork.currency }} {{ artwork.price }}</p>
           </div>
 
-          <button class="item item-icon-left calm" onclick="window.plugins.socialsharing.share('Hi there, check out my artwork!', null, '{{ artwork.images[0].fluid_large.local_path }}', 'http://www.artfinder.com');">
+          <button class="item item-icon-left calm" ng-click="shareArtwork(artwork.images[0].fluid_large.local_path);">
             <i class="icon ion-share"></i>
             Share
           </button>
