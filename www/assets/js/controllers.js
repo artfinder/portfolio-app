@@ -235,10 +235,11 @@ angular.module('portfolio.controllers', [])
             rawArts[artIdx].images[imgIdx].grid_medium.local_path = file.toURL();
 
             // Fetch fluid_large...
-            RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data){
+            RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
 
               // ...save fluid_large to persistent storage.
               console.log('save fluid_large ' + artIdx + '-' + imgIdx);
+
               PersistentStorageProvider.saveBlob(data.data, filename('fluid_large', artIdx, imgIdx), function(file) {
                 rawArts[artIdx].images[imgIdx].fluid_large.local_path = file.toURL();
 
@@ -248,21 +249,20 @@ angular.module('portfolio.controllers', [])
 
                 // Carry on to the next image in the current artwork
                 fetchAndSave(artIdx, imgIdx+1);
-
               });
 
             }, function(error){
-              console.log('error while fetching fluid_large');
-              // TODO: handle errors nicely - stop and display alerts rather than moving on
-              fetchAndSave(artIdx, imgIdx+1);
+            	alert('Error getting file no: ' + imgIdx + '. Aborting...');
+            	$scope.cancel();
+            	fetchAndSave(artIdx, imgIdx); //handle for error
             });
 
           });
 
         }, function(error){
-          console.log('error while fetching grid_medium');
-          // TODO: handle errors nicely - stop and display alerts rather than moving on
-          fetchAndSave(artIdx, imgIdx+1);
+        	alert('Error getting file no: ' + imgIdx + '. Aborting...');
+        	$scope.cancel();
+        	fetchAndSave(artIdx, imgIdx); //handle for error
         });
 
       } else {
