@@ -221,7 +221,7 @@ angular.module('portfolio.services', [])
     // TODO: Refactor this later to use proper Cordova File plugin methods
     var requestStorage = function(callback) {
         // Watch out for quota!
-        window.webkitStorageInfo.requestQuota(window.PERSISTENT, 50*1024*1024, function(grantedBytes) {
+        /*window.webkitStorageInfo.requestQuota(window.PERSISTENT, 50*1024*1024, function(grantedBytes) {
             window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
             window.requestFileSystem(window.PERSISTENT, grantedBytes, function(fileSystem) {
                 fileSystem.root.getDirectory(DATADIR, { create: true },
@@ -229,7 +229,14 @@ angular.module('portfolio.services', [])
                     errorHandler
                 );
             }, errorHandler);
-        });
+        });*/
+    	window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+        window.requestFileSystem(window.PERSISTENT, 50*1024*1024, function(fileSystem) {
+            fileSystem.root.getDirectory(DATADIR, { create: true },
+                callback,
+                errorHandler
+            );
+        }, errorHandler);
     };
 
     var errorHandler = function(error) {
