@@ -246,7 +246,7 @@ angular.module('portfolio.services', [])
 
     var errorHandler = function(error) {
         var msg = '';
-        switch (e.code) {
+        switch (error.code) {
           case FileError.QUOTA_EXCEEDED_ERR:
             msg = 'QUOTA_EXCEEDED_ERR';
             break;
@@ -262,6 +262,9 @@ angular.module('portfolio.services', [])
           case FileError.INVALID_STATE_ERR:
             msg = 'INVALID_STATE_ERR';
             break;
+          case FileError.NOT_READABLE_ERR:
+        	msg = 'NOT_READABLE_ERR';
+        	break;
           default:
             msg = 'Unknown Error';
             break;
@@ -289,16 +292,15 @@ angular.module('portfolio.services', [])
             requestStorage(function(dir) {
             	//dir.removeRecursively(callback, errorHandler); //removing whole dir is not working when using cordova dir location
             	
-            	console.log('Persistent storage: Purge - Removing directory: ' + dir.fullPath);
             	var dirReader = dir.createReader();
             	dirReader.readEntries(function(files) {
             		for (var i=0; i<files.length; ++i) {
             			console.log('Removing file: ' + files[i].toURL());
-            			files[i].remove(null, errorHandler);
+            			files[i].remove(function() {}, errorHandler);
             		}
             	});
             	
-            	dir.remove(null, null); //this will remove directory, but if it can not than will forgot about it
+            	dir.remove(function() {}, function() {}); //this will remove directory, but if it can not than will forgot about it
                 
             	callback();
             });
