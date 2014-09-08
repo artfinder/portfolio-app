@@ -175,7 +175,7 @@ angular.module('portfolio.controllers', [])
  * - recursively fetches artworks images and passes to storage service to save locally
  * - updates artworks json dada with paths leading to locally stored images
  */
-.controller('FetcherController', function($scope, $state, $ionicLoading, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider, MessagesProvider) {
+.controller('FetcherController', function($scope, $state, $ionicLoading, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider, MessagesProvider, ArtworkProvider) {
 
   var rawArts = LocalStorageProvider.getRawArtworksData();
   var numOfArtworks = rawArts.length;
@@ -275,6 +275,7 @@ angular.module('portfolio.controllers', [])
       // - redirect
       console.log('fetch process done');
       LocalStorageProvider.saveArtworksData(rawArts);
+      ArtworkProvider.reloadCache();
       $state.go('intro.complete');
 
     } // ENDOF: if (rawArts[artIdx])

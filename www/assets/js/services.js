@@ -27,6 +27,10 @@ angular.module('portfolio.services', [])
                 if (a.id == id) artwork = a;
             });
             return artwork;
+        },
+        
+        reloadCache: function() {
+            arts = LocalStorageProvider.getArtworksData();
         }
     };
 })
