@@ -266,4 +266,21 @@ angular.module('portfolio.services', [])
         }
     };
 
+})
+
+/**
+ * A service for displaying user messages, alerts
+ */
+.factory('MessagesProvider', function messagesProvider($ionicPopup, $ionicLoading) {
+
+    // A simple function to handle errors using friendly popup message
+    return {
+    	alertPopup: function(message, title) {
+            $ionicPopup.alert({
+                title: title ? title : 'Oops',
+                template: message,
+                onTap: $ionicLoading.hide()
+            });
+        }
+    };
 });

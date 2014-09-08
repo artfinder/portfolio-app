@@ -131,22 +131,13 @@ angular.module('portfolio.controllers', [])
  * - saves data into local storage
  * - redirects to the next step (FetcherController)
  */
-.controller('LoginController', function($scope, $state, $ionicPopup, $ionicLoading, RemoteDataProvider, LocalStorageProvider) {
-
-  // A simple function to handle errors using friendly popup message
-  var alertPopup = function(message, title) {
-    $ionicPopup.alert({
-      title: title ? title : 'Oops',
-      template: message,
-      onTap: $ionicLoading.hide()
-    });
-  };
+.controller('LoginController', function($scope, $state, $ionicPopup, $ionicLoading, RemoteDataProvider, LocalStorageProvider, MessagesProvider) {
 
   $scope.login = function(user) {
 
     var u = user ? user.slug : null;
     if (!u) {
-      return alertPopup('Please provide username/slug');
+      return MessagesProvider.alertPopup('Please provide username/slug');
     }
 
     $ionicLoading.show({
@@ -156,7 +147,7 @@ angular.module('portfolio.controllers', [])
     // Fetch artworks and save response to local storage
     RemoteDataProvider.fetchArtworksForUser(u).then(function(data_arts) {
       if (!data_arts.data.objects || data_arts.data.objects.length === 0) {
-        alertPopup('It appears that you have no artworks in your portfolio.');
+        MessagesProvider.alertPopup('It appears that you have no artworks in your portfolio.');
       } else {
         LocalStorageProvider.saveUsername(u);
         LocalStorageProvider.saveRawArtworksData(data_arts.data.objects);
@@ -173,7 +164,7 @@ angular.module('portfolio.controllers', [])
         });
       }
     }, function(err){
-      alertPopup('An unexpected error occurred while logging in. Perhaps you are not connected to the internet?');
+      MessagesProvider.alertPopup('An unexpected error occurred while logging in. Perhaps you are not connected to the internet?');
     });
   };
 })
@@ -184,7 +175,7 @@ angular.module('portfolio.controllers', [])
  * - recursively fetches artworks images and passes to storage service to save locally
  * - updates artworks json dada with paths leading to locally stored images
  */
-.controller('FetcherController', function($scope, $state, $ionicLoading, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider) {
+.controller('FetcherController', function($scope, $state, $ionicLoading, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider, MessagesProvider) {
 
   var rawArts = LocalStorageProvider.getRawArtworksData();
   var numOfArtworks = rawArts.length;
@@ -257,16 +248,18 @@ angular.module('portfolio.controllers', [])
               });
 
             }, function(error){
-              alert('Error getting file no: ' + imgIdx + '. Aborting...');
-              $scope.cancel();
+              console.log('Error getting fluid_large file no: ' + imgIdx + '. Error: ' + error.toString());
+              killswitch = 1;
+              MessagesProvider.alertPopup('an unexpected error occurred when downloading your artworks. Please try again.', 'Oops,');
               fetchAndSave(artIdx, imgIdx); //handle for error
             });
 
           });
 
         }, function(error){
-          alert('Error getting file no: ' + imgIdx + '. Aborting...');
-          $scope.cancel();
+          console.log('Error getting grid_medium file no: ' + imgIdx + '. Error: ' + error.toString());
+          killswitch = 1;
+          MessagesProvider.alertPopup('an unexpected error occurred when downloading your artworks. Please try again.', 'Oops,');
           fetchAndSave(artIdx, imgIdx); //handle for error
         });
 
