@@ -241,7 +241,7 @@ angular.module('portfolio.services', [])
     };
 
     var errorHandler = function(error) {
-        console.log('Persistent storage error: ' + error.name);
+        console.log('Persistent storage error: ' + error.name + ', code: ' + error.code);
         console.log(error);
     };
 
@@ -251,7 +251,7 @@ angular.module('portfolio.services', [])
                 dir.getFile(filename, { create: true }, function(file) {
                     file.createWriter(function(writer) {
                         writer.onwriteend = function(e) {
-                            // console.log(file.toURL());
+                            console.log(file.toURL());
                             callback(file);
                         };
                         writer.write(data);
@@ -261,7 +261,20 @@ angular.module('portfolio.services', [])
         },
         purge: function(callback) {
             requestStorage(function(dir) {
-                dir.removeRecursively(callback, errorHandler);
+            	//dir.removeRecursively(callback, errorHandler); //removing whole dir is not working when using cordova dir location
+            	
+            	console.log('Persistent storage: Purge - Removing directory: ' + dir.fullPath);
+            	var dirReader = dir.createReader();
+            	dirReader.readEntries(function(files) {
+            		for (var i=0; i<files.length; ++i) {
+            			console.log('Removing file: ' + files[i].toURL());
+            			files[i].remove(null, errorHandler);
+            		}
+            	});
+            	
+            	dir.remove(null, null); //this will remove directory, but if it can not than will forgot about it
+                
+            	callback();
             });
         }
     };

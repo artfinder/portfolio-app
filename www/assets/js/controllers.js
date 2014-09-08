@@ -250,7 +250,7 @@ angular.module('portfolio.controllers', [])
             }, function(error){
               console.log('Error getting fluid_large file no: ' + imgIdx + '. Error: ' + error.toString());
               killswitch = 1;
-              MessagesProvider.alertPopup('an unexpected error occurred when downloading your artworks. Please try again.', 'Oops,');
+              MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Oops,');
               fetchAndSave(artIdx, imgIdx); //handle for error
             });
 
@@ -259,7 +259,7 @@ angular.module('portfolio.controllers', [])
         }, function(error){
           console.log('Error getting grid_medium file no: ' + imgIdx + '. Error: ' + error.toString());
           killswitch = 1;
-          MessagesProvider.alertPopup('an unexpected error occurred when downloading your artworks. Please try again.', 'Oops,');
+          MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Oops,');
           fetchAndSave(artIdx, imgIdx); //handle for error
         });
 
