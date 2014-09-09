@@ -28,7 +28,7 @@ angular.module('portfolio.services', [])
             });
             return artwork;
         },
-        
+
         reloadCache: function() {
             arts = LocalStorageProvider.getArtworksData();
         }
@@ -158,7 +158,7 @@ angular.module('portfolio.services', [])
                 cache: false,
                 headers: {
                     'Pragma': 'no-cache',
-                    'Cache-Control': 'no-cache',
+                    'Cache-Control': 'no-cache'
                 }
             });
         }
@@ -272,8 +272,8 @@ angular.module('portfolio.services', [])
           default:
             msg = 'Unknown Error';
             break;
-        };
-        
+        }
+
         console.log('Persistent storage error: ' + error.name + ', code: ' + error.code + ', message: ' + msg);
         console.log(error);
     };
@@ -295,7 +295,7 @@ angular.module('portfolio.services', [])
         purge: function(callback) {
             requestStorage(function(dir) {
                 //dir.removeRecursively(callback, errorHandler); //removing whole dir is not working when using cordova dir location
-                
+
                 var dirReader = dir.createReader();
                 dirReader.readEntries(function(files) {
                     for (var i=0; i<files.length; ++i) {
@@ -303,9 +303,9 @@ angular.module('portfolio.services', [])
                         files[i].remove(function() {}, errorHandler);
                     }
                 });
-                
+
                 dir.remove(function() {}, function() {}); //this will remove directory, but if it can not than will forgot about it
-                
+
                 callback();
             });
         }
@@ -318,8 +318,8 @@ angular.module('portfolio.services', [])
  */
 .factory('MessagesProvider', function messagesProvider($ionicPopup, $ionicLoading) {
 
-	var singleArtworkViewOverlayEnabled = true;
-	
+    var singleArtworkViewOverlayEnabled = true;
+
     // A simple function to handle errors using friendly popup message
     return {
         alertPopup: function(message, title) {
@@ -329,18 +329,18 @@ angular.module('portfolio.services', [])
                 onTap: $ionicLoading.hide()
             });
         },
-    	displaySingleArtworkOverlay: function($scope) {
-    		if (singleArtworkViewOverlayEnabled) {
-    		    $ionicLoading.show({
-		             templateUrl: 'templates/artwork/swipingInstructionsOverlay.html',
-		             scope: $scope,
-		             //duration: 1000
-		        });
-    	    }
-    	},
-    	hideSingleArtworkOverlay: function() {
-    	    singleArtworkViewOverlayEnabled = false;
-    	    $ionicLoading.hide();
-    	}
+        displaySingleArtworkOverlay: function($scope) {
+            if (singleArtworkViewOverlayEnabled) {
+                $ionicLoading.show({
+                     templateUrl: 'templates/artwork/swipingInstructionsOverlay.html',
+                     scope: $scope,
+                     //duration: 1000
+                });
+            }
+        },
+        hideSingleArtworkOverlay: function() {
+            singleArtworkViewOverlayEnabled = false;
+            $ionicLoading.hide();
+        }
     };
 });

@@ -201,14 +201,14 @@ angular.module('portfolio.controllers', [])
   var filename = function(type, artIdx, imgIdx) {
     return username + '-' + type + '-' + artIdx + '-' + imgIdx + '.jpg';
   };
-  
+
   // Helper method for handling errors
   var handleError = function(type, artIdx, imgIdx, error) {
 	console.log('Error getting ' + type + ' file no: ' + imgIdx + '. Error: ' + error.toString());
     killswitch = 1;
     MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Oops,');
     fetchAndSave(artIdx, imgIdx); //handle for error
-  }
+  };
 
   // Recursive function to fetch binary images and save in persistent storage
   var fetchAndSave = function(artIdx, imgIdx) {
@@ -306,7 +306,7 @@ angular.module('portfolio.controllers', [])
         $state.go('portfolio.artworks');
       }
     }, 2000, false);
-  }
+  };
 
   handleRedirect();
 });
