@@ -279,7 +279,7 @@ angular.module('portfolio.controllers', [])
       var timeEnd = new Date();
       console.log('Fetch process done, time end: ' + timeEnd.toTimeString() + ', duration: ' + (timeEnd.getTime() - timeStart.getTime()) + 'ms.');
       LocalStorageProvider.saveArtworksData(rawArts);
-      ArtworkProvider.reloadCache();
+      ArtworkProvider.init();
       $state.go('intro.complete');
 
     } // ENDOF: if (rawArts[artIdx])
