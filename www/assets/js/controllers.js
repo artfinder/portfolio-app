@@ -206,7 +206,7 @@ angular.module('portfolio.controllers', [])
     console.log('Error getting ' + type + ' file no: ' + imgIdx + '. Error: ' + error.toString());
     killswitch = 1;
     MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Oops,');
-    fetchAndSave(artIdx, imgIdx); //handle for error
+    fetchAndSave(artIdx, imgIdx);
   };
 
   // Recursive function to fetch binary images and save in persistent storage
@@ -247,6 +247,7 @@ angular.module('portfolio.controllers', [])
               PersistentStorageProvider.saveBlob(data.data, filename('fluid_large', artIdx, imgIdx), function(file) {
                 rawArts[artIdx].images[imgIdx].fluid_large.local_path = file.toURL();
 
+                // Populate cover_image attribute for artwork
                 if (imgIdx === 0) {
                   rawArts[artIdx].cover_image = rawArts[artIdx].images[imgIdx].fluid_large;
                 }
