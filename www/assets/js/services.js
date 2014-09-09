@@ -157,8 +157,8 @@ angular.module('portfolio.services', [])
                 responseType: 'blob',
                 cache: false,
                 headers: {
-                	'Pragma': 'no-cache',
-                	'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache',
+                    'Cache-Control': 'no-cache',
                 }
             });
         }
@@ -267,13 +267,13 @@ angular.module('portfolio.services', [])
             msg = 'INVALID_STATE_ERR';
             break;
           case FileError.NOT_READABLE_ERR:
-        	msg = 'NOT_READABLE_ERR';
-        	break;
+            msg = 'NOT_READABLE_ERR';
+            break;
           default:
             msg = 'Unknown Error';
             break;
         };
-    	
+        
         console.log('Persistent storage error: ' + error.name + ', code: ' + error.code + ', message: ' + msg);
         console.log(error);
     };
@@ -294,19 +294,19 @@ angular.module('portfolio.services', [])
         },
         purge: function(callback) {
             requestStorage(function(dir) {
-            	//dir.removeRecursively(callback, errorHandler); //removing whole dir is not working when using cordova dir location
-            	
-            	var dirReader = dir.createReader();
-            	dirReader.readEntries(function(files) {
-            		for (var i=0; i<files.length; ++i) {
-            			console.log('Removing file: ' + files[i].toURL());
-            			files[i].remove(function() {}, errorHandler);
-            		}
-            	});
-            	
-            	dir.remove(function() {}, function() {}); //this will remove directory, but if it can not than will forgot about it
+                //dir.removeRecursively(callback, errorHandler); //removing whole dir is not working when using cordova dir location
                 
-            	callback();
+                var dirReader = dir.createReader();
+                dirReader.readEntries(function(files) {
+                    for (var i=0; i<files.length; ++i) {
+                        console.log('Removing file: ' + files[i].toURL());
+                        files[i].remove(function() {}, errorHandler);
+                    }
+                });
+                
+                dir.remove(function() {}, function() {}); //this will remove directory, but if it can not than will forgot about it
+                
+                callback();
             });
         }
     };
@@ -320,7 +320,7 @@ angular.module('portfolio.services', [])
 
     // A simple function to handle errors using friendly popup message
     return {
-    	alertPopup: function(message, title) {
+        alertPopup: function(message, title) {
             $ionicPopup.alert({
                 title: title ? title : 'Oops',
                 template: message,
