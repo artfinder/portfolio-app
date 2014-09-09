@@ -318,6 +318,8 @@ angular.module('portfolio.services', [])
  */
 .factory('MessagesProvider', function messagesProvider($ionicPopup, $ionicLoading) {
 
+	var singleArtworkViewOverlayEnabled = true;
+	
     // A simple function to handle errors using friendly popup message
     return {
         alertPopup: function(message, title) {
@@ -326,6 +328,19 @@ angular.module('portfolio.services', [])
                 template: message,
                 onTap: $ionicLoading.hide()
             });
-        }
+        },
+    	displaySingleArtworkOverlay: function($scope) {
+    		if (singleArtworkViewOverlayEnabled) {
+    		    $ionicLoading.show({
+		             templateUrl: 'templates/artwork/swipingInstructionsOverlay.html',
+		             scope: $scope,
+		             //duration: 1000
+		        });
+    	    }
+    	},
+    	hideSingleArtworkOverlay: function() {
+    	    singleArtworkViewOverlayEnabled = false;
+    	    $ionicLoading.hide();
+    	}
     };
 });

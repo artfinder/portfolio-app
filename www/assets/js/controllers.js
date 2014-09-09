@@ -203,7 +203,7 @@ angular.module('portfolio.controllers', [])
   };
   
   // Helper method for handling errors
-  var handleError = function(type, imgIdx, error) {
+  var handleError = function(type, artIdx, imgIdx, error) {
 	console.log('Error getting ' + type + ' file no: ' + imgIdx + '. Error: ' + error.toString());
     killswitch = 1;
     MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Oops,');
@@ -257,13 +257,13 @@ angular.module('portfolio.controllers', [])
               });
 
             }, function(error){
-              handleError('fluid_large', imgIdx, error);
+              handleError('fluid_large', artIdx, imgIdx, error);
             });
 
           });
 
         }, function(error){
-          handleError('grid_medium', imgIdx, error);
+          handleError('grid_medium', artIdx, imgIdx, error);
         });
 
       } else {
