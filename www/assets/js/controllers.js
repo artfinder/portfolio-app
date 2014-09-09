@@ -181,7 +181,6 @@ angular.module('portfolio.controllers', [])
   var numOfArtworks = rawArts.length;
   var username = LocalStorageProvider.getUsername();
   var killswitch = 0;
-  var timeStart;
 
   // Cancel ongoing, recursive fetch process
   // Sets the killswitch to tell recursive function that process needs to stop
@@ -275,9 +274,8 @@ angular.module('portfolio.controllers', [])
     } else {
       // Fetching process finished:
       // - save json artworks data to local storage
+      // - initialize ArtworkProvider
       // - redirect
-      var timeEnd = new Date();
-      console.log('Fetch process done, time end: ' + timeEnd.toTimeString() + ', duration: ' + (timeEnd.getTime() - timeStart.getTime()) + 'ms.');
       LocalStorageProvider.saveArtworksData(rawArts);
       ArtworkProvider.init();
       $state.go('intro.complete');
@@ -287,8 +285,6 @@ angular.module('portfolio.controllers', [])
   };
 
   // Start recursive fetching process
-  timeStart = new Date();
-  console.log('Starting download proces, time started: ' + timeStart.toTimeString());
   fetchAndSave(0, 0);
 
 })
