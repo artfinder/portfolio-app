@@ -103,3 +103,10 @@ ion-view.splash-scrren-info content div {
 ion-view.splash-scrren-info content div li {
 	font-size: 400%;
 }
+
+div .slidebox100h {
+	min-height: 91vh;
+	min-height: -webkit-calc(100vh - 44px);
+  min-height: -moz-calc(100vh - 44px);
+  min-height: calc(100vh - 44px);
+}
