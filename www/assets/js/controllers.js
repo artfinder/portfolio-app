@@ -34,6 +34,9 @@ angular.module('portfolio.controllers', [])
  * Handles artworks listing
  */
 .controller('ArtworksController', function($scope, $stateParams, ArtworkProvider, CollectionProvider) {
+  // Init artworks
+  ArtworkProvider.init();
+
   $scope.viewTitle = 'Artworks';
   $scope.ref = 'artworks';
   $scope.refId = 0;
@@ -278,7 +281,6 @@ angular.module('portfolio.controllers', [])
       // - initialize ArtworkProvider
       // - redirect
       LocalStorageProvider.saveArtworksData(rawArts);
-      ArtworkProvider.init();
       $state.go('intro.complete');
 
     } // ENDOF: if (rawArts[artIdx])
