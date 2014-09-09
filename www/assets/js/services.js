@@ -155,7 +155,11 @@ angular.module('portfolio.services', [])
             console.log(url);
             return $http.get(url, {
                 responseType: 'blob',
-                cache: false
+                cache: false,
+                headers: {
+                	'Pragma': 'no-cache',
+                	'Cache-Control': 'no-cache',
+                }
             });
         }
     };
