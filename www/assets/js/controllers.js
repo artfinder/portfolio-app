@@ -204,7 +204,7 @@ angular.module('portfolio.controllers', [])
 
   // Helper method for handling errors
   var handleError = function(type, artIdx, imgIdx, error) {
-	console.log('Error getting ' + type + ' file no: ' + imgIdx + '. Error: ' + error.toString());
+    console.log('Error getting ' + type + ' file no: ' + imgIdx + '. Error: ' + error.toString());
     killswitch = 1;
     MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Oops,');
     fetchAndSave(artIdx, imgIdx); //handle for error
@@ -294,19 +294,9 @@ angular.module('portfolio.controllers', [])
 })
 
 .controller('SplashScreenController', function($state, $timeout, LocalStorageProvider) {
-  var handleRedirect = function() {
-  console.log('Exceuted handle redirect');
 
-    $timeout(function() {
-      if (LocalStorageProvider.getUsername() === null) {
-        // Redirect to intro when no user data detected
-        $state.go('intro.welcome');
-      }
-      else {
-        $state.go('portfolio.artworks');
-      }
-    }, 2000, false);
-  };
+  $timeout(function() {
+    $state.go(LocalStorageProvider.getUsername() === null ? 'intro.welcome' : 'portfolio.artworks');
+  }, 2000, false);
 
-  handleRedirect();
 });
