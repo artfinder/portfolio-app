@@ -142,33 +142,65 @@ angular.module('portfolio.controllers', [])
     if (!u) {
       return MessagesProvider.alertPopup('Please provide username/slug');
     }
+    if (!user.password) {
+      return MessagesProvider.alertPopup('Please provide verification code');
+    }
 
     $ionicLoading.show({
       template: 'Logging in...'
     });
+    
+    var handleError = function(err) {
+      MessagesProvider.alertPopup('An unexpected error occurred while logging in. Perhaps you are not connected to the internet?');
+    }
+    
+    var authError = function() {
+      MessagesProvider.alertPopup('The login details are incorrect. Please try again.');
+    }
+    
+    // Check login details
+    RemoteDataProvider.fetchAuthDataForUser(u).then(function(data_user) {
+      if (data_user.data.auth.toLowerCase() == user.password.toLowerCase()) {
 
-    // Fetch artworks and save response to local storage
-    RemoteDataProvider.fetchArtworksForUser(u).then(function(data_arts) {
-      if (!data_arts.data.objects || data_arts.data.objects.length === 0) {
-        MessagesProvider.alertPopup('It appears that you have no artworks in your portfolio.');
-      } else {
-        LocalStorageProvider.saveUsername(u);
-        LocalStorageProvider.saveRawArtworksData(data_arts.data.objects);
+        // Fetch artworks and save response to local storage
+        RemoteDataProvider.fetchArtworksForUser(u).then(function(data_arts) {
+          if (!data_arts.data.objects || data_arts.data.objects.length === 0) {
+            MessagesProvider.alertPopup('It appears that you have no artworks in your portfolio.');
+          } else {
+            LocalStorageProvider.saveUsername(u);
+            LocalStorageProvider.saveRawArtworksData(data_arts.data.objects);
 
-        // Fetch collections and save response to local storage
-        RemoteDataProvider.fetchCollectionsForUser(u).then(function(data_cols){
-          if (data_cols.data.objects && data_cols.data.objects.length > 0) {
-            LocalStorageProvider.saveRawCollectionsData(data_cols.data.objects);
+            // Fetch collections and save response to local storage
+            RemoteDataProvider.fetchCollectionsForUser(u).then(function(data_cols){
+              if (data_cols.data.objects && data_cols.data.objects.length > 0) {
+                LocalStorageProvider.saveRawCollectionsData(data_cols.data.objects);
+              }
+
+              // Redirect to intro.fetch view to begin artwork/collections fetching
+              $ionicLoading.hide();
+              $state.go('intro.fetch');
+            });
           }
-
-          // Redirect to intro.fetch view to begin artwork/collections fetching
-          $ionicLoading.hide();
-          $state.go('intro.fetch');
+        }, function(err){
+          handleError(err);
         });
       }
-    }, function(err){
-      MessagesProvider.alertPopup('An unexpected error occurred while logging in. Perhaps you are not connected to the internet?');
+      else {
+        authError();
+      }
+    }, function(err) {
+        // Handle not existing slug (as it is 404)
+        if (err && err.data && err.data.error == "Artist matching query does not exist.") {
+          authError();
+        }
+        else {
+          handleError(err);
+        }
     });
+
+    /*
+
+    */
   };
 })
 
