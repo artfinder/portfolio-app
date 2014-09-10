@@ -157,6 +157,12 @@ angular.module('portfolio.controllers', [])
     var authError = function() {
       MessagesProvider.alertPopup('The login details are incorrect. Please try again.');
     }
+
+    // Redirect to intro.fetch view to begin artwork/collections fetching
+    var redirectIntoFetchView = function() {
+      $ionicLoading.hide();
+      $state.go('intro.fetch');
+    }
     
     // Check login details
     RemoteDataProvider.fetchAuthDataForUser(u).then(function(data_user) {
@@ -164,6 +170,7 @@ angular.module('portfolio.controllers', [])
 
         // Fetch artworks and save response to local storage
         RemoteDataProvider.fetchArtworksForUser(u).then(function(data_arts) {
+          console.log('Fetched artworks');
           if (!data_arts.data.objects || data_arts.data.objects.length === 0) {
             MessagesProvider.alertPopup('It appears that you have no artworks in your portfolio.');
           } else {
@@ -172,13 +179,24 @@ angular.module('portfolio.controllers', [])
 
             // Fetch collections and save response to local storage
             RemoteDataProvider.fetchCollectionsForUser(u).then(function(data_cols){
+              console.log('Fetched collections');
               if (data_cols.data.objects && data_cols.data.objects.length > 0) {
                 LocalStorageProvider.saveRawCollectionsData(data_cols.data.objects);
               }
 
               // Redirect to intro.fetch view to begin artwork/collections fetching
-              $ionicLoading.hide();
-              $state.go('intro.fetch');
+              redirectIntoFetchView();
+            },
+            function(err) {
+              // Handle empty collection for user (as it is 404)
+              if (err && err.data && err.data.error == "list index out of range") {
+            	console.log('User doesn\'t have any collections');
+            	// Redirect to intro.fetch view to begin artwork/collections fetching
+                redirectIntoFetchView();
+              }
+              else {
+            	handleError(err);
+              }
             });
           }
         }, function(err){
@@ -227,8 +245,8 @@ angular.module('portfolio.controllers', [])
   };
 
   // Helper method to update progress status
-  var updateStatus = function(count) {
-    $scope.statusTxt = count + '/' + numOfArtworks;
+  var updateStatus = function(count, type) {
+    $scope.statusTxt = count + '/' + numOfArtworks + ' ' + type;
   };
 
   // Helper method to generate filename
@@ -244,10 +262,8 @@ angular.module('portfolio.controllers', [])
     fetchAndSave(artIdx, imgIdx);
   };
 
-  // Recursive function to fetch binary images and save in persistent storage
-  var fetchAndSave = function(artIdx, imgIdx) {
-
-    // Abort execution grecefully when killswitch is on
+  // Abort execution grecefully when killswitch is on
+  var killswitchHandle = function() {
     if (killswitch > 0) {
       console.log('Aborting - killswitch: ' + killswitch);
       PersistentStorageProvider.purge(function() {
@@ -255,14 +271,23 @@ angular.module('portfolio.controllers', [])
         $ionicLoading.hide();
         $state.go('intro.welcome');
       });
-      return;
+      return true;
+    }
+  }
+
+  // Recursive function to fetch binary images and save in persistent storage
+  var fetchAndSave = function(artIdx, imgIdx) {
+
+    // Abort execution grecefully when killswitch is on
+    if (killswitchHandle()) {
+    	return;
     }
 
     if (rawArts[artIdx]) {
 
       if (rawArts[artIdx].images[imgIdx]) {
 
-        updateStatus(artIdx+1);
+        updateStatus(artIdx+1, 'artworks');
         var img = rawArts[artIdx].images[imgIdx];
 
         // Fetch grid_medium...

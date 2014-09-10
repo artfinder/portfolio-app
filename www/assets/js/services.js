@@ -133,8 +133,7 @@ angular.module('portfolio.services', [])
     var apikey = '19957ec02e669s11e3ab523a0800270f67ea';
     var auth_webservice_url = 'https://www.artfinder.com/api/v1/artist/$USER$/';
     var artworks_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/';
-    // TODO: Replace collections API URL when proper webservice is in place
-    var collections_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/';
+    var collections_webservice_url = 'https://www.artfinder.com/api/v1/collection/$USER$/';
 
     var getUrl = function(url, username) {
         return url.replace('$USER$', username);
@@ -209,10 +208,16 @@ angular.module('portfolio.services', [])
         getRawArtworksData: function() {
             return JSON.parse(window.localStorage.getItem(ARTWORKS_RAW_INDEX_KEY));
         },
+        getRawCollectionsData: function() {
+            return JSON.parse(window.localStorage.getItem(COLLECTIONS_RAW_INDEX_KEY));
+        },
 
         // Removers
         removeRawArtworksData: function() {
             window.localStorage.removeItem(ARTWORKS_RAW_INDEX_KEY);
+        },
+        removeRawCollectionsData: function() {
+            window.localStorage.removeItem(COLLECTIONS_RAW_INDEX_KEY);
         },
         purge: function() {
             window.localStorage.removeItem(USER_KEY);
