@@ -194,6 +194,9 @@ angular.module('portfolio.services', [])
         saveRawArtworksData: function(data) {
             window.localStorage.setItem(ARTWORKS_RAW_INDEX_KEY, JSON.stringify(data));
         },
+        saveCollectionsData: function(data) {
+            window.localStorage.setItem(COLLECTIONS_INDEX_KEY, JSON.stringify(data));
+        },
         saveRawCollectionsData: function(data) {
             window.localStorage.setItem(COLLECTIONS_RAW_INDEX_KEY, JSON.stringify(data));
         },

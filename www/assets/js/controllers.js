@@ -256,14 +256,16 @@ angular.module('portfolio.controllers', [])
 
   // Helper method for handling errors
   var handleError = function(type, artIdx, imgIdx, error) {
-    console.log('Error getting ' + type + ' file no: ' + imgIdx + '. Error: ' + error.toString());
+    console.log('Error getting ' + type + ', artwork no: ' + artIdx + ', file no: ' + imgIdx + '. Error: ' + error.toString());
     killswitch = 1;
     MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Oops,');
     fetchAndSave(artIdx, imgIdx);
   };
 
-  // Abort execution grecefully when killswitch is on
-  var killswitchHandle = function() {
+  // Recursive function to fetch binary images and save in persistent storage
+  var fetchAndSave = function(artIdx, imgIdx, type) {
+
+    // Abort execution grecefully when killswitch is on
     if (killswitch > 0) {
       console.log('Aborting - killswitch: ' + killswitch);
       PersistentStorageProvider.purge(function() {
@@ -271,40 +273,32 @@ angular.module('portfolio.controllers', [])
         $ionicLoading.hide();
         $state.go('intro.welcome');
       });
-      return true;
-    }
-  }
-
-  // Recursive function to fetch binary images and save in persistent storage
-  var fetchAndSave = function(artIdx, imgIdx) {
-
-    // Abort execution grecefully when killswitch is on
-    if (killswitchHandle()) {
-    	return;
+      return;
     }
 
     if (rawArts[artIdx]) {
 
+      //TODO: Fix opening cover_image instead of images in 'collections' type
       if (rawArts[artIdx].images[imgIdx]) {
 
-        updateStatus(artIdx+1, 'artworks');
+        updateStatus(artIdx+1, type);
         var img = rawArts[artIdx].images[imgIdx];
 
         // Fetch grid_medium...
         RemoteDataProvider.fetchBlob(img.grid_medium.url).then(function(data){
 
           // ...save grid_medium to persistent storage.
-          console.log('save grid_medium ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
-          PersistentStorageProvider.saveBlob(data.data, filename('grid_medium', artIdx, imgIdx), function(file) {
+          console.log('save ' + type + '_grid_medium ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
+          PersistentStorageProvider.saveBlob(data.data, filename(type + '_grid_medium', artIdx, imgIdx), function(file) {
             rawArts[artIdx].images[imgIdx].grid_medium.local_path = file.toURL();
 
             // Fetch fluid_large...
             RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
 
               // ...save fluid_large to persistent storage.
-              console.log('save fluid_large ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
+              console.log('save ' + type + '_fluid_large ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
 
-              PersistentStorageProvider.saveBlob(data.data, filename('fluid_large', artIdx, imgIdx), function(file) {
+              PersistentStorageProvider.saveBlob(data.data, filename(type + '_fluid_large', artIdx, imgIdx), function(file) {
                 rawArts[artIdx].images[imgIdx].fluid_large.local_path = file.toURL();
 
                 // Populate cover_image attribute for artwork
@@ -313,39 +307,58 @@ angular.module('portfolio.controllers', [])
                 }
 
                 // Carry on to the next image in the current artwork
-                fetchAndSave(artIdx, imgIdx+1);
+                fetchAndSave(artIdx, imgIdx+1, type);
               });
 
             }, function(error){
-              handleError('fluid_large', artIdx, imgIdx, error);
+              handleError(type + '_fluid_large', artIdx, imgIdx, error);
             });
 
           });
 
         }, function(error){
-          handleError('grid_medium', artIdx, imgIdx, error);
+          handleError(type + '_grid_medium', artIdx, imgIdx, error);
         });
 
       } else {
         // Carry on to the next artwork
-        fetchAndSave(artIdx+1, 0);
+        fetchAndSave(artIdx+1, 0, type);
 
       } // ENDOF: if (rawArts[artIdx].images[imgIdx])
 
     } else {
-      // Fetching process finished:
-      // - save json artworks data to local storage
-      // - initialize ArtworkProvider
-      // - redirect
-      LocalStorageProvider.saveArtworksData(rawArts);
-      $state.go('intro.complete');
-
+      console.log('Fetch process type: ' + type + ' completed. ArtIdx:' + artIdx + ', imgIdx: ' + imgIdx);
+      if (type == 'artworks') {
+    	// Fetching process finished:
+        // - save json artworks data to local storage
+        // - initialize ArtworkProvider
+        // - proceed collections
+        LocalStorageProvider.saveArtworksData(rawArts);
+        
+        proceedFetchAndSaveCollections();
+      }
+      else if (type == 'collections') {
+    	// Fetching process finished:
+        // - save json artworks data to local storage
+        // - redirect
+        LocalStorageProvider.saveCollectionsData(rawArts);
+        $state.go('intro.complete');
+      }
+      else {
+    	handleError(type, artIdx, imgIdx, 'Unsupported type in fetch completion');
+      }
     } // ENDOF: if (rawArts[artIdx])
-
   };
+  
+  var proceedFetchAndSaveCollections = function() {
+	rawArts = LocalStorageProvider.getRawCollectionsData();
+    numOfArtworks = rawArts.length;
+    
+    fetchAndSave(0, 0, 'collections');
+  }
 
   // Start recursive fetching process
-  fetchAndSave(0, 0);
+  fetchAndSave(0, 0, 'artworks');
 
 })
 
