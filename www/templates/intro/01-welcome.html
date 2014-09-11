@@ -23,14 +23,16 @@
 
         <div class="list list-inset">
           <label class="item item-input item-stacked-label">
-            <span class="input-label">Your username/slug at Artfinder</span>
+            <span class="input-label">Username/slug</span>
             <input type="text" placeholder="michael-jackson" ng-model="user.slug">
           </label>
           <label class="item item-input item-stacked-label">
             <span class="input-label">Verification code</span>
-            <input type="text" placeholder="auth" ng-model="user.password">
+            <input type="text" placeholder="123456" ng-model="user.code">
           </label>
         </div>
+
+        <p>You can obtain verification code in your account settings at Artfinder.com</p>
 
         <span class="center">
           <div id="cellular_warning"></div>

@@ -136,89 +136,79 @@ angular.module('portfolio.controllers', [])
  */
 .controller('LoginController', function($scope, $state, $ionicPopup, $ionicLoading, RemoteDataProvider, LocalStorageProvider, MessagesProvider) {
 
+  // A generic error handler for logging process
+  var errorHandler = function(err, context, callback) {
+    var genericErrorMessage = 'An unexpected error occurred while logging in. Perhaps you are not connected to the internet?';
+    if (err.status && err.status == 404) {
+      switch (context) {
+        case 'auth':
+          MessagesProvider.alertPopup('The login details are incorrect. Please try again.');
+          break;
+        case 'collections':
+          console.log('No collections returned');
+          callback();
+          break;
+        default:
+          MessagesProvider.alertPopup(genericErrorMessage);
+      }
+    } else {
+      MessagesProvider.alertPopup(genericErrorMessage);
+    }
+  };
+
+  // Helper function to redirect upon successful login
+  var redirectToFetcher = function() {
+    $ionicLoading.hide();
+    $state.go('intro.fetch');
+  };
+
+  // Login entry point
   $scope.login = function(user) {
 
-    var u = user ? user.slug : null;
-    if (!u) {
+    if (!user || !user.slug) {
       return MessagesProvider.alertPopup('Please provide username/slug');
     }
-    if (!user.password) {
+    if (!user.code) {
       return MessagesProvider.alertPopup('Please provide verification code');
     }
 
     $ionicLoading.show({
       template: 'Logging in...'
     });
-    
-    var handleError = function(err) {
-      MessagesProvider.alertPopup('An unexpected error occurred while logging in. Perhaps you are not connected to the internet?');
-    }
-    
-    var authError = function() {
-      MessagesProvider.alertPopup('The login details are incorrect. Please try again.');
-    }
 
-    // Redirect to intro.fetch view to begin artwork/collections fetching
-    var redirectIntoFetchView = function() {
-      $ionicLoading.hide();
-      $state.go('intro.fetch');
-    }
-    
-    // Check login details
-    RemoteDataProvider.fetchAuthDataForUser(u).then(function(data_user) {
-      if (data_user.data.auth.toLowerCase() == user.password.toLowerCase()) {
+    var username = user.slug;
 
-        // Fetch artworks and save response to local storage
-        RemoteDataProvider.fetchArtworksForUser(u).then(function(data_arts) {
-          console.log('Fetched artworks');
-          if (!data_arts.data.objects || data_arts.data.objects.length === 0) {
-            MessagesProvider.alertPopup('It appears that you have no artworks in your portfolio.');
-          } else {
-            LocalStorageProvider.saveUsername(u);
-            LocalStorageProvider.saveRawArtworksData(data_arts.data.objects);
-
-            // Fetch collections and save response to local storage
-            RemoteDataProvider.fetchCollectionsForUser(u).then(function(data_cols){
-              console.log('Fetched collections');
-              if (data_cols.data.objects && data_cols.data.objects.length > 0) {
-                LocalStorageProvider.saveRawCollectionsData(data_cols.data.objects);
-              }
-
-              // Redirect to intro.fetch view to begin artwork/collections fetching
-              redirectIntoFetchView();
-            },
-            function(err) {
-              // Handle empty collection for user (as it is 404)
-              if (err && err.data && err.data.error == "list index out of range") {
-            	console.log('User doesn\'t have any collections');
-            	// Redirect to intro.fetch view to begin artwork/collections fetching
-                redirectIntoFetchView();
-              }
-              else {
-            	handleError(err);
-              }
-            });
-          }
-        }, function(err){
-          handleError(err);
-        });
+    // Fetch login details, compare with details entered by user
+    RemoteDataProvider.fetchAuthDataForUser(username).then(function(data_user) {
+      if (data_user.data.auth.toLowerCase() != user.code.toLowerCase()) {
+        MessagesProvider.alertPopup('The login details are incorrect. Please try again.');
+        $ionicLoading.hide();
+        return;
       }
-      else {
-        authError();
-      }
-    }, function(err) {
-        // Handle not existing slug (as it is 404)
-        if (err && err.data && err.data.error == "Artist matching query does not exist.") {
-          authError();
-        }
-        else {
-          handleError(err);
-        }
-    });
 
-    /*
+      // Fetch artworks and save response to local storage
+      RemoteDataProvider.fetchArtworksForUser(username).then(function(data_arts) {
+        if (!data_arts.data.objects || data_arts.data.objects.length === 0) {
+          MessagesProvider.alertPopup('It appears that you have no artworks in your portfolio.');
+        } else {
+          LocalStorageProvider.saveUsername(username);
+          LocalStorageProvider.saveRawArtworksData(data_arts.data.objects);
 
-    */
+          // Fetch collections and save response to local storage
+          RemoteDataProvider.fetchCollectionsForUser(username).then(function(data_cols){
+            if (data_cols.data.objects && data_cols.data.objects.length > 0) {
+              LocalStorageProvider.saveRawCollectionsData(data_cols.data.objects);
+            }
+
+            // Redirect to intro.fetch view to begin artwork/collections fetching
+            redirectToFetcher();
+
+          // TODO: Not sure whether we should allow empty collections...?
+          // Need to check that with Gump
+          }, function(e) { errorHandler(e, 'collections', redirectToFetcher); });
+        }
+      }, function(e) { errorHandler(e, 'artworks'); });
+    }, function(e) { errorHandler(e, 'auth'); });
   };
 })
 
@@ -329,31 +319,31 @@ angular.module('portfolio.controllers', [])
     } else {
       console.log('Fetch process type: ' + type + ' completed. ArtIdx:' + artIdx + ', imgIdx: ' + imgIdx);
       if (type == 'artworks') {
-    	// Fetching process finished:
+      // Fetching process finished:
         // - save json artworks data to local storage
         // - initialize ArtworkProvider
         // - proceed collections
         LocalStorageProvider.saveArtworksData(rawArts);
-        
+
         proceedFetchAndSaveCollections();
       }
       else if (type == 'collections') {
-    	// Fetching process finished:
+      // Fetching process finished:
         // - save json artworks data to local storage
         // - redirect
         LocalStorageProvider.saveCollectionsData(rawArts);
         $state.go('intro.complete');
       }
       else {
-    	handleError(type, artIdx, imgIdx, 'Unsupported type in fetch completion');
+      handleError(type, artIdx, imgIdx, 'Unsupported type in fetch completion');
       }
     } // ENDOF: if (rawArts[artIdx])
   };
-  
+
   var proceedFetchAndSaveCollections = function() {
-	rawArts = LocalStorageProvider.getRawCollectionsData();
+  rawArts = LocalStorageProvider.getRawCollectionsData();
     numOfArtworks = rawArts.length;
-    
+
     fetchAndSave(0, 0, 'collections');
   }
 
