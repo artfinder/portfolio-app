@@ -140,7 +140,7 @@ angular.module('portfolio.services', [])
     };
 
     return {
-    	fetchAuthDataForUser: function(username) {
+        fetchAuthDataForUser: function(username) {
             return $http.get(getUrl(auth_webservice_url, username), {
                 params: { api_key: apikey }
             });
