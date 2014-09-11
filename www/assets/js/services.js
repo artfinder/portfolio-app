@@ -131,9 +131,11 @@ angular.module('portfolio.services', [])
 .factory('RemoteDataProvider', function remoteDataProvider($http, LocalStorageProvider) {
 
     var apikey = '19957ec02e669s11e3ab523a0800270f67ea';
-    var auth_webservice_url = 'https://www.artfinder.com/api/v1/artist/$USER$/';
-    var artworks_webservice_url = 'https://www.artfinder.com/api/v1/product/$USER$/';
-    var collections_webservice_url = 'https://www.artfinder.com/api/v1/collection/$USER$/';
+    var webservices = {
+        auth: 'https://www.artfinder.com/api/v1/artist/$USER$/',
+        artworks: 'https://www.artfinder.com/api/v1/product/$USER$/',
+        collections: 'https://www.artfinder.com/api/v1/collection/$USER$/'
+    };
 
     var getUrl = function(url, username) {
         return url.replace('$USER$', username);
@@ -141,17 +143,17 @@ angular.module('portfolio.services', [])
 
     return {
         fetchAuthDataForUser: function(username) {
-            return $http.get(getUrl(auth_webservice_url, username), {
+            return $http.get(getUrl(webservices.auth, username), {
                 params: { api_key: apikey }
             });
         },
         fetchArtworksForUser: function(username) {
-            return $http.get(getUrl(artworks_webservice_url, username), {
+            return $http.get(getUrl(webservices.artworks, username), {
                 params: { api_key: apikey }
             });
         },
         fetchCollectionsForUser: function(username) {
-            return $http.get(getUrl(collections_webservice_url, username), {
+            return $http.get(getUrl(webservices.collections, username), {
                 params: { api_key: apikey }
             });
         },
