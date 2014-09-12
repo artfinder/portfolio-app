@@ -9,9 +9,8 @@
 
         <div class="artwork-box" ng-repeat="collection in collections">
 
-            <!-- <a href="#/portfolio/by-collection/{{ collection.id }}"> -->
-            <a onclick="alert('Not implemented until Collections API is available');">
-                <img ng-src="{{ collection.cover_image.local_path }}" />
+            <a href="#/portfolio/by-collection/{{ collection.id }}">
+                <img ng-src="{{ collection.cover_image.grid_medium.local_path }}" />
             </a>
 
             <div class="artwork-description">

@@ -59,6 +59,7 @@ angular.module('portfolio.controllers', [])
  * Handles collections listing
  */
 .controller('CollectionsController', function($scope, CollectionProvider) {
+    CollectionProvider.init();
     $scope.collections = CollectionProvider.all();
 })
 
