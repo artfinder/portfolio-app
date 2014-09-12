@@ -3,9 +3,11 @@
     <h3>Please wait...</h3>
     <p>Your Artfinder portfolio is now being downloaded to the device for offline access.<br/>This may take some time...</p>
 
+    <p>Downloading...</p>
+
     <span class="icon ion-looping"></span>
 
-    <p>Fetching... {{ statusTxt }}</p>
+    <p>{{ counter }} / {{ totalRecords }}</p>
 
     <button class="button button-calm" ng-click="cancel();">
         Finish later

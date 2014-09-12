@@ -217,13 +217,20 @@ angular.module('portfolio.controllers', [])
  * - reads json data from local storage (saved at the login step)
  * - recursively fetches artworks images and passes to storage service to save locally
  * - updates artworks json dada with paths leading to locally stored images
+ *
+ * And yes, this code is SHIIEEEEET. Sorry.
  */
 .controller('FetcherController', function($scope, $state, $ionicLoading, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider, MessagesProvider, ArtworkProvider) {
 
-  var rawArts = LocalStorageProvider.getRawArtworksData();
-  var numOfArtworks = rawArts.length;
-  var username = LocalStorageProvider.getUsername();
   var killswitch = 0;
+  var username = LocalStorageProvider.getUsername();
+  var rawArts = LocalStorageProvider.getRawArtworksData();
+  var rawCols = LocalStorageProvider.getRawCollectionsData();
+  var numOfArtworks = rawArts !== null ? rawArts.length : 0;
+  var numOfCollections = rawCols !== null ? rawCols.length : 0;
+  var counter = 0;
+
+  $scope.totalRecords = numOfArtworks + numOfCollections;
 
   // Cancel ongoing, recursive fetch process
   // Sets the killswitch to tell recursive function that process needs to stop
@@ -234,61 +241,60 @@ angular.module('portfolio.controllers', [])
     });
   };
 
-  // Helper method to update progress status
-  var updateStatus = function(count, type) {
-    $scope.statusTxt = count + '/' + numOfArtworks + ' ' + type;
-  };
-
-  // Helper method to generate filename
+  // Helper function to generate an image filename
   var filename = function(type, artIdx, imgIdx) {
     return username + '-' + type + '-' + artIdx + '-' + imgIdx + '.jpg';
   };
 
-  // Helper method for handling errors
-  var handleError = function(type, artIdx, imgIdx, error) {
-    console.log('Error getting ' + type + ', artwork no: ' + artIdx + ', file no: ' + imgIdx + '. Error: ' + error.toString());
-    killswitch = 1;
-    MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Oops,');
-    fetchAndSave(artIdx, imgIdx);
+  var errorHandler = function(err, imgVariant, recordIdx, imgIdx) {
+    console.log('Error while fetching img variant: ' + imgVariant + '; art/col idx: ' + recordIdx + '; image idx: ' + imgIdx);
+    console.log(err);
+    MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Error');
+    terminateFetcher();
   };
 
-  // Recursive function to fetch binary images and save in persistent storage
-  var fetchAndSave = function(artIdx, imgIdx, type) {
+  var terminateFetcher = function() {
+    PersistentStorageProvider.purge(function() {
+      LocalStorageProvider.purge();
+      $ionicLoading.hide();
+      $state.go('intro.welcome');
+    });
+  };
+
+  /**
+   * Recursive function to fetch binary images for artworks
+   * and save in persistent storage
+   */
+  var fetchAndSaveArtworks = function(artIdx, imgIdx) {
 
     // Abort execution grecefully when killswitch is on
     if (killswitch > 0) {
-      console.log('Aborting - killswitch: ' + killswitch);
-      PersistentStorageProvider.purge(function() {
-        LocalStorageProvider.purge();
-        $ionicLoading.hide();
-        $state.go('intro.welcome');
-      });
+      terminateFetcher();
       return;
     }
 
     if (rawArts[artIdx]) {
 
-      //TODO: Fix opening cover_image instead of images in 'collections' type
       if (rawArts[artIdx].images[imgIdx]) {
 
-        updateStatus(artIdx+1, type);
+        $scope.counter = ++counter;
+
         var img = rawArts[artIdx].images[imgIdx];
 
         // Fetch grid_medium...
         RemoteDataProvider.fetchBlob(img.grid_medium.url).then(function(data){
 
           // ...save grid_medium to persistent storage.
-          console.log('save ' + type + '_grid_medium ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
-          PersistentStorageProvider.saveBlob(data.data, filename(type + '_grid_medium', artIdx, imgIdx), function(file) {
+          console.log('save grid_medium ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
+          PersistentStorageProvider.saveBlob(data.data, filename('art_grid_medium', artIdx, imgIdx), function(file) {
             rawArts[artIdx].images[imgIdx].grid_medium.local_path = file.toURL();
 
             // Fetch fluid_large...
             RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
 
               // ...save fluid_large to persistent storage.
-              console.log('save ' + type + '_fluid_large ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
-
-              PersistentStorageProvider.saveBlob(data.data, filename(type + '_fluid_large', artIdx, imgIdx), function(file) {
+              console.log('save fluid_large ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
+              PersistentStorageProvider.saveBlob(data.data, filename('art_fluid_large', artIdx, imgIdx), function(file) {
                 rawArts[artIdx].images[imgIdx].fluid_large.local_path = file.toURL();
 
                 // Populate cover_image attribute for artwork
@@ -297,58 +303,105 @@ angular.module('portfolio.controllers', [])
                 }
 
                 // Carry on to the next image in the current artwork
-                fetchAndSave(artIdx, imgIdx+1, type);
+                fetchAndSaveArtworks(artIdx, imgIdx+1);
               });
 
-            }, function(error){
-              handleError(type + '_fluid_large', artIdx, imgIdx, error);
-            });
+            }, function(error) { errorHandler(error, 'fluid_large', artIdx, imgIdx); });
 
           });
 
-        }, function(error){
-          handleError(type + '_grid_medium', artIdx, imgIdx, error);
-        });
+        }, function(error) { errorHandler(error, 'grid_medium', artIdx, imgIdx); });
 
       } else {
         // Carry on to the next artwork
-        fetchAndSave(artIdx+1, 0, type);
+        fetchAndSaveArtworks(artIdx+1, 0);
 
       } // ENDOF: if (rawArts[artIdx].images[imgIdx])
 
     } else {
-      console.log('Fetch process type: ' + type + ' completed. ArtIdx:' + artIdx + ', imgIdx: ' + imgIdx);
-      if (type == 'artworks') {
-      // Fetching process finished:
-        // - save json artworks data to local storage
-        // - initialize ArtworkProvider
-        // - proceed collections
-        LocalStorageProvider.saveArtworksData(rawArts);
 
-        proceedFetchAndSaveCollections();
-      }
-      else if (type == 'collections') {
-      // Fetching process finished:
-        // - save json artworks data to local storage
-        // - redirect
-        LocalStorageProvider.saveCollectionsData(rawArts);
-        $state.go('intro.complete');
-      }
-      else {
-      handleError(type, artIdx, imgIdx, 'Unsupported type in fetch completion');
-      }
+      console.log('Artworks fetch process completed.');
+      LocalStorageProvider.saveArtworksData(rawArts);
+
+      // Carry on to fetch collections
+      fetchAndSaveCollections(0);
+
     } // ENDOF: if (rawArts[artIdx])
   };
 
-  var proceedFetchAndSaveCollections = function() {
-  rawArts = LocalStorageProvider.getRawCollectionsData();
-    numOfArtworks = rawArts.length;
+  /**
+   * Recursive function to fetch binary images for collections
+   * and save in persistent storage
+   */
+  var fetchAndSaveCollections = function(colIdx) {
 
-    fetchAndSave(0, 0, 'collections');
+    // Abort execution grecefully when killswitch is on
+    if (killswitch > 0) {
+      terminateFetcher();
+      return;
+    }
+
+    if (rawCols && rawCols[colIdx]) {
+
+      if (rawCols[colIdx].cover_image) {
+
+        $scope.counter = ++counter;
+
+        var img = rawCols[colIdx].cover_image;
+
+        // Fetch grid_medium...
+        RemoteDataProvider.fetchBlob(img.grid_medium.url).then(function(data){
+
+          // ...save grid_medium to persistent storage.
+          PersistentStorageProvider.saveBlob(data.data, filename('col_grid_medium', colIdx), function(file) {
+            rawCols[colIdx].cover_image.grid_medium.local_path = file.toURL();
+
+            // Fetch fluid_large...
+            RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
+
+              // ...save fluid_large to persistent storage.
+              PersistentStorageProvider.saveBlob(data.data, filename('col_fluid_large', colIdx), function(file) {
+                rawCols[colIdx].cover_image.fluid_large.local_path = file.toURL();
+
+                // Carry on to the next collection
+                fetchAndSaveCollections(colIdx+1);
+              });
+
+            }, function(error) { errorHandler(error, 'fluid_large', colIdx, 0); });
+
+          });
+
+        }, function(error){ errorHandler(error, 'grid_medium', colIdx, 0); });
+
+      } else {
+        // Carry on to the next collection
+        fetchAndSaveCollections(colIdx+1);
+
+      } // ENDOF: if (rawCols[colIdx].cover_image)
+
+    } else {
+      console.log('Collection fetch process completed');
+
+      // Finished fetching collections
+      LocalStorageProvider.saveCollectionsData(rawCols);
+
+      // Redirect to the next step
+      $state.go('intro.complete');
+
+    } // ENDOF: if (rawCols[colIdx])
+  };
+
+  if (rawArts === null) {
+    terminateFetcher();
+    return;
   }
 
-  // Start recursive fetching process
-  fetchAndSave(0, 0, 'artworks');
+  /**
+   * MAIN ENTRY POINT
+   *
+   * Execute fetching by calling a recursive function
+   */
+  fetchAndSaveArtworks(0, 0, 'artworks');
 
 })
 
