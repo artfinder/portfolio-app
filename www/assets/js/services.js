@@ -68,45 +68,15 @@ angular.module('portfolio.services', [])
 /**
  * Collections repository
  */
-.factory('CollectionProvider', function collectionProviderFactory() {
+.factory('CollectionProvider', function collectionProviderFactory(LocalStorageProvider) {
 
-    // TODO: Collections to be fetched from local storage once API allows it
-    var collections = [
-        {
-            id: 1,
-            name: 'Large paintings',
-            cover_image: {
-                local_path: 'assets/samples/grid/06-grid.jpg'
-            },
-            artworks: [2,4,6,8]
-        },
-        {
-            id: 2,
-            name: 'Small paintings',
-            cover_image: {
-                local_path: 'assets/samples/grid/05-grid.jpg'
-            },
-            artworks: [1,3,5,7]
-        },
-        {
-            id: 3,
-            name: 'Colorful',
-            cover_image: {
-                local_path: 'assets/samples/grid/07-grid.jpg'
-            },
-            artworks: [7,5,1]
-        },
-        {
-            id: 4,
-            name: 'Black and white',
-            cover_image: {
-                local_path: 'assets/samples/grid/08-grid.jpg'
-            },
-            artworks: [8,6,4,2,1]
-        }
-    ];
+    var collections = [];
 
     return {
+
+        init: function() {
+            collections = LocalStorageProvider.getCollectionsData();
+        },
 
         all: function() {
             return collections;
@@ -212,6 +182,9 @@ angular.module('portfolio.services', [])
         },
         getRawArtworksData: function() {
             return JSON.parse(window.localStorage.getItem(ARTWORKS_RAW_INDEX_KEY));
+        },
+        getCollectionsData: function() {
+            return JSON.parse(window.localStorage.getItem(COLLECTIONS_INDEX_KEY));
         },
         getRawCollectionsData: function() {
             return JSON.parse(window.localStorage.getItem(COLLECTIONS_RAW_INDEX_KEY));
