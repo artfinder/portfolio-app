@@ -36,18 +36,19 @@ angular.module('portfolio.controllers', [])
 .controller('ArtworksController', function($scope, $stateParams, ArtworkProvider, CollectionProvider) {
   // Init artworks
   ArtworkProvider.init();
+  CollectionProvider.init();
 
   $scope.viewTitle = 'Artworks';
   $scope.ref = 'artworks';
   $scope.refId = 0;
 
   // Display artworks that belong to collection...
-  if ($stateParams.collectionId) {
-    var collection = CollectionProvider.findById($stateParams.collectionId);
+  if ($stateParams.collectionSlug) {
+    var collection = CollectionProvider.findBySlug($stateParams.collectionSlug);
     $scope.artworks = ArtworkProvider.allByCollection(collection);
     $scope.viewTitle = collection.name;
     $scope.ref = 'collection';
-    $scope.refId = collection.id;
+    $scope.refId = collection.slug;
 
   // ...or display them all
   } else {
@@ -60,7 +61,9 @@ angular.module('portfolio.controllers', [])
  */
 .controller('CollectionsController', function($scope, CollectionProvider) {
     CollectionProvider.init();
-    $scope.collections = CollectionProvider.all();
+    var collections = CollectionProvider.all();
+    $scope.collections = collections;
+    $scope.collectionsCount = collections.length;
 })
 
 /**
@@ -73,7 +76,7 @@ angular.module('portfolio.controllers', [])
   // Define artwork set to help browsing
   var artworkSet = [];
   if ($stateParams.ref == 'collection') {
-    var collection = CollectionProvider.findById($stateParams.refId);
+    var collection = CollectionProvider.findBySlug($stateParams.refId);
     artworkSet = ArtworkProvider.allByCollection(collection);
   } else {
     artworkSet = ArtworkProvider.all();
@@ -93,7 +96,7 @@ angular.module('portfolio.controllers', [])
   // Handle "Back" button depending whether we're in collections or artworks context
   $scope.goBack = function() {
     if ($stateParams.ref == 'collection') {
-      $state.go('portfolio.bycollection', {collectionId: $stateParams.refId});
+      $state.go('portfolio.bycollection', {collectionSlug: $stateParams.refId});
     } else {
       $state.go('portfolio.artworks');
     }

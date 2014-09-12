@@ -5,11 +5,11 @@
 
   <ion-content padding="true" class="has-header">
 
-    <div class="artworks-listing">
+    <div class="artworks-listing" ng-if="collections">
 
         <div class="artwork-box" ng-repeat="collection in collections">
 
-            <a href="#/portfolio/by-collection/{{ collection.id }}">
+            <a href="#/portfolio/by-collection/{{ collection.slug }}">
                 <img ng-src="{{ collection.cover_image.grid_medium.local_path }}" />
             </a>
 
@@ -19,6 +19,10 @@
 
         </div>
 
+    </div>
+
+    <div ng-if="collectionsCount == 0" class="center">
+      <p>It appears you don't have any collections.</p>
     </div>
 
   </ion-content>

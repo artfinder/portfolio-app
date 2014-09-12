@@ -35,7 +35,7 @@ angular.module('portfolio.routes', [])
     })
 
     .state('portfolio.bycollection', {
-      url: '/by-collection/:collectionId',
+      url: '/by-collection/:collectionSlug',
       views: {
         'main-content': {
             templateUrl: 'templates/artworks.html',

@@ -18,9 +18,11 @@ angular.module('portfolio.services', [])
 
         allByCollection: function(collection) {
             var artworks = [];
-            for (var i in collection.artworks) {
-                artId = collection.artworks[i];
-                artworks.push(this.findById(artId));
+            if (collection && collection.artwork_ids.length > 0) {
+                for (var i in collection.artwork_ids) {
+                    artId = collection.artwork_ids[i];
+                    artworks.push(this.findById(artId));
+                }
             }
             return artworks;
         },
@@ -82,10 +84,10 @@ angular.module('portfolio.services', [])
             return collections;
         },
 
-        findById: function(id) {
+        findBySlug: function(slug) {
             collection = null;
             collections.map(function(c) {
-                if (c.id == id) {
+                if (c.slug == slug) {
                     collection = c;
                 }
             });
