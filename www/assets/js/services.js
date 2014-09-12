@@ -100,13 +100,14 @@ angular.module('portfolio.services', [])
 /**
  * A service that fetches and returns data from remote http locations
  */
-.factory('RemoteDataProvider', function remoteDataProvider($http, LocalStorageProvider) {
+.factory('RemoteDataProvider', function remoteDataProvider($http) {
 
     var apikey = '19957ec02e669s11e3ab523a0800270f67ea';
     var webservices = {
         auth: 'https://www.artfinder.com/api/v1/artist/$USER$/',
         artworks: 'https://www.artfinder.com/api/v1/product/$USER$/',
-        collections: 'https://www.artfinder.com/api/v1/collection/$USER$/'
+        collections: 'https://www.artfinder.com/api/v1/collection/$USER$/',
+        subscription: 'https://www.artfinder.com/api/v1/subscriber/$USER$/'
     };
 
     var getUrl = function(url, username) {
@@ -140,6 +141,11 @@ angular.module('portfolio.services', [])
                     'Pragma': 'no-cache',
                     'Cache-Control': 'no-cache'
                 }
+            });
+        },
+        subscribe: function(username, subscriberData) {
+            return $http.post(getUrl(webservices.subscription, username), subscriberData, {
+                params: { api_key: apikey }
             });
         }
     };
