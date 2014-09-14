@@ -22,12 +22,15 @@ angular.module('portfolio.controllers', [])
 
   $scope.submitSubscriber = function(subscriber) {
 
-    // TODO: Validate form before subscription
+    // TODO: Validate the input:
+    // - whether email address is valid
+    // - permission checkboxes are OK
+    if (typeof subscriber == 'undefined' || !subscriber.email) {
+      MessagesProvider.alertPopup('Please provide an email address', 'Error');
+      return;
+    }
 
     var username = LocalStorageProvider.getUsername();
-
-    console.log(subscriber);
-
     RemoteDataProvider.subscribe(username, subscriber).then(function(data){
       console.log(data);
       if (data.added > 0) {
