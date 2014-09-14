@@ -91,16 +91,16 @@
   text-align: center;
 }
 
-ion-view.splash-scrren-info {
+ion-view.splash-screen-info {
 	background: orange;
 }
 
-ion-view.splash-scrren-info content div {
+ion-view.splash-screen-info content div {
 	margin: 40% 10% 40% 10%;
   text-align: center;
 }
 
-ion-view.splash-scrren-info content div li {
+ion-view.splash-screen-info content div li {
 	font-size: 400%;
 }
 
