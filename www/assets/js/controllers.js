@@ -87,9 +87,18 @@ angular.module('portfolio.controllers', [])
 /**
  * A single artwork view controller
  */
-.controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider) {
+.controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, $ionicBackdrop, $ionicLoading, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider) {
+
+  ArtworkProvider.init();
+  CollectionProvider.init();
 
   $scope.artwork = ArtworkProvider.findById($stateParams.artId);
+
+  // $ionicBackdrop.retain();
+  $ionicLoading.show({
+    templateUrl: 'templates/artwork/info-overlay.html'
+  });
+
 
   // Define artwork set to help browsing
   var artworkSet = [];
