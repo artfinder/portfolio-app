@@ -162,6 +162,7 @@ angular.module('portfolio.services', [])
     var ARTWORKS_INDEX_KEY = 'artworks';
     var COLLECTIONS_RAW_INDEX_KEY = 'raw_collections';
     var COLLECTIONS_INDEX_KEY = 'collections';
+    var OVERLAY_DISPLAY = 'overlay_display';
 
     return {
         // Setters
@@ -180,6 +181,9 @@ angular.module('portfolio.services', [])
         saveRawCollectionsData: function(data) {
             window.localStorage.setItem(COLLECTIONS_RAW_INDEX_KEY, JSON.stringify(data));
         },
+        saveOverlayDisplay: function(display) {
+            window.localStorage.setItem(OVERLAY_DISPLAY, JSON.stringify(display));
+        },
 
         // Getters
         getUsername: function() {
@@ -197,6 +201,9 @@ angular.module('portfolio.services', [])
         getRawCollectionsData: function() {
             return JSON.parse(window.localStorage.getItem(COLLECTIONS_RAW_INDEX_KEY));
         },
+        getOverlayDisplay: function() {
+            return JSON.parse(window.localStorage.getItem(OVERLAY_DISPLAY));
+        },
 
         // Removers
         removeRawArtworksData: function() {
@@ -211,6 +218,7 @@ angular.module('portfolio.services', [])
             window.localStorage.removeItem(ARTWORKS_RAW_INDEX_KEY);
             window.localStorage.removeItem(COLLECTIONS_INDEX_KEY);
             window.localStorage.removeItem(COLLECTIONS_RAW_INDEX_KEY);
+            window.localStorage.removeItem(OVERLAY_DISPLAY);
         }
     };
 
@@ -314,12 +322,10 @@ angular.module('portfolio.services', [])
 /**
  * A service for displaying user messages, alerts
  */
-.factory('MessagesProvider', function messagesProvider($ionicPopup, $ionicLoading) {
+.factory('MessagesProvider', function messagesProvider($ionicPopup, $ionicLoading, LocalStorageProvider) {
 
-    var singleArtworkViewOverlayEnabled = true;
-
-    // A simple function to handle errors using friendly popup message
     return {
+    	// A simple function to handle errors using friendly popup message
         alertPopup: function(message, title) {
             $ionicPopup.alert({
                 title: title ? title : 'Oops',
@@ -328,8 +334,8 @@ angular.module('portfolio.services', [])
             });
         },
         displaySingleArtworkOverlay: function($scope) {
-            if (singleArtworkViewOverlayEnabled) {
-                singleArtworkViewOverlayEnabled = false;
+            if (!LocalStorageProvider.getOverlayDisplay()) {
+                LocalStorageProvider.saveOverlayDisplay(true);
                 $ionicLoading.show({
                      templateUrl: 'templates/artwork/info-overlay.html',
                 });
