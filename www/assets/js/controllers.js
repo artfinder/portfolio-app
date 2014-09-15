@@ -94,10 +94,6 @@ angular.module('portfolio.controllers', [])
 
   $scope.artwork = ArtworkProvider.findById($stateParams.artId);
 
-  // display overlay if already not hidden
-  MessagesProvider.displaySingleArtworkOverlay();
-
-
   // Define artwork set to help browsing
   var artworkSet = [];
   if ($stateParams.ref == 'collection') {
@@ -106,6 +102,9 @@ angular.module('portfolio.controllers', [])
   } else {
     artworkSet = ArtworkProvider.all();
   }
+  
+  // display overlay if already not hidden
+  MessagesProvider.displaySingleArtworkOverlay();
 
   // Handle browsing through multiple artworks within given context
   ArtworkIteratorProvider.init(artworkSet, $stateParams.artId);
@@ -153,7 +152,7 @@ angular.module('portfolio.controllers', [])
   };
   
   $scope.hideInfoOverlay = function() {
-	MessagesProvider.hideSingleArtworkOverlay();
+    MessagesProvider.hideSingleArtworkOverlay();
   }
 })
 

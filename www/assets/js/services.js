@@ -329,13 +329,13 @@ angular.module('portfolio.services', [])
         },
         displaySingleArtworkOverlay: function($scope) {
             if (singleArtworkViewOverlayEnabled) {
+                singleArtworkViewOverlayEnabled = false;
                 $ionicLoading.show({
                      templateUrl: 'templates/artwork/info-overlay.html',
                 });
             }
         },
         hideSingleArtworkOverlay: function() {
-            singleArtworkViewOverlayEnabled = false;
             $ionicLoading.hide();
         }
     };
