@@ -29,6 +29,10 @@ angular.module('portfolio.controllers', [])
       MessagesProvider.alertPopup('Please provide an email address', 'Error');
       return;
     }
+    if (!subscriber.add_permission) {
+      MessagesProvider.alertPopup('Please mark that person agreed to add him to followers', 'Error');
+      return;
+    }
 
     var username = LocalStorageProvider.getUsername();
     RemoteDataProvider.subscribe(username, subscriber).then(function(data){
