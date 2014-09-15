@@ -138,6 +138,7 @@ angular.module('portfolio.controllers', [])
   });
 
   $scope.$on('$destroy', function() {
+	console.log('on destroy');
     $scope.modal.remove();
   });
 
@@ -152,7 +153,11 @@ angular.module('portfolio.controllers', [])
   $scope.shareArtwork = function(artworkUrl) {
     window.plugins.socialsharing.share('Hi there, check out my artwork!', null, artworkUrl, 'http://www.artfinder.com');
   };
-
+  
+  $scope.hideInfoOverlay = function() {
+	console.log('test hideInfoOverlay');
+	$ionicLoading.hide();
+  }
 })
 
 .controller('IntroController', function($scope) {
