@@ -110,3 +110,7 @@ div .slidebox100h {
   min-height: -moz-calc(100vh - 44px);
   min-height: calc(100vh - 44px);
 }
+
+div.loading-container.visible.active div.loading {
+	background-color: transparent;
+}
