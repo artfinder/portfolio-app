@@ -87,17 +87,15 @@ angular.module('portfolio.controllers', [])
 /**
  * A single artwork view controller
  */
-.controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, $ionicBackdrop, $ionicLoading, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider) {
+.controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider, MessagesProvider) {
 
   ArtworkProvider.init();
   CollectionProvider.init();
 
   $scope.artwork = ArtworkProvider.findById($stateParams.artId);
 
-  // $ionicBackdrop.retain();
-  $ionicLoading.show({
-    templateUrl: 'templates/artwork/info-overlay.html'
-  });
+  // display overlay if already not hidden
+  MessagesProvider.displaySingleArtworkOverlay();
 
 
   // Define artwork set to help browsing
@@ -155,8 +153,7 @@ angular.module('portfolio.controllers', [])
   };
   
   $scope.hideInfoOverlay = function() {
-	console.log('test hideInfoOverlay');
-	$ionicLoading.hide();
+	MessagesProvider.hideSingleArtworkOverlay();
   }
 })
 

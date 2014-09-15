@@ -330,9 +330,7 @@ angular.module('portfolio.services', [])
         displaySingleArtworkOverlay: function($scope) {
             if (singleArtworkViewOverlayEnabled) {
                 $ionicLoading.show({
-                     templateUrl: 'templates/artwork/swipingInstructionsOverlay.html',
-                     scope: $scope,
-                     //duration: 1000
+                     templateUrl: 'templates/artwork/info-overlay.html',
                 });
             }
         },
