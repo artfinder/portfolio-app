@@ -106,8 +106,8 @@ angular.module('portfolio.controllers', [])
   } else {
     artworkSet = ArtworkProvider.all();
   }
-  
-  // display overlay if already not hidden
+
+  // Display overlay with usage instructions
   MessagesProvider.displaySingleArtworkOverlay();
 
   // Handle browsing through multiple artworks within given context
@@ -139,7 +139,6 @@ angular.module('portfolio.controllers', [])
   });
 
   $scope.$on('$destroy', function() {
-	console.log('on destroy');
     $scope.modal.remove();
   });
 
@@ -154,10 +153,10 @@ angular.module('portfolio.controllers', [])
   $scope.shareArtwork = function(artworkUrl) {
     window.plugins.socialsharing.share('Hi there, check out my artwork!', null, artworkUrl, 'http://www.artfinder.com');
   };
-  
+
   $scope.hideInfoOverlay = function() {
     MessagesProvider.hideSingleArtworkOverlay();
-  }
+  };
 })
 
 .controller('IntroController', function($scope) {
