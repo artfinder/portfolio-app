@@ -236,7 +236,7 @@ angular.module('portfolio.controllers', [])
       template: 'Logging in...'
     });
 
-    var username = user.slug;
+    var username = user.slug.toLowerCase();
     var BACKDOOR = 'zoya';
 
     // Fetch login details, compare with details entered by user
