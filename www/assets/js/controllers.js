@@ -175,7 +175,10 @@ angular.module('portfolio.controllers', [])
  * - saves data into local storage
  * - redirects to the next step (FetcherController)
  */
-.controller('LoginController', function($scope, $state, $ionicPopup, $ionicLoading, RemoteDataProvider, LocalStorageProvider, MessagesProvider) {
+.controller('LoginController', function($scope, $state, $ionicPopup, $ionicLoading, RemoteDataProvider, LocalStorageProvider, MessagesProvider, $ionicViewService) {
+
+  //clears history every time it is initialised
+  $ionicViewService.clearHistory();
 
   // A generic error handler for logging process
   var errorHandler = function(err, context, callback) {
