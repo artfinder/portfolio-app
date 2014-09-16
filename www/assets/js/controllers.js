@@ -180,6 +180,7 @@ angular.module('portfolio.controllers', [])
   // A generic error handler for logging process
   var errorHandler = function(err, context, callback) {
     console.log(err);
+    $ionicLoading.hide();
     var genericErrorMessage = 'An unexpected error occurred while logging in. Perhaps you are not connected to the internet?';
     if (err.status && err.status == 404) {
       switch (context) {
@@ -190,16 +191,18 @@ angular.module('portfolio.controllers', [])
         // No collections found -- carry on
         case 'collections':
           console.log('No collections returned');
+          callback();
           break;
         default:
           MessagesProvider.alertPopup(genericErrorMessage);
+          cleanup();
       }
     } else {
-      console.log('errorHandler - generic exit', err.status, err.data.error);
+      console.log('generic error', err.status, err.data.error);
       MessagesProvider.alertPopup(genericErrorMessage);
+      cleanup();
     }
-    $ionicLoading.hide();
-    callback();
+
   };
 
   var cleanup = function() {
@@ -260,8 +263,8 @@ angular.module('portfolio.controllers', [])
           // Need to check that with Gump
           }, function(e) { errorHandler(e, 'collections', redirectToFetcher); });
         }
-      }, function(e) { errorHandler(e, 'artworks', cleanup); });
-    }, function(e) { errorHandler(e, 'auth', cleanup); });
+      }, function(e) { errorHandler(e, 'artworks'); });
+    }, function(e) { errorHandler(e, 'auth'); });
   };
 })
 
