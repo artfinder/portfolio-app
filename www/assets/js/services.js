@@ -330,8 +330,7 @@ angular.module('portfolio.services', [])
         alertPopup: function(message, title) {
             $ionicPopup.alert({
                 title: title ? title : 'Oops',
-                template: message,
-                onTap: $ionicLoading.hide()
+                template: message
             });
         }
     };
