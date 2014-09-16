@@ -56,7 +56,7 @@ angular.module('portfolio.controllers', [])
  * Handles artworks listing
  */
 .controller('ArtworksController', function($scope, $stateParams, ArtworkProvider, CollectionProvider) {
-  // Init artworks
+
   ArtworkProvider.init();
   CollectionProvider.init();
 
@@ -151,17 +151,22 @@ angular.module('portfolio.controllers', [])
     window.plugins.socialsharing.share('Hi there, check out my artwork!', null, artworkUrl, 'http://www.artfinder.com');
   };
 
-  $scope.dismissInstructionsOverlay = function() {
-    LocalStorageProvider.setArtworkInstructionsOverlayFlag();
-    $ionicLoading.hide();
-  };
+  /**
+   * Instructions overlay that uses $ionicLoading component has been disabled
+   * as it caused massive performance issue on a device (not in a browser window
+   * tough). Needs different solution.
+   */
+  // $scope.dismissInstructionsOverlay = function() {
+  //   LocalStorageProvider.setArtworkInstructionsOverlayFlag();
+  //   $ionicLoading.hide();
+  // };
 
   // Display swiping instructions overlay if not previously displayed
-  if (LocalStorageProvider.getArtworkInstructionsOverlayFlag() === null) {
-    $ionicLoading.show({
-      templateUrl: 'templates/artwork/info-overlay.html'
-    });
-  }
+  // if (LocalStorageProvider.getArtworkInstructionsOverlayFlag() === null) {
+  //   $ionicLoading.show({
+  //     templateUrl: 'templates/artwork/info-overlay.html'
+  //   });
+  // }
 
 })
 
