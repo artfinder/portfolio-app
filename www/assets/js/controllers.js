@@ -91,7 +91,7 @@ angular.module('portfolio.controllers', [])
 /**
  * A single artwork view controller
  */
-.controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider, MessagesProvider) {
+.controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, $ionicLoading, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
 
   ArtworkProvider.init();
   CollectionProvider.init();
@@ -106,9 +106,6 @@ angular.module('portfolio.controllers', [])
   } else {
     artworkSet = ArtworkProvider.all();
   }
-
-  // Display overlay with usage instructions
-  MessagesProvider.displaySingleArtworkOverlay();
 
   // Handle browsing through multiple artworks within given context
   ArtworkIteratorProvider.init(artworkSet, $stateParams.artId);
@@ -154,9 +151,18 @@ angular.module('portfolio.controllers', [])
     window.plugins.socialsharing.share('Hi there, check out my artwork!', null, artworkUrl, 'http://www.artfinder.com');
   };
 
-  $scope.hideInfoOverlay = function() {
-    MessagesProvider.hideSingleArtworkOverlay();
+  $scope.dismissInstructionsOverlay = function() {
+    LocalStorageProvider.setArtworkInstructionsOverlayFlag();
+    $ionicLoading.hide();
   };
+
+  // Display swiping instructions overlay if not previously displayed
+  if (LocalStorageProvider.getArtworkInstructionsOverlayFlag() === null) {
+    $ionicLoading.show({
+      templateUrl: 'templates/artwork/info-overlay.html'
+    });
+  }
+
 })
 
 .controller('IntroController', function($scope) {

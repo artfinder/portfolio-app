@@ -162,7 +162,7 @@ angular.module('portfolio.services', [])
     var ARTWORKS_INDEX_KEY = 'artworks';
     var COLLECTIONS_RAW_INDEX_KEY = 'raw_collections';
     var COLLECTIONS_INDEX_KEY = 'collections';
-    var OVERLAY_DISPLAY = 'overlay_display';
+    var ARTWORK_OVERLAY_FLAG = 'artwork_overlay_flag';
 
     return {
         // Setters
@@ -181,8 +181,8 @@ angular.module('portfolio.services', [])
         saveRawCollectionsData: function(data) {
             window.localStorage.setItem(COLLECTIONS_RAW_INDEX_KEY, JSON.stringify(data));
         },
-        saveOverlayDisplay: function(display) {
-            window.localStorage.setItem(OVERLAY_DISPLAY, JSON.stringify(display));
+        setArtworkInstructionsOverlayFlag: function() {
+            window.localStorage.setItem(ARTWORK_OVERLAY_FLAG, 1);
         },
 
         // Getters
@@ -201,8 +201,8 @@ angular.module('portfolio.services', [])
         getRawCollectionsData: function() {
             return JSON.parse(window.localStorage.getItem(COLLECTIONS_RAW_INDEX_KEY));
         },
-        getOverlayDisplay: function() {
-            return JSON.parse(window.localStorage.getItem(OVERLAY_DISPLAY));
+        getArtworkInstructionsOverlayFlag: function() {
+            return window.localStorage.getItem(ARTWORK_OVERLAY_FLAG);
         },
 
         // Removers
@@ -219,6 +219,7 @@ angular.module('portfolio.services', [])
             window.localStorage.removeItem(COLLECTIONS_INDEX_KEY);
             window.localStorage.removeItem(COLLECTIONS_RAW_INDEX_KEY);
             window.localStorage.removeItem(OVERLAY_DISPLAY);
+            window.localStorage.removeItem(ARTWORK_OVERLAY_FLAG);
         }
     };
 
@@ -322,27 +323,16 @@ angular.module('portfolio.services', [])
 /**
  * A service for displaying user messages, alerts
  */
-.factory('MessagesProvider', function messagesProvider($ionicPopup, $ionicLoading, LocalStorageProvider) {
+.factory('MessagesProvider', function messagesProvider($ionicPopup) {
 
     return {
-    	// A simple function to handle errors using friendly popup message
+        // A simple function to handle errors using friendly popup message
         alertPopup: function(message, title) {
             $ionicPopup.alert({
                 title: title ? title : 'Oops',
                 template: message,
                 onTap: $ionicLoading.hide()
             });
-        },
-        displaySingleArtworkOverlay: function($scope) {
-            if (!LocalStorageProvider.getOverlayDisplay()) {
-                LocalStorageProvider.saveOverlayDisplay(true);
-                $ionicLoading.show({
-                     templateUrl: 'templates/artwork/info-overlay.html',
-                });
-            }
-        },
-        hideSingleArtworkOverlay: function() {
-            $ionicLoading.hide();
         }
     };
 });
