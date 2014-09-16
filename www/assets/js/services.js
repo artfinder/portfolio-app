@@ -5,11 +5,13 @@ angular.module('portfolio.services', [])
  */
 .factory('ArtworkProvider', function artworkProviderFactory(LocalStorageProvider) {
 
-    var arts;
+    var arts = [];
 
     return {
         init: function() {
-            arts = LocalStorageProvider.getArtworksData();
+            if (arts.length === 0) {
+                arts = LocalStorageProvider.getArtworksData();
+            }
         },
 
         all: function() {
@@ -77,7 +79,9 @@ angular.module('portfolio.services', [])
     return {
 
         init: function() {
-            collections = LocalStorageProvider.getCollectionsData();
+            if (collections.length === 0) {
+                collections = LocalStorageProvider.getCollectionsData();
+            }
         },
 
         all: function() {

@@ -1,24 +1,42 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.zoyalab.artfinder.portfolio.ionic" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <name>Artfinder Portfolio (ionic)</name>
+<widget
+  id="com.zoyalab.artfinder.portfolio"
+  version="0.0.1"
+  xmlns="http://www.w3.org/ns/widgets"
+  xmlns:cdv="http://cordova.apache.org/ns/1.0"
+  xmlns:gap = "http://phonegap.com/ns/1.0">
+
+  <name>
+    Artfinder Portfolio
+  </name>
   <description>
-        Artfinder Portfolio mobile application
-    </description>
+    Artfinder Portfolio mobile application
+  </description>
   <author email="hello@zoyalab.com" href="http://zoyalab.com/">
-        zoya.lab, the web software company
-    </author>
+    zoya.lab, the web software company
+  </author>
+
   <content src="index.html"/>
   <icon src="www/assets/icon/icon-artfinder-175x175.png"/>
-  <preference name="webviewbounce" value="false"/>
-  <preference name="UIWebViewBounce" value="false"/>
+
+  <preference name="webviewbounce" value="true"/>
+  <preference name="UIWebViewBounce" value="true"/>
   <preference name="DisallowOverscroll" value="true"/>
   <preference name="BackupWebStorage" value="none"/>
+
   <feature name="StatusBar">
     <param name="ios-package" value="CDVStatusBar" onload="true"/>
   </feature>
+
   <plugins>
     <plugin name="Device" value="org.apache.cordova.device"/>
     <plugin name="File" value="org.apache.cordova.file"/>
   </plugins>
+
+  <!-- Phonegap Build service plugins -->
+  <gap:plugin name="fork.cordova.file" version="1.2.1" />
+  <gap:plugin name="org.apache.cordova.device" version="0.2.8" />
+  <gap:plugin name="nl.x-services.plugins.socialsharing" version="4.3.0" />
+
   <access origin="*"/>
 </widget>
