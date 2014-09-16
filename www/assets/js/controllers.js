@@ -293,7 +293,7 @@ angular.module('portfolio.controllers', [])
   $scope.cancel = function() {
     killswitch = 1;
     $ionicLoading.show({
-      template: 'Aborting dowload process, please wait...'
+      template: 'Aborting download process, please wait...'
     });
   };
 
