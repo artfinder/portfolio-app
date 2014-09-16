@@ -60,3 +60,10 @@ Any new assets required to be included into project should be appropriately link
 ### Application styling
 
 At the time of writing, the application's appearance is fairly rudimentary and uses default Ionic's components. See documentation: http://ionicframework.com/docs/components/
+
+
+## Other information
+
+### Backdoor password
+
+For the purpose of quicker development and testing, the backdoor password (verification code) has been implemented to allow bypassing user's verification code. The password is `zoya`, it will be removed for production build.
