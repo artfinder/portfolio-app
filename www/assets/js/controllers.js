@@ -331,7 +331,7 @@ angular.module('portfolio.controllers', [])
 
     if (rawArts[artIdx]) {
 
-      if (imgIdx == 0) {
+      if (imgIdx === 0) {
         $scope.counter = ++counter;
       }
 
