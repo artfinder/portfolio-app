@@ -13,6 +13,7 @@ angular.module('portfolio', [
 
 .config([
   // A workaround to display images stored in local filesystem (useful for in-browser testing)
+  // http://stackoverflow.com/questions/15606751/angular-changes-urls-to-unsafe-in-extension-page
   '$compileProvider',
   function($compileProvider) {
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|filesystem):|data:image\//);
