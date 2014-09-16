@@ -85,7 +85,7 @@ angular.module('portfolio.controllers', [])
     CollectionProvider.init();
     var collections = CollectionProvider.all();
     $scope.collections = collections;
-    $scope.collectionsCount = collections.length;
+    $scope.collectionsCount = (collections) ? collections.length : 0;
 })
 
 /**
@@ -181,7 +181,7 @@ angular.module('portfolio.controllers', [])
   var errorHandler = function(err, context, callback) {
     console.log(err);
     var genericErrorMessage = 'An unexpected error occurred while logging in. Perhaps you are not connected to the internet?';
-    if (err.status && err.status == 404) {
+    if ((err.status && err.status == 404) || (err.data && err.data.error == 'list index out of range')) {
       switch (context) {
         case 'auth':
           MessagesProvider.alertPopup('The login details are incorrect. Please try again.');
@@ -194,6 +194,7 @@ angular.module('portfolio.controllers', [])
           MessagesProvider.alertPopup(genericErrorMessage);
       }
     } else {
+      console.log('errorHandler - generic exit', err.status, err.data.error);
       MessagesProvider.alertPopup(genericErrorMessage);
     }
   };
