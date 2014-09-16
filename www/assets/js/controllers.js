@@ -181,14 +181,15 @@ angular.module('portfolio.controllers', [])
   var errorHandler = function(err, context, callback) {
     console.log(err);
     var genericErrorMessage = 'An unexpected error occurred while logging in. Perhaps you are not connected to the internet?';
-    if ((err.status && err.status == 404) || (err.data && err.data.error == 'list index out of range')) {
+    if (err.status && err.status == 404) {
       switch (context) {
+        // User not found
         case 'auth':
           MessagesProvider.alertPopup('The login details are incorrect. Please try again.');
           break;
+        // No collections found -- carry on
         case 'collections':
           console.log('No collections returned');
-          callback();
           break;
         default:
           MessagesProvider.alertPopup(genericErrorMessage);
@@ -197,6 +198,12 @@ angular.module('portfolio.controllers', [])
       console.log('errorHandler - generic exit', err.status, err.data.error);
       MessagesProvider.alertPopup(genericErrorMessage);
     }
+    $ionicLoading.hide();
+    callback();
+  };
+
+  var cleanup = function() {
+    LocalStorageProvider.purge();
   };
 
   // Helper function to redirect upon successful login
@@ -253,8 +260,8 @@ angular.module('portfolio.controllers', [])
           // Need to check that with Gump
           }, function(e) { errorHandler(e, 'collections', redirectToFetcher); });
         }
-      }, function(e) { errorHandler(e, 'artworks'); });
-    }, function(e) { errorHandler(e, 'auth'); });
+      }, function(e) { errorHandler(e, 'artworks', cleanup); });
+    }, function(e) { errorHandler(e, 'auth', cleanup); });
   };
 })
 
@@ -320,7 +327,7 @@ angular.module('portfolio.controllers', [])
     }
 
     if (rawArts[artIdx]) {
-      
+
       if (imgIdx == 0) {
         $scope.counter = ++counter;
       }
