@@ -319,10 +319,12 @@ angular.module('portfolio.controllers', [])
     }
 
     if (rawArts[artIdx]) {
+      
+      if (imgIdx == 0) {
+        $scope.counter = ++counter;
+      }
 
       if (rawArts[artIdx].images[imgIdx]) {
-
-        $scope.counter = ++counter;
 
         var img = rawArts[artIdx].images[imgIdx];
 
