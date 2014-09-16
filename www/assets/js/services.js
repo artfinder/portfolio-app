@@ -218,7 +218,6 @@ angular.module('portfolio.services', [])
             window.localStorage.removeItem(ARTWORKS_RAW_INDEX_KEY);
             window.localStorage.removeItem(COLLECTIONS_INDEX_KEY);
             window.localStorage.removeItem(COLLECTIONS_RAW_INDEX_KEY);
-            window.localStorage.removeItem(OVERLAY_DISPLAY);
             window.localStorage.removeItem(ARTWORK_OVERLAY_FLAG);
         }
     };
