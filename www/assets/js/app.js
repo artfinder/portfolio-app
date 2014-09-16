@@ -11,9 +11,18 @@ angular.module('portfolio', [
   'portfolio.services'
 ])
 
+.config([
+  // A workaround to display images stored in local filesystem (useful for in-browser testing)
+  '$compileProvider',
+  function($compileProvider) {
+    $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|filesystem):|data:image\//);
+  }
+])
+
 .run(function($ionicPlatform, $state, LocalStorageProvider) {
 
   $ionicPlatform.ready(function() {
+
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if (window.cordova && window.cordova.plugins.Keyboard) {
