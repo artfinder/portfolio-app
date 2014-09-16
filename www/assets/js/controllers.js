@@ -30,7 +30,7 @@ angular.module('portfolio.controllers', [])
       return;
     }
     if (!subscriber.add_permission) {
-      MessagesProvider.alertPopup('Please mark that person agreed to add him to followers', 'Error');
+      MessagesProvider.alertPopup('Please make sure the person has agreed to subscribe', 'Error');
       return;
     }
 
