@@ -13,7 +13,9 @@ angular.module('portfolio.services', [])
     
     return {
         init: function() {
-            arts = LocalStorageProvider.getArtworksData();
+        	arts = LocalStorageProvider.getArtworksData();
+/*
+        	arts = LocalStorageProvider.getArtworksData();
             var artImage;
             for (var i in arts) {
             	arts[i].cover_image.getLocalFilePath = getLocalFilePath;
@@ -22,6 +24,7 @@ angular.module('portfolio.services', [])
             }
 console.log('arts in ArtworkProvider');
 console.log(arts);
+*/
         },
 
         all: function() {
@@ -178,6 +181,7 @@ console.log(arts);
     var COLLECTIONS_RAW_INDEX_KEY = 'raw_collections';
     var COLLECTIONS_INDEX_KEY = 'collections';
     var ARTWORK_OVERLAY_FLAG = 'artwork_overlay_flag';
+    var BASE_URL = 'base_url';
 
     return {
         // Setters
@@ -199,6 +203,9 @@ console.log(arts);
         setArtworkInstructionsOverlayFlag: function() {
             window.localStorage.setItem(ARTWORK_OVERLAY_FLAG, 1);
         },
+        setBaseUrl: function(data) {
+        	window.localStorage.setItem(BASE_URL, data);
+        },
 
         // Getters
         getUsername: function() {
@@ -219,6 +226,9 @@ console.log(arts);
         getArtworkInstructionsOverlayFlag: function() {
             return window.localStorage.getItem(ARTWORK_OVERLAY_FLAG);
         },
+        getBaseUrl: function() {
+            return window.localStorage.getItem(BASE_URL);
+        },
 
         // Removers
         removeRawArtworksData: function() {
@@ -234,6 +244,7 @@ console.log(arts);
             window.localStorage.removeItem(COLLECTIONS_INDEX_KEY);
             window.localStorage.removeItem(COLLECTIONS_RAW_INDEX_KEY);
             window.localStorage.removeItem(ARTWORK_OVERLAY_FLAG);
+            window.localStorage.removeItem(BASE_URL);
         }
     };
 
@@ -334,22 +345,17 @@ console.log('requestStorage called');
                 callback();
             });
         },
-        getLocalFilePath: function(filename) {
-console.log('currentStorageDataDir in PS.getLocalFilePath');
-console.log(currentStorageDataDir);
-            if (!currentStorageDataDir) {
-                requestStorage(function(dir) {
-console.log('callback of requestStorage called');
-                    currentStorageDataDir = dir.toURL()
-                    if (currentStorageDataDir.substr(currentStorageDataDir.length - 1) !== '/') {
-                    currentStorageDataDir += '/';    
-                    }
-console.log('set currentStorageDataDir in PS.getLFP');
-console.log(currentStorageDataDir);
-                });
-            }
-            
-            return currentStorageDataDir + filename;
+        getBaseUrl: function(callback) {
+            requestStorage(function(dir) {
+                var baseUrl = dir.toURL()
+                if (baseUrl.substr(baseUrl.length - 1) !== '/') {
+                	baseUrl += '/';    
+                }
+                console.log('sets the base dir in PS::requestStorage to:');
+                console.log(baseUrl);
+                
+                callback(baseUrl);
+            }, errorHandler);
         }
     };
 

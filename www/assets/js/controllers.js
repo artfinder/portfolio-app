@@ -61,7 +61,7 @@ angular.module('portfolio.controllers', [])
 /**
  * Handles artworks listing
  */
-.controller('ArtworksController', function($scope, $stateParams, ArtworkProvider, CollectionProvider) {
+.controller('ArtworksController', function($scope, $stateParams, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
 
   ArtworkProvider.init();
   CollectionProvider.init();
@@ -69,6 +69,7 @@ angular.module('portfolio.controllers', [])
   $scope.viewTitle = 'Artworks';
   $scope.ref = 'artworks';
   $scope.refId = 0;
+  $scope.baseUrl = LocalStorageProvider.getBaseUrl();
 
   // Display artworks that belong to collection...
   if ($stateParams.collectionSlug) {
@@ -87,11 +88,12 @@ angular.module('portfolio.controllers', [])
 /**
  * Handles collections listing
  */
-.controller('CollectionsController', function($scope, CollectionProvider) {
+.controller('CollectionsController', function($scope, CollectionProvider, LocalStorageProvider) {
     CollectionProvider.init();
     var collections = CollectionProvider.all();
     $scope.collections = collections;
     $scope.collectionsCount = (collections) ? collections.length : 0;
+    $scope.baseUrl = LocalStorageProvider.getBaseUrl();
 })
 
 /**
@@ -103,6 +105,7 @@ angular.module('portfolio.controllers', [])
   CollectionProvider.init();
 
   $scope.artwork = ArtworkProvider.findById($stateParams.artId);
+  $scope.baseUrl = LocalStorageProvider.getBaseUrl();
 
   // Define artwork set to help browsing
   var artworkSet = [];
@@ -492,10 +495,18 @@ console.log(rawArts[artIdx].images[imgIdx].fluid_large.getLocalFilePath());
 
 })
 
-.controller('SplashScreenController', function($state, $timeout, LocalStorageProvider) {
+.controller('SplashScreenController', function($state, $timeout, LocalStorageProvider, PersistentStorageProvider) {
 
-  $timeout(function() {
-    $state.go(LocalStorageProvider.getUsername() === null ? 'intro.welcome' : 'portfolio.artworks');
-  }, 2000, false);
+  //initialise base-url variable
+  PersistentStorageProvider.getBaseUrl(function(baseUrl) {
+	console.log('Baseurl in SplashScreenController');
+	console.log(baseUrl);
+	LocalStorageProvider.setBaseUrl(baseUrl);
 
+	//redirect for proper screen	
+	$timeout(function() {
+	  $state.go(LocalStorageProvider.getUsername() === null ? 'intro.welcome' : 'portfolio.artworks');
+	}, 2000, false);
+  });
+  
 });
