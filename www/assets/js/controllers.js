@@ -63,25 +63,31 @@ angular.module('portfolio.controllers', [])
  */
 .controller('ArtworksController', function($scope, $stateParams, ArtworkProvider, CollectionProvider) {
 
-  ArtworkProvider.init();
-  CollectionProvider.init();
+  ArtworkProvider.init(function() {
+console.log('callback of ArtworkProvider.init');
+    CollectionProvider.init(function() {
+console.log('callback of CollectionProvider.init');
 
-  $scope.viewTitle = 'Artworks';
-  $scope.ref = 'artworks';
-  $scope.refId = 0;
+      $scope.viewTitle = 'Artworks';
+      $scope.ref = 'artworks';
+      $scope.refId = 0;
 
-  // Display artworks that belong to collection...
-  if ($stateParams.collectionSlug) {
-    var collection = CollectionProvider.findBySlug($stateParams.collectionSlug);
-    $scope.artworks = ArtworkProvider.allByCollection(collection);
-    $scope.viewTitle = collection.name;
-    $scope.ref = 'collection';
-    $scope.refId = collection.slug;
+      // Display artworks that belong to collection...
+      if ($stateParams.collectionSlug) {
+        var collection = CollectionProvider.findBySlug($stateParams.collectionSlug);
+        $scope.artworks = ArtworkProvider.allByCollection(collection);
+        $scope.viewTitle = collection.name;
+        $scope.ref = 'collection';
+        $scope.refId = collection.slug;
 
-  // ...or display them all
-  } else {
-    $scope.artworks = ArtworkProvider.all();
-  }
+      // ...or display them all
+      } else {
+        $scope.artworks = ArtworkProvider.all();
+      }
+console.log('end of ArtworksController//init, artworks:');
+console.log($scope.artworks);
+    });
+  });
 })
 
 /**

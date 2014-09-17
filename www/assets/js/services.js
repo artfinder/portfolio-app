@@ -12,16 +12,22 @@ angular.module('portfolio.services', [])
     }
     
     return {
-        init: function() {
+        init: function(callback) {
             arts = LocalStorageProvider.getArtworksData();
-            var artImage;
-            for (var i in arts) {
-            	arts[i].cover_image.getLocalFilePath = getLocalFilePath;
-            	//artImage = arts[i].cover_image;
-            	//artImage.local_path2 = PersistentStorageProvider.getLocalFilePath(artImage.local_file_name);
-            }
+            var artImage, dataDir;
+            PersistentStorageProvider.getLocalFilePath2(function(dataDir) {
+console.log('callback func of ArtworkProvider::init');
+console.log(dataDir);
+            	for (var i in arts) {
+	            	//arts[i].cover_image.getLocalFilePath = getLocalFilePath;
+	            	artImage = arts[i].cover_image;
+	            	artImage.local_path2 = dataDir + artImage.local_file_name;
+	            }
 console.log('arts in ArtworkProvider');
 console.log(arts);
+	
+	            callback();
+            });
         },
 
         all: function() {
@@ -88,8 +94,10 @@ console.log(arts);
 
     return {
 
-        init: function() {
+        init: function(callback) {
             collections = LocalStorageProvider.getCollectionsData();
+
+            callback();
         },
 
         all: function() {
@@ -249,10 +257,8 @@ console.log(arts);
     var currentStorageDataDir;
 
     var requestStorageUsingFileStorageApi = function(storageType, grantedBytes, callback) {
-console.log('requestStorageUsingFileStorageApi called');
         window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
         window.requestFileSystem(storageType, grantedBytes, function(fileSystem) {
-console.log('call fileSystem.root.getDirectory');
             fileSystem.root.getDirectory(DATADIR, { create: true },
                 callback,
                 errorHandler
@@ -339,8 +345,7 @@ console.log('currentStorageDataDir in PS.getLocalFilePath');
 console.log(currentStorageDataDir);
             if (!currentStorageDataDir) {
                 requestStorage(function(dir) {
-console.log('callback of requestStorage called');
-                    currentStorageDataDir = dir.toURL()
+                    currentStorageDataDir = dir.toURL();
                     if (currentStorageDataDir.substr(currentStorageDataDir.length - 1) !== '/') {
                     currentStorageDataDir += '/';    
                     }
@@ -350,6 +355,18 @@ console.log(currentStorageDataDir);
             }
             
             return currentStorageDataDir + filename;
+        },
+        getLocalFilePath2: function(callback, path) {
+        	requestStorage(function(dir) {
+        		var workingDir = dir.toURL();
+                if (workingDir.substr(workingDir.length - 1) !== '/') {
+	                workingDir += '/';
+	                path = workingDir;
+console.log('path = workingDir');
+console.log(path);
+	                callback(workingDir);
+                }
+        	});
         }
     };
 
