@@ -361,7 +361,6 @@ angular.module('portfolio.controllers', [])
           PersistentStorageProvider.saveBlob(data.data, filename('art_grid_medium', artIdx, imgIdx), function(file) {
             rawArts[artIdx].images[imgIdx].grid_medium.local_file_name = file.name;
             rawArts[artIdx].images[imgIdx].grid_medium.local_path = file.toURL();
-            rawArts[artIdx].images[imgIdx].grid_medium.getLocalFilePath = getLocalFilePath;
 
             // Fetch fluid_large...
             RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
@@ -371,12 +370,6 @@ angular.module('portfolio.controllers', [])
               PersistentStorageProvider.saveBlob(data.data, filename('art_fluid_large', artIdx, imgIdx), function(file) {
                 rawArts[artIdx].images[imgIdx].fluid_large.local_file_name = file.name;
                 rawArts[artIdx].images[imgIdx].fluid_large.local_path = file.toURL();
-                rawArts[artIdx].images[imgIdx].fluid_large.getLocalFilePath = getLocalFilePath;
-console.log('kaboom');
-console.log(rawArts[artIdx].images[imgIdx].fluid_large.local_file_name);
-console.log(rawArts[artIdx].images[imgIdx].fluid_large.local_path);
-console.log('kaboom2');
-console.log(rawArts[artIdx].images[imgIdx].fluid_large.getLocalFilePath());
 
 
                 // Populate cover_image attribute for artwork
@@ -438,7 +431,6 @@ console.log(rawArts[artIdx].images[imgIdx].fluid_large.getLocalFilePath());
           PersistentStorageProvider.saveBlob(data.data, filename('col_grid_medium', colIdx), function(file) {
             rawCols[colIdx].cover_image.grid_medium.local_file_name = file.name;
             rawCols[colIdx].cover_image.grid_medium.local_path = file.toURL();
-            rawCols[colIdx].cover_image.grid_medium.getLocalFilePath = getLocalFilePath;
 
             // Fetch fluid_large...
             RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
@@ -447,7 +439,6 @@ console.log(rawArts[artIdx].images[imgIdx].fluid_large.getLocalFilePath());
               PersistentStorageProvider.saveBlob(data.data, filename('col_fluid_large', colIdx), function(file) {
                 rawCols[colIdx].cover_image.fluid_large.local_file_name = file.name;
                 rawCols[colIdx].cover_image.fluid_large.local_path = file.toURL();
-                rawCols[colIdx].cover_image.fluid_large.getLocalFilePath = getLocalFilePath;
 
                 // Carry on to the next collection
                 fetchAndSaveCollections(colIdx+1);
@@ -477,10 +468,6 @@ console.log(rawArts[artIdx].images[imgIdx].fluid_large.getLocalFilePath());
     } // ENDOF: if (rawCols[colIdx])
   };
   
-  var getLocalFilePath = function() {
-    return PersistentStorageProvider.getLocalFilePath(this.local_file_name);
-  }
-
   if (rawArts === null) {
     terminateFetcher();
     return;
