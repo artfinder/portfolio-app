@@ -3,13 +3,25 @@ angular.module('portfolio.services', [])
 /**
  * Artworks respository
  */
-.factory('ArtworkProvider', function artworkProviderFactory(LocalStorageProvider) {
+.factory('ArtworkProvider', function artworkProviderFactory(LocalStorageProvider, PersistentStorageProvider) {
 
     var arts = [];
 
+    var getLocalFilePath = function() {
+        return PersistentStorageProvider.getLocalFilePath(this.local_file_name);
+    }
+    
     return {
         init: function() {
             arts = LocalStorageProvider.getArtworksData();
+            var artImage;
+            for (var i in arts) {
+            	arts[i].cover_image.getLocalFilePath = getLocalFilePath;
+            	//artImage = arts[i].cover_image;
+            	//artImage.local_path2 = PersistentStorageProvider.getLocalFilePath(artImage.local_file_name);
+            }
+console.log('arts in ArtworkProvider');
+console.log(arts);
         },
 
         all: function() {
@@ -234,10 +246,13 @@ angular.module('portfolio.services', [])
 
     var DATADIR = 'artp';
     var QUOTA = 50*1024*1024; // 50MB
+    var currentStorageDataDir;
 
     var requestStorageUsingFileStorageApi = function(storageType, grantedBytes, callback) {
+console.log('requestStorageUsingFileStorageApi called');
         window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
         window.requestFileSystem(storageType, grantedBytes, function(fileSystem) {
+console.log('call fileSystem.root.getDirectory');
             fileSystem.root.getDirectory(DATADIR, { create: true },
                 callback,
                 errorHandler
@@ -246,6 +261,7 @@ angular.module('portfolio.services', [])
     };
 
     var requestStorage = function(callback) {
+console.log('requestStorage called');
         if (window.cordova) {
             window.resolveLocalFileSystemURL(window.cordova.file.dataDirectory, callback, errorHandler);
         } else if (window.webkitPersistentStorage) {
@@ -317,6 +333,23 @@ angular.module('portfolio.services', [])
 
                 callback();
             });
+        },
+        getLocalFilePath: function(filename) {
+console.log('currentStorageDataDir in PS.getLocalFilePath');
+console.log(currentStorageDataDir);
+            if (!currentStorageDataDir) {
+                requestStorage(function(dir) {
+console.log('callback of requestStorage called');
+                    currentStorageDataDir = dir.toURL()
+                    if (currentStorageDataDir.substr(currentStorageDataDir.length - 1) !== '/') {
+                    currentStorageDataDir += '/';    
+                    }
+console.log('set currentStorageDataDir in PS.getLFP');
+console.log(currentStorageDataDir);
+                });
+            }
+            
+            return currentStorageDataDir + filename;
         }
     };
 

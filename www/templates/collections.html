@@ -10,7 +10,7 @@
         <div class="artwork-box" ng-repeat="collection in collections">
 
             <a href="#/portfolio/by-collection/{{ collection.slug }}">
-                <img ng-src="{{ collection.cover_image.grid_medium.local_path }}" />
+                <img ng-src="{{ collection.cover_image.grid_medium.getLocalFilePath() }}" />
             </a>
 
             <div class="artwork-description">

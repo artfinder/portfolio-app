@@ -10,7 +10,7 @@
         <div class="artwork-box" ng-repeat="art in artworks">
 
             <a href="#/artwork/{{ art.id }}/{{ ref }}/{{ refId }}">
-                <img ng-src="{{ art.cover_image.local_path }}" />
+                <img ng-src="{{ art.cover_image.getLocalFilePath() }}" />
             </a>
 
             <div class="artwork-description">
