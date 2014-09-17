@@ -34,6 +34,14 @@ Apparently this is related with a ``localhost`` not being allowed to fetch data 
 
 As a workaround we use [Ripple Emulator](https://chrome.google.com/webstore/detail/ripple-emulator-beta/geelfhphabnejjhdalkjhgipohgpdnoc) extension for Chrome browser which uses remote proxy for all XHR requests, which in turn allows bypassing the issue.
 
+#### Quota for local storage exceeded
+
+Run the following in Google Chrome's console:
+
+    webkitStorageInfo.requestQuota(webkitStorageInfo.PERSISTENT, 1024*1024*100, function(e) { console.log('success'); }, function(e) { console.log('failure'); });
+
+It should return ``success`` if the permission was granted.
+
 
 ## Application structure
 
