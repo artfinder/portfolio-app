@@ -3,7 +3,7 @@ angular.module('portfolio.controllers', [])
 /**
  * Generic application controller
  */
-.controller('AppController', function($scope, $state, $ionicPopup, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider, MessagesProvider) {
+.controller('AppController', function($scope, $state, $ionicPopup, $ionicLoading, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider, MessagesProvider) {
 
   $scope.logout = function() {
     $ionicPopup.confirm({
@@ -34,18 +34,23 @@ angular.module('portfolio.controllers', [])
       return;
     }
 
+    $ionicLoading.show({
+      template: 'Please wait...'
+    });
+
     var username = LocalStorageProvider.getUsername();
     RemoteDataProvider.subscribe(username, subscriber).then(function(data){
       console.log(data);
-      if (data.added > 0) {
+      if (data.data.added > 0) {
         MessagesProvider.alertPopup('Thank you for your subscription', 'Add subscriber');
       } else {
-        MessagesProvider.alertPopup(data.error, 'Error');
+        MessagesProvider.alertPopup(data.data.error, 'Error');
       }
+      $ionicLoading.hide();
     }, function(err) {
-      console.log('Subscription error');
-      console.log(err);
+      console.log('Subscription error', err);
       MessagesProvider.alertPopup('An unexpected error occurred while submitting subscription. Please try again later.', 'Error');
+      $ionicLoading.hide();
     });
 
   };

@@ -145,6 +145,7 @@ angular.module('portfolio.services', [])
         },
         subscribe: function(username, subscriberData) {
             return $http.post(getUrl(webservices.subscription, username), subscriberData, {
+                headers: { 'Content-Type': 'application/json' },
                 params: { api_key: apikey }
             });
         }
