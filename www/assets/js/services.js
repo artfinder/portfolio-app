@@ -91,8 +91,10 @@ console.log(arts);
 
     return {
 
-        init: function() {
+        init: function(callback) {
             collections = LocalStorageProvider.getCollectionsData();
+
+            callback();
         },
 
         all: function() {
@@ -260,10 +262,8 @@ console.log(arts);
     var currentStorageDataDir;
 
     var requestStorageUsingFileStorageApi = function(storageType, grantedBytes, callback) {
-console.log('requestStorageUsingFileStorageApi called');
         window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
         window.requestFileSystem(storageType, grantedBytes, function(fileSystem) {
-console.log('call fileSystem.root.getDirectory');
             fileSystem.root.getDirectory(DATADIR, { create: true },
                 callback,
                 errorHandler
