@@ -3,7 +3,7 @@ angular.module('portfolio.controllers', [])
 /**
  * Generic application controller
  */
-.controller('AppController', function($scope, $state, $ionicPopup, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider, MessagesProvider) {
+.controller('AppController', function($scope, $state, $ionicPopup, $ionicLoading, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider, MessagesProvider) {
 
   $scope.logout = function() {
     $ionicPopup.confirm({
@@ -34,18 +34,24 @@ angular.module('portfolio.controllers', [])
       return;
     }
 
+    $ionicLoading.show({
+      template: 'Please wait...'
+    });
+
     var username = LocalStorageProvider.getUsername();
     RemoteDataProvider.subscribe(username, subscriber).then(function(data){
       console.log(data);
-      if (data.added > 0) {
+      if (data.data.added > 0) {
         MessagesProvider.alertPopup('Thank you for your subscription', 'Add subscriber');
       } else {
-        MessagesProvider.alertPopup(data.error, 'Error');
+        MessagesProvider.alertPopup(data.data.error, 'Error');
       }
+      $ionicLoading.hide();
     }, function(err) {
       console.log('Subscription error');
-      console.log(err);
+      console.log(angular.toJson(err));
       MessagesProvider.alertPopup('An unexpected error occurred while submitting subscription. Please try again later.', 'Error');
+      $ionicLoading.hide();
     });
 
   };
@@ -55,14 +61,15 @@ angular.module('portfolio.controllers', [])
 /**
  * Handles artworks listing
  */
-.controller('ArtworksController', function($scope, $stateParams, ArtworkProvider, CollectionProvider) {
-  // Init artworks
+.controller('ArtworksController', function($scope, $stateParams, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
+
   ArtworkProvider.init();
   CollectionProvider.init();
 
   $scope.viewTitle = 'Artworks';
   $scope.ref = 'artworks';
   $scope.refId = 0;
+  $scope.baseUrl = LocalStorageProvider.getBaseUrl();
 
   // Display artworks that belong to collection...
   if ($stateParams.collectionSlug) {
@@ -81,11 +88,12 @@ angular.module('portfolio.controllers', [])
 /**
  * Handles collections listing
  */
-.controller('CollectionsController', function($scope, CollectionProvider) {
+.controller('CollectionsController', function($scope, CollectionProvider, LocalStorageProvider) {
     CollectionProvider.init();
     var collections = CollectionProvider.all();
     $scope.collections = collections;
     $scope.collectionsCount = (collections) ? collections.length : 0;
+    $scope.baseUrl = LocalStorageProvider.getBaseUrl();
 })
 
 /**
@@ -97,6 +105,7 @@ angular.module('portfolio.controllers', [])
   CollectionProvider.init();
 
   $scope.artwork = ArtworkProvider.findById($stateParams.artId);
+  $scope.baseUrl = LocalStorageProvider.getBaseUrl();
 
   // Define artwork set to help browsing
   var artworkSet = [];
@@ -151,17 +160,22 @@ angular.module('portfolio.controllers', [])
     window.plugins.socialsharing.share('Hi there, check out my artwork!', null, artworkUrl, 'http://www.artfinder.com');
   };
 
-  $scope.dismissInstructionsOverlay = function() {
-    LocalStorageProvider.setArtworkInstructionsOverlayFlag();
-    $ionicLoading.hide();
-  };
+  /**
+   * Instructions overlay that uses $ionicLoading component has been disabled
+   * as it caused massive performance issue on a device (not in a browser window
+   * tough). Needs different solution.
+   */
+  // $scope.dismissInstructionsOverlay = function() {
+  //   LocalStorageProvider.setArtworkInstructionsOverlayFlag();
+  //   $ionicLoading.hide();
+  // };
 
   // Display swiping instructions overlay if not previously displayed
-  if (LocalStorageProvider.getArtworkInstructionsOverlayFlag() === null) {
-    $ionicLoading.show({
-      templateUrl: 'templates/artwork/info-overlay.html'
-    });
-  }
+  // if (LocalStorageProvider.getArtworkInstructionsOverlayFlag() === null) {
+  //   $ionicLoading.show({
+  //     templateUrl: 'templates/artwork/info-overlay.html'
+  //   });
+  // }
 
 })
 
@@ -234,7 +248,7 @@ angular.module('portfolio.controllers', [])
       template: 'Logging in...'
     });
 
-    var username = user.slug;
+    var username = user.slug.toLowerCase();
     var BACKDOOR = 'zoya';
 
     // Fetch login details, compare with details entered by user
@@ -296,7 +310,7 @@ angular.module('portfolio.controllers', [])
   $scope.cancel = function() {
     killswitch = 1;
     $ionicLoading.show({
-      template: 'Aborting dowload process, please wait...'
+      template: 'Aborting download process, please wait...'
     });
   };
 
@@ -306,7 +320,7 @@ angular.module('portfolio.controllers', [])
   };
 
   var errorHandler = function(err, imgVariant, recordIdx, imgIdx) {
-    console.log('Error while fetching img variant: ' + imgVariant + '; art/col idx: ' + recordIdx + '; image idx: ' + imgIdx);
+    console.log('Error while fetching img variant: ' + imgVariant + '; record idx: ' + recordIdx + '; image idx: ' + imgIdx);
     console.log(err);
     MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Error');
     terminateFetcher();
@@ -334,7 +348,7 @@ angular.module('portfolio.controllers', [])
 
     if (rawArts[artIdx]) {
 
-      if (imgIdx == 0) {
+      if (imgIdx === 0) {
         $scope.counter = ++counter;
       }
 
@@ -348,7 +362,7 @@ angular.module('portfolio.controllers', [])
           // ...save grid_medium to persistent storage.
           console.log('save grid_medium ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
           PersistentStorageProvider.saveBlob(data.data, filename('art_grid_medium', artIdx, imgIdx), function(file) {
-            rawArts[artIdx].images[imgIdx].grid_medium.local_path = file.toURL();
+            rawArts[artIdx].images[imgIdx].grid_medium.local_file_name = file.name;
 
             // Fetch fluid_large...
             RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
@@ -356,7 +370,8 @@ angular.module('portfolio.controllers', [])
               // ...save fluid_large to persistent storage.
               console.log('save fluid_large ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
               PersistentStorageProvider.saveBlob(data.data, filename('art_fluid_large', artIdx, imgIdx), function(file) {
-                rawArts[artIdx].images[imgIdx].fluid_large.local_path = file.toURL();
+                rawArts[artIdx].images[imgIdx].fluid_large.local_file_name = file.name;
+
 
                 // Populate cover_image attribute for artwork
                 if (imgIdx === 0) {
@@ -415,14 +430,14 @@ angular.module('portfolio.controllers', [])
 
           // ...save grid_medium to persistent storage.
           PersistentStorageProvider.saveBlob(data.data, filename('col_grid_medium', colIdx), function(file) {
-            rawCols[colIdx].cover_image.grid_medium.local_path = file.toURL();
+            rawCols[colIdx].cover_image.grid_medium.local_file_name = file.name;
 
             // Fetch fluid_large...
             RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
 
               // ...save fluid_large to persistent storage.
               PersistentStorageProvider.saveBlob(data.data, filename('col_fluid_large', colIdx), function(file) {
-                rawCols[colIdx].cover_image.fluid_large.local_path = file.toURL();
+                rawCols[colIdx].cover_image.fluid_large.local_file_name = file.name;
 
                 // Carry on to the next collection
                 fetchAndSaveCollections(colIdx+1);
@@ -446,12 +461,17 @@ angular.module('portfolio.controllers', [])
       // Finished fetching collections
       LocalStorageProvider.saveCollectionsData(rawCols);
 
-      // Redirect to the next step
-      $state.go('intro.complete');
+      // Initialise base-url variable (as it may be claered if user logged out)
+      PersistentStorageProvider.getBaseUrl(function(baseUrl) {
+        LocalStorageProvider.setBaseUrl(baseUrl);
+
+        // Redirect to the next step
+        $state.go('intro.complete');
+      });
 
     } // ENDOF: if (rawCols[colIdx])
   };
-
+  
   if (rawArts === null) {
     terminateFetcher();
     return;
@@ -466,10 +486,17 @@ angular.module('portfolio.controllers', [])
 
 })
 
-.controller('SplashScreenController', function($state, $timeout, LocalStorageProvider) {
+.controller('SplashScreenController', function($ionicPlatform, $state, $timeout, LocalStorageProvider, PersistentStorageProvider) {
 
-  $timeout(function() {
-    $state.go(LocalStorageProvider.getUsername() === null ? 'intro.welcome' : 'portfolio.artworks');
-  }, 2000, false);
-
+  $ionicPlatform.ready(function() {
+    //initialise base-url variable
+    PersistentStorageProvider.getBaseUrl(function(baseUrl) {
+      LocalStorageProvider.setBaseUrl(baseUrl);
+  
+      //redirect for proper screen
+      $timeout(function() {
+        $state.go(LocalStorageProvider.getUsername() === null ? 'intro.welcome' : 'portfolio.artworks');
+      }, 2000, false);
+    });
+  });
 });

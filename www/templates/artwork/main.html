@@ -10,7 +10,7 @@
     <ion-slide-box on-swipe-up="loadNext();" on-swipe-down="loadPrev();">
       <ion-slide ng-repeat="image in artwork.images">
         <div class="slidebox100h">
-          <img ng-src="{{ image.fluid_large.local_path }}">
+          <img ng-src="{{ baseUrl }}{{ image.fluid_large.local_file_name }}">
         </div>
       </ion-slide>
     </ion-slide-box>

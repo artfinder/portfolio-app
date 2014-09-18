@@ -3,13 +3,17 @@ angular.module('portfolio.services', [])
 /**
  * Artworks respository
  */
-.factory('ArtworkProvider', function artworkProviderFactory(LocalStorageProvider) {
+.factory('ArtworkProvider', function artworkProviderFactory(LocalStorageProvider, PersistentStorageProvider) {
 
-    var arts;
+    var arts = [];
 
+    var getLocalFilePath = function() {
+        return PersistentStorageProvider.getLocalFilePath(this.local_file_name);
+    }
+    
     return {
         init: function() {
-            arts = LocalStorageProvider.getArtworksData();
+        	arts = LocalStorageProvider.getArtworksData();
         },
 
         all: function() {
@@ -103,12 +107,14 @@ angular.module('portfolio.services', [])
 .factory('RemoteDataProvider', function remoteDataProvider($http) {
 
     var apikey = '19957ec02e669s11e3ab523a0800270f67ea';
+    var webservices_base_live = 'https://www.artfinder.com/api/v1/';
+    var webservices_base_staging = 'https://artfinder:1nkandcrayon@www.staging.artfinder.com/api/v1/';
     var webservices = {
-        auth: 'https://www.artfinder.com/api/v1/artist/$USER$/',
-        artworks: 'https://www.artfinder.com/api/v1/product/$USER$/',
-        collections: 'https://www.artfinder.com/api/v1/collection/$USER$/',
-        subscription: 'https://www.artfinder.com/api/v1/subscriber/$USER$/'
-    };
+        auth: webservices_base_live + 'artist/$USER$/',
+        artworks: webservices_base_live + 'product/$USER$/',
+        collections: webservices_base_live + 'collection/$USER$/',
+        subscription: webservices_base_staging + 'subscriber/$USER$/'
+    }
 
     var getUrl = function(url, username) {
         return url.replace('$USER$', username);
@@ -145,6 +151,7 @@ angular.module('portfolio.services', [])
         },
         subscribe: function(username, subscriberData) {
             return $http.post(getUrl(webservices.subscription, username), subscriberData, {
+                headers: { 'Content-Type': 'application/json' },
                 params: { api_key: apikey }
             });
         }
@@ -163,6 +170,7 @@ angular.module('portfolio.services', [])
     var COLLECTIONS_RAW_INDEX_KEY = 'raw_collections';
     var COLLECTIONS_INDEX_KEY = 'collections';
     var ARTWORK_OVERLAY_FLAG = 'artwork_overlay_flag';
+    var BASE_URL = 'base_url';
 
     return {
         // Setters
@@ -184,6 +192,9 @@ angular.module('portfolio.services', [])
         setArtworkInstructionsOverlayFlag: function() {
             window.localStorage.setItem(ARTWORK_OVERLAY_FLAG, 1);
         },
+        setBaseUrl: function(data) {
+        	window.localStorage.setItem(BASE_URL, data);
+        },
 
         // Getters
         getUsername: function() {
@@ -204,6 +215,9 @@ angular.module('portfolio.services', [])
         getArtworkInstructionsOverlayFlag: function() {
             return window.localStorage.getItem(ARTWORK_OVERLAY_FLAG);
         },
+        getBaseUrl: function() {
+            return window.localStorage.getItem(BASE_URL);
+        },
 
         // Removers
         removeRawArtworksData: function() {
@@ -219,6 +233,7 @@ angular.module('portfolio.services', [])
             window.localStorage.removeItem(COLLECTIONS_INDEX_KEY);
             window.localStorage.removeItem(COLLECTIONS_RAW_INDEX_KEY);
             window.localStorage.removeItem(ARTWORK_OVERLAY_FLAG);
+            window.localStorage.removeItem(BASE_URL);
         }
     };
 
@@ -231,6 +246,7 @@ angular.module('portfolio.services', [])
 
     var DATADIR = 'artp';
     var QUOTA = 50*1024*1024; // 50MB
+    var currentStorageDataDir;
 
     var requestStorageUsingFileStorageApi = function(storageType, grantedBytes, callback) {
         window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
@@ -314,6 +330,18 @@ angular.module('portfolio.services', [])
 
                 callback();
             });
+        },
+        getBaseUrl: function(callback) {
+            requestStorage(function(dir) {
+                var baseUrl = dir.toURL()
+                if (baseUrl.substr(baseUrl.length - 1) !== '/') {
+                	baseUrl += '/';    
+                }
+                console.log('sets the base dir in PS::requestStorage to:');
+                console.log(baseUrl);
+                
+                callback(baseUrl);
+            }, errorHandler);
         }
     };
 
