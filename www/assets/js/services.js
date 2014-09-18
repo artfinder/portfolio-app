@@ -14,17 +14,6 @@ angular.module('portfolio.services', [])
     return {
         init: function() {
         	arts = LocalStorageProvider.getArtworksData();
-/*
-        	arts = LocalStorageProvider.getArtworksData();
-            var artImage;
-            for (var i in arts) {
-            	arts[i].cover_image.getLocalFilePath = getLocalFilePath;
-            	//artImage = arts[i].cover_image;
-            	//artImage.local_path2 = PersistentStorageProvider.getLocalFilePath(artImage.local_file_name);
-            }
-console.log('arts in ArtworkProvider');
-console.log(arts);
-*/
         },
 
         all: function() {
@@ -260,10 +249,8 @@ console.log(arts);
     var currentStorageDataDir;
 
     var requestStorageUsingFileStorageApi = function(storageType, grantedBytes, callback) {
-console.log('requestStorageUsingFileStorageApi called');
         window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
         window.requestFileSystem(storageType, grantedBytes, function(fileSystem) {
-console.log('call fileSystem.root.getDirectory');
             fileSystem.root.getDirectory(DATADIR, { create: true },
                 callback,
                 errorHandler
@@ -272,7 +259,6 @@ console.log('call fileSystem.root.getDirectory');
     };
 
     var requestStorage = function(callback) {
-console.log('requestStorage called');
         if (window.cordova) {
             window.resolveLocalFileSystemURL(window.cordova.file.dataDirectory, callback, errorHandler);
         } else if (window.webkitPersistentStorage) {

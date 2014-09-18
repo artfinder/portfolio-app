@@ -317,7 +317,7 @@ angular.module('portfolio.controllers', [])
   };
 
   var errorHandler = function(err, imgVariant, recordIdx, imgIdx) {
-    console.log('Error while fetching img variant: ' + imgVariant + '; art/col idx: ' + recordIdx + '; image idx: ' + imgIdx);
+    console.log('Error while fetching img variant: ' + imgVariant + '; record idx: ' + recordIdx + '; image idx: ' + imgIdx);
     console.log(err);
     MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Error');
     terminateFetcher();
@@ -360,7 +360,6 @@ angular.module('portfolio.controllers', [])
           console.log('save grid_medium ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
           PersistentStorageProvider.saveBlob(data.data, filename('art_grid_medium', artIdx, imgIdx), function(file) {
             rawArts[artIdx].images[imgIdx].grid_medium.local_file_name = file.name;
-            rawArts[artIdx].images[imgIdx].grid_medium.local_path = file.toURL();
 
             // Fetch fluid_large...
             RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
@@ -369,7 +368,6 @@ angular.module('portfolio.controllers', [])
               console.log('save fluid_large ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
               PersistentStorageProvider.saveBlob(data.data, filename('art_fluid_large', artIdx, imgIdx), function(file) {
                 rawArts[artIdx].images[imgIdx].fluid_large.local_file_name = file.name;
-                rawArts[artIdx].images[imgIdx].fluid_large.local_path = file.toURL();
 
 
                 // Populate cover_image attribute for artwork
@@ -430,7 +428,6 @@ angular.module('portfolio.controllers', [])
           // ...save grid_medium to persistent storage.
           PersistentStorageProvider.saveBlob(data.data, filename('col_grid_medium', colIdx), function(file) {
             rawCols[colIdx].cover_image.grid_medium.local_file_name = file.name;
-            rawCols[colIdx].cover_image.grid_medium.local_path = file.toURL();
 
             // Fetch fluid_large...
             RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
@@ -438,7 +435,6 @@ angular.module('portfolio.controllers', [])
               // ...save fluid_large to persistent storage.
               PersistentStorageProvider.saveBlob(data.data, filename('col_fluid_large', colIdx), function(file) {
                 rawCols[colIdx].cover_image.fluid_large.local_file_name = file.name;
-                rawCols[colIdx].cover_image.fluid_large.local_path = file.toURL();
 
                 // Carry on to the next collection
                 fetchAndSaveCollections(colIdx+1);
@@ -462,8 +458,13 @@ angular.module('portfolio.controllers', [])
       // Finished fetching collections
       LocalStorageProvider.saveCollectionsData(rawCols);
 
-      // Redirect to the next step
-      $state.go('intro.complete');
+      // Initialise base-url variable (as it may be claered if user logged out)
+      PersistentStorageProvider.getBaseUrl(function(baseUrl) {
+        LocalStorageProvider.setBaseUrl(baseUrl);
+
+        // Redirect to the next step
+        $state.go('intro.complete');
+      });
 
     } // ENDOF: if (rawCols[colIdx])
   };
@@ -482,18 +483,17 @@ angular.module('portfolio.controllers', [])
 
 })
 
-.controller('SplashScreenController', function($state, $timeout, LocalStorageProvider, PersistentStorageProvider) {
+.controller('SplashScreenController', function($ionicPlatform, $state, $timeout, LocalStorageProvider, PersistentStorageProvider) {
 
-  //initialise base-url variable
-  PersistentStorageProvider.getBaseUrl(function(baseUrl) {
-	console.log('Baseurl in SplashScreenController');
-	console.log(baseUrl);
-	LocalStorageProvider.setBaseUrl(baseUrl);
-
-	//redirect for proper screen	
-	$timeout(function() {
-	  $state.go(LocalStorageProvider.getUsername() === null ? 'intro.welcome' : 'portfolio.artworks');
-	}, 2000, false);
-  });
+  $ionicPlatform.ready(function() {
+    //initialise base-url variable
+    PersistentStorageProvider.getBaseUrl(function(baseUrl) {
+      LocalStorageProvider.setBaseUrl(baseUrl);
   
+      //redirect for proper screen
+      $timeout(function() {
+        $state.go(LocalStorageProvider.getUsername() === null ? 'intro.welcome' : 'portfolio.artworks');
+      }, 2000, false);
+    });
+  });
 });
