@@ -481,11 +481,11 @@ angular.module('portfolio.controllers', [])
 .controller('SplashScreenController', function($ionicPlatform, $state, $timeout, LocalStorageProvider, PersistentStorageProvider) {
 
   $ionicPlatform.ready(function() {
-    //initialise base-url variable
+    // Initialise base-url variable
     PersistentStorageProvider.getBaseUrl(function(baseUrl) {
       LocalStorageProvider.setBaseUrl(baseUrl);
 
-      //redirect for proper screen
+      // Redirect for relevant user-facing view
       $timeout(function() {
         $state.go(LocalStorageProvider.getUsername() === null ? 'intro.welcome' : 'portfolio.artworks');
       }, 2000, false);

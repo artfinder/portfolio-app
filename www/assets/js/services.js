@@ -7,13 +7,9 @@ angular.module('portfolio.services', [])
 
     var arts = [];
 
-    var getLocalFilePath = function() {
-        return PersistentStorageProvider.getLocalFilePath(this.local_file_name);
-    }
-    
     return {
         init: function() {
-        	arts = LocalStorageProvider.getArtworksData();
+            arts = LocalStorageProvider.getArtworksData();
         },
 
         all: function() {
@@ -193,7 +189,7 @@ angular.module('portfolio.services', [])
             window.localStorage.setItem(ARTWORK_OVERLAY_FLAG, 1);
         },
         setBaseUrl: function(data) {
-        	window.localStorage.setItem(BASE_URL, data);
+            window.localStorage.setItem(BASE_URL, data);
         },
 
         // Getters
@@ -333,13 +329,13 @@ angular.module('portfolio.services', [])
         },
         getBaseUrl: function(callback) {
             requestStorage(function(dir) {
-                var baseUrl = dir.toURL()
+                var baseUrl = dir.toURL();
                 if (baseUrl.substr(baseUrl.length - 1) !== '/') {
-                	baseUrl += '/';    
+                    baseUrl += '/';
                 }
                 console.log('sets the base dir in PS::requestStorage to:');
                 console.log(baseUrl);
-                
+
                 callback(baseUrl);
             }, errorHandler);
         }
