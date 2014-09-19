@@ -172,7 +172,7 @@ angular.module('portfolio.controllers', [])
    * tough). Needs different solution.
    */
   // $scope.dismissInstructionsOverlay = function() {
-  //   LocalStorageProvider.setArtworkInstructionsOverlayFlag();
+  //   LocalStorageProvider.saveArtworkInstructionsOverlayFlag();
   //   $ionicLoading.hide();
   // };
 
@@ -466,10 +466,11 @@ angular.module('portfolio.controllers', [])
 
       // Finished fetching collections
       LocalStorageProvider.saveCollectionsData(rawCols);
+      LocalStorageProvider.saveDownloadProcessCompleted(1);
 
       // Initialise base-url variable (as it may be claered if user logged out)
       PersistentStorageProvider.getBaseUrl(function(baseUrl) {
-        LocalStorageProvider.setBaseUrl(baseUrl);
+        LocalStorageProvider.saveBaseUrl(baseUrl);
 
         // Redirect to the next step
         $state.go('intro.complete');
@@ -488,7 +489,13 @@ angular.module('portfolio.controllers', [])
    *
    * Execute fetching by calling a recursive function
    */
-  fetchAndSaveArtworks(0, 0, 'artworks');
+  if (!LocalStorageProvider.getDownloadProcessCompleted()) {
+	fetchAndSaveArtworks(0, 0);  
+  }
+  else {
+    //handle for user back button on download completed page
+	$state.go('intro.complete');
+  }
 
 })
 
@@ -497,7 +504,7 @@ angular.module('portfolio.controllers', [])
   $ionicPlatform.ready(function() {
     //initialise base-url variable
     PersistentStorageProvider.getBaseUrl(function(baseUrl) {
-      LocalStorageProvider.setBaseUrl(baseUrl);
+      LocalStorageProvider.saveBaseUrl(baseUrl);
   
       //redirect for proper screen
       $timeout(function() {
