@@ -18,10 +18,10 @@
           <div class="item">
             <ul class="modal-detail-list">
                 <li><i class="icon ion-ios7-arrow-forward"></i><span>Category: {{ artwork.category }}</span></li>
-                <li ng-if="{{ artwork.unique }}"><i class="icon ion-ios7-arrow-forward"></i><span>Unique</span></li>
+                <li ng-if="artwork.unique"><i class="icon ion-ios7-arrow-forward"></i><span>Unique</span></li>
                 <li><i class="icon ion-ios7-arrow-forward"></i><span>Size: {{ artwork.size_cm }}</span></li>
                 <li><i class="icon ion-ios7-arrow-forward"></i><span>{{ artwork.currency }} {{ artwork.price }}</span></li>
-                <li ng-if="{{ artwork.framed }} == u"><i class="icon ion-ios7-arrow-forward"></i><span>Framed</span></li>
+                <li ng-if="artwork.framed == u"><i class="icon ion-ios7-arrow-forward"></i><span>Framed</span></li>
             </ul>
           </div>
 
