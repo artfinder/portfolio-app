@@ -1,0 +1,82 @@
+@import 'variables';
+@media (min-width: 768px) {
+  .home-logo{
+    img{
+      font-size:$smallFont;
+      max-width: 500px;
+      padding:50px 0px;
+    }
+  }
+
+  h1.af-title{
+    font-size: 35px;
+    padding: 30px 20px;
+  }
+
+  .home-banner{
+    span{
+      font-size:30px;
+      margin: 40px 70px;
+    }
+  }
+
+  h2.main{
+    padding: 25px 0px;
+  }
+
+  .main-article{
+    font-size: 25px;
+    padding: 40px;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  .padding-page{
+    max-width: 65%;
+    margin:0 auto;
+  }
+
+  .main-input{
+    padding: 12px 20px;
+    margin-top: 25px;
+
+    input{
+      font-size: 22px;
+      line-height: 30px;
+    }
+  }
+
+  .btn{
+    padding: 20px 0px;
+  }
+
+  .help{
+    font-size: 15px;
+    margin-top: 13px;
+  }
+
+  .loading-circle{
+    margin: 50px auto;
+  }
+
+  .complete-icon{
+    margin-top:35px;
+    display: inline-block;
+  }
+
+  .toogle-af{
+    min-height: 40px;
+    vertical-align: middle;
+    margin-top: 25px;
+  }
+
+  .reduced-padding{
+    padding: 40px 70px !important;
+  }
+
+  .modal-detail-list{
+    li{
+      padding:7px 0px 7px 20px;
+    }
+  }
+}

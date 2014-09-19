@@ -1,28 +1,31 @@
-<ion-view title="Collections">
+<ion-view title="Collections ({{ collectionsCount }})">
   <ion-nav-buttons side="left">
     <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
 
-  <ion-content padding="true" class="has-header">
+  <ion-content padding="true" class="has-header white-bg">
 
-    <div class="artworks-listing" ng-if="collections">
+  <div class="artworks-listing" ng-if="collections">
 
-        <div class="artwork-box" ng-repeat="collection in collections">
+      <div class="artwork-box" ng-repeat="collection in collections">
+          <div class="art-item">
+              <a href="#/portfolio/by-collection/{{ collection.slug }}">
+                  <img ng-src="{{ collection.cover_image.grid_medium.local_path }}" />
+              </a>
 
-            <a href="#/portfolio/by-collection/{{ collection.slug }}">
-                <img ng-src="{{ collection.cover_image.grid_medium.local_path }}" />
-            </a>
+              <div class="artwork-description">
+                  <span class="title">{{ collection.name }}</span>
+              </div>
+          </div>
+      </div>
 
-            <div class="artwork-description">
-                <h4 class="title center">{{ collection.name }}</h4>
-            </div>
-
-        </div>
-
-    </div>
+  </div>
 
     <div ng-if="collectionsCount == 0" class="center">
-      <p>It appears you don't have any collections.</p>
+      <div class="main-article dark no-found">
+          <i class="icon ion-more"></i>
+          <div>It appears you don't have any collections.</div>
+      </div>
     </div>
 
   </ion-content>

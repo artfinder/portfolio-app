@@ -1,39 +1,39 @@
-<ion-view title="Add subscriber">
-  <ion-nav-buttons side="left">
-    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
-  </ion-nav-buttons>
+<ion-view class="border-bottom-head" title="Add a follower">
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+        <!--button menu-toggle="right" class="button button-icon icon ion-close smaller-icon"></button-->
+    </ion-nav-buttons>
 
-  <ion-content has-header="true" padding="true" class="">
-    <p>Person added below will automatically follow you on Artfinder and will receive updates on new work added, sales and offers.</p>
+    <ion-content has-header="true" padding="false" class="">
+        <div class="main-article reduced-padding">Person added below will automatically follow you on Artfinder and will receive updates on new work added, sales and offers.</div>
+        <div class="padding-page">
+            <form ng-submit="submitSubscriber(subscriber);">
 
-    <form ng-submit="submitSubscriber(subscriber);">
-    <div class="list list-inset">
-      <label class="item item-input item-stacked-label">
-        <span class="input-label">First Name (optional)</span>
-        <input type="text" placeholder="Michael" ng-model="subscriber.first_name">
-      </label>
-      <label class="item item-input item-stacked-label">
-        <span class="input-label">Last Name (optional)</span>
-        <input type="text" placeholder="Jackson" ng-model="subscriber.last_name">
-      </label>
-      <label class="item item-input item-stacked-label">
-        <span class="input-label">Email</span>
-        <input type="email" placeholder="michael@jackson.com" ng-model="subscriber.email">
-      </label>
-    </div>
+                <div class="main-input lgn-email">
+                    <input type="text" placeholder="First name" ng-model="subscriber.first_name">
+                    <div class="warning icon ion-alert-circled"></div>
+                </div>
+                <div class="main-input lgn-email">
+                    <input type="text" placeholder="Last name" ng-model="subscriber.first_name">
+                    <div class="warning icon ion-alert-circled"></div>
+                </div>
+                <div class="main-input lgn-email">
+                    <input type="text" placeholder="Email" ng-model="subscriber.email">
+                    <div class="warning icon ion-alert-circled"></div>
+                </div>
 
-    <ion-toggle ng-model="subscriber.add_permission" toggle-class="toggle-calm">
-        The above person gave me explicit permission to add to my Artfinder followers
-    </ion-toggle>
+            <ion-toggle ng-model="subscriber.add_permission" class="toogle-af" toggle-class="toggle-calm">
+                The above person gave me explicit permission to add to my Artfinder followers
+            </ion-toggle>
 
-    <ion-toggle ng-model="subscriber.add_newsletter" toggle-class="toggle-calm">
-        Also subscribe to Artinder's Inspirations newsletter<br/>
-        (definitely no spam + stop emails at any time!)
-    </ion-toggle>
+            <ion-toggle ng-model="subscriber.add_newsletter" class="toogle-af" toggle-class="toggle-calm">
+                Also subscribe to Artinder's Inspirations newsletter<br/>
+                (definitely no spam + stop emails at any time!)
+            </ion-toggle>
 
-    <button class="button button-block button-calm activated">Submit</button>
+            <button class="btn btn-main">Submit</button>
 
-    </form>
-
-  </ion-content>
+            </form>
+        </div>
+    </ion-content>
 </ion-view>

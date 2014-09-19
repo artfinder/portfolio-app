@@ -65,7 +65,7 @@ angular.module('portfolio.controllers', [])
   ArtworkProvider.init();
   CollectionProvider.init();
 
-  $scope.viewTitle = 'Artworks';
+  $scope.viewTitle = 'My Artworks ('+12+')';
   $scope.ref = 'artworks';
   $scope.refId = 0;
 
@@ -73,13 +73,16 @@ angular.module('portfolio.controllers', [])
   if ($stateParams.collectionSlug) {
     var collection = CollectionProvider.findBySlug($stateParams.collectionSlug);
     $scope.artworks = ArtworkProvider.allByCollection(collection);
-    $scope.viewTitle = collection.name;
+    $scope.artworksCount = ($scope.artworks) ? $scope.artworks.length : 0;
+    $scope.viewTitle = collection.name+" ("+$scope.artworksCount+")";
     $scope.ref = 'collection';
     $scope.refId = collection.slug;
 
   // ...or display them all
   } else {
     $scope.artworks = ArtworkProvider.all();
+    $scope.artworksCount = ($scope.artworks) ? $scope.artworks.length : 0;
+    $scope.viewTitle = "My Artworks ("+$scope.artworksCount+")";
   }
 })
 
@@ -196,7 +199,7 @@ angular.module('portfolio.controllers', [])
       switch (context) {
         // User not found
         case 'auth':
-          MessagesProvider.alertPopup('The login details are incorrect. Please try again.');
+          MessagesProvider.alertPopup('The login details are incorrect. <br> Please try again.');
           break;
         // No collections found -- carry on
         case 'collections':
@@ -227,11 +230,11 @@ angular.module('portfolio.controllers', [])
 
   // Login entry point
   $scope.login = function(user) {
-
     if (!user || !user.slug) {
-      MessagesProvider.alertPopup('Please provide username/slug');
+      MessagesProvider.alertPopup('Please provide email');
       return false;
     }
+
     if (!user.code) {
       MessagesProvider.alertPopup('Please provide verification code');
       return false;
@@ -287,7 +290,6 @@ angular.module('portfolio.controllers', [])
  * And yes, this code is SHIIEEEEET. Sorry.
  */
 .controller('FetcherController', function($scope, $state, $ionicLoading, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider, MessagesProvider, ArtworkProvider) {
-
   var killswitch = 0;
   var username = LocalStorageProvider.getUsername();
   var rawArts = LocalStorageProvider.getRawArtworksData();
@@ -295,6 +297,24 @@ angular.module('portfolio.controllers', [])
   var numOfArtworks = rawArts !== null ? rawArts.length : 0;
   var numOfCollections = rawCols !== null ? rawCols.length : 0;
   var counter = 0;
+
+  $scope.firstAngle = 0;
+  $scope.secondAngle = 0;
+
+  var updateLoadingBar = function(x, outOf){
+    var firstHalfAngle = 180;
+    var secondHalfAngle = 0;
+
+    var drawAngle = x / outOf * 360;
+    if (drawAngle <= 180) {
+        firstHalfAngle = drawAngle;
+    } else {
+        secondHalfAngle = drawAngle - 180;
+    }
+    $scope.firstAngle = firstHalfAngle;
+    $scope.secondAngle = secondHalfAngle;
+    console.log($scope.firstAngle +" - "+ $scope.secondAngle );
+  };
 
   $scope.totalRecords = numOfArtworks + numOfCollections;
 
@@ -340,14 +360,18 @@ angular.module('portfolio.controllers', [])
     }
 
     if (rawArts[artIdx]) {
+      console.log(rawArts[artIdx]);
 
       if (imgIdx === 0) {
         $scope.counter = ++counter;
+        updateLoadingBar($scope.counter, $scope.totalRecords);
       }
 
       if (rawArts[artIdx].images[imgIdx]) {
 
         var img = rawArts[artIdx].images[imgIdx];
+
+        // IMAGE SIZES 280  580  735  500x500
 
         // Fetch grid_medium...
         RemoteDataProvider.fetchBlob(img.grid_medium.url).then(function(data){
@@ -414,6 +438,8 @@ angular.module('portfolio.controllers', [])
       if (rawCols[colIdx].cover_image) {
 
         $scope.counter = ++counter;
+
+        updateLoadingBar($scope.counter, $scope.totalRecords);
 
         var img = rawCols[colIdx].cover_image;
 

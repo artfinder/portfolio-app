@@ -1,27 +1,32 @@
 <ion-view title="{{ viewTitle }}">
-  <ion-nav-buttons side="left">
-    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
-  </ion-nav-buttons>
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
 
-  <ion-content padding="true" class="has-header">
+    <ion-content padding="true" class="has-header white-bg">
+        <!--div class="search-container">
 
-    <div class="artworks-listing">
+        </div-->
+        <div class="artworks-listing">
+            <div class="artwork-box" ng-repeat="art in artworks">
+                <div class="art-item">
+                    <a href="#/artwork/{{ art.id }}/{{ ref }}/{{ refId }}">
+                        <img ng-src="{{ art.cover_image.local_path }}">
+                    </a>
 
-        <div class="artwork-box" ng-repeat="art in artworks">
-
-            <a href="#/artwork/{{ art.id }}/{{ ref }}/{{ refId }}">
-                <img ng-src="{{ art.cover_image.local_path }}" />
-            </a>
-
-            <div class="artwork-description">
-                <h4 class="title">{{ art.name }}</h4>
-                {{ art.category }}<br/>
-                <span class="price">&pound;{{ art.price }}</span>
+                    <div class="artwork-description">
+                        <span class="title">{{ art.name }}</span>
+                        <!--{{ art.category }}<br/>
+                        <span class="price">&pound;{{ art.price }}</span-->
+                    </div>
+                </div>
             </div>
-
         </div>
-
-    </div>
-
-  </ion-content>
+        <div ng-if="artworksCount == 0" class="center">
+            <div class="main-article dark no-found">
+                <i class="icon ion-more"></i>
+                <div>It appears you don't have any artworks.</div>
+            </div>
+        </div>
+      </ion-content>
 </ion-view>
