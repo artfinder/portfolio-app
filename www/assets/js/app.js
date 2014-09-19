@@ -29,8 +29,11 @@ angular.module('portfolio', [
     if (window.cordova && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
     }
+
+    // iOS statusbar tweaks
     if (window.StatusBar) {
       StatusBar.styleDefault();
+      StatusBar.overlaysWebView(true);
     }
   });
 });
