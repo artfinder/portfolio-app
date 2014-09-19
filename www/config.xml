@@ -17,7 +17,7 @@
   </author>
 
   <content src="index.html"/>
-  <icon src="www/assets/icon/icon-artfinder-175x175.png"/>
+  <icon src="assets/icon/icon-artfinder-175x175.png"/>
 
   <preference name="webviewbounce" value="true"/>
   <preference name="UIWebViewBounce" value="true"/>
