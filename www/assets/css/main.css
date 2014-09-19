@@ -198,6 +198,18 @@ h2.main {
   text-transform: uppercase;
   border-bottom: 1px #139bd4 solid; }
 
+.title-splash {
+  padding: 20px 0px;
+  margin: 0px;
+  color: white;
+  font-size: 28px; }
+
+.loading-icon {
+  display: block;
+  font-size: 50px;
+  margin-top: 140px;
+  color: #139bd4; }
+
 .main-article {
   padding: 20px 20px;
   color: white;

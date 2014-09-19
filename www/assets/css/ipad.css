@@ -26,6 +26,17 @@ $accentLightColor:  #71d1e2;
     font-size: 13px;
     max-width: 500px;
     padding: 50px 0px; }
+  .home-logo.splash {
+    padding: 0px; }
+    .home-logo.splash img {
+      font-size: 13px;
+      max-width: 500px;
+      margin-top: 50px;
+      padding: 30px 0px; }
+
+  .loading-icon {
+    margin-top: 145px;
+    font-size: 90px; }
 
   h1.af-title {
     font-size: 35px;
@@ -78,4 +89,26 @@ $accentLightColor:  #71d1e2;
     padding: 40px 70px !important; }
 
   .modal-detail-list li {
-    padding: 7px 0px 7px 20px; } }
+    padding: 7px 0px 7px 20px; }
+
+  .title-splash {
+    font-size: 45px;
+    padding: 30px 0px; }
+
+  .welcome-list {
+    color: white;
+    font-size: 18px;
+    margin-top: 100px; }
+    .welcome-list li {
+      margin-left: 60px;
+      padding: 20px 0px;
+      font-size: 25px; }
+      .welcome-list li i {
+        display: inline-block;
+        font-size: 50px;
+        margin-left: -60px;
+        float: left;
+        margin-top: -2px; }
+      .welcome-list li span {
+        line-height: 1.5;
+        font-size: 30px; } }
