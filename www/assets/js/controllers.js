@@ -333,6 +333,8 @@ angular.module('portfolio.controllers', [])
   };
 
   var terminateFetcher = function() {
+	document.removeEventListener("backbutton", backButtonHandle); //removes listener
+
     PersistentStorageProvider.purge(function() {
       LocalStorageProvider.purge();
       $ionicLoading.hide();
@@ -467,6 +469,7 @@ angular.module('portfolio.controllers', [])
       // Finished fetching collections
       LocalStorageProvider.saveCollectionsData(rawCols);
       LocalStorageProvider.saveDownloadProcessCompleted(1);
+      document.removeEventListener("backbutton", backButtonHandle); //removes back-button handle
 
       // Initialise base-url variable (as it may be claered if user logged out)
       PersistentStorageProvider.getBaseUrl(function(baseUrl) {
@@ -483,17 +486,34 @@ angular.module('portfolio.controllers', [])
     terminateFetcher();
     return;
   }
+  
+  //backbutton handle (to cancel when downloading)
+  var backButtonHandle = function(e) {
+      console.log('Backbutton detected');
+      e.preventDefault();
+      $scope.cancel();
+      document.removeEventListener("backbutton", backButtonHandle);
+  }
 
+  
   /**
    * MAIN ENTRY POINT
    *
    * Execute fetching by calling a recursive function
    */
   if (!LocalStorageProvider.getDownloadProcessCompleted()) {
-	fetchAndSaveArtworks(0, 0);  
+    //register back-butthon handle
+    document.addEventListener("deviceready", function() {
+      console.log('DeviceReady event detected');
+      document.addEventListener("backbutton", backButtonHandle, false);
+    }, false);
+
+    //call load function
+    fetchAndSaveArtworks(0, 0);  
   }
   else {
     //handle for user back button on download completed page
+	document.removeEventListener("backbutton", backButtonHandle); //disables back-button handle
 	$state.go('intro.complete');
   }
 
