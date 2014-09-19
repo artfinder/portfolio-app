@@ -3,7 +3,7 @@ angular.module('portfolio.services', [])
 /**
  * Artworks respository
  */
-.factory('ArtworkProvider', function artworkProviderFactory(LocalStorageProvider) {
+.factory('ArtworkProvider', function artworkProviderFactory(LocalStorageProvider, PersistentStorageProvider) {
 
     var arts = [];
 
@@ -166,6 +166,7 @@ angular.module('portfolio.services', [])
     var COLLECTIONS_RAW_INDEX_KEY = 'raw_collections';
     var COLLECTIONS_INDEX_KEY = 'collections';
     var ARTWORK_OVERLAY_FLAG = 'artwork_overlay_flag';
+    var BASE_URL = 'base_url';
 
     return {
         // Setters
@@ -187,6 +188,9 @@ angular.module('portfolio.services', [])
         setArtworkInstructionsOverlayFlag: function() {
             window.localStorage.setItem(ARTWORK_OVERLAY_FLAG, 1);
         },
+        setBaseUrl: function(data) {
+            window.localStorage.setItem(BASE_URL, data);
+        },
 
         // Getters
         getUsername: function() {
@@ -207,6 +211,9 @@ angular.module('portfolio.services', [])
         getArtworkInstructionsOverlayFlag: function() {
             return window.localStorage.getItem(ARTWORK_OVERLAY_FLAG);
         },
+        getBaseUrl: function() {
+            return window.localStorage.getItem(BASE_URL);
+        },
 
         // Removers
         removeRawArtworksData: function() {
@@ -222,6 +229,7 @@ angular.module('portfolio.services', [])
             window.localStorage.removeItem(COLLECTIONS_INDEX_KEY);
             window.localStorage.removeItem(COLLECTIONS_RAW_INDEX_KEY);
             window.localStorage.removeItem(ARTWORK_OVERLAY_FLAG);
+            window.localStorage.removeItem(BASE_URL);
         }
     };
 
@@ -234,6 +242,7 @@ angular.module('portfolio.services', [])
 
     var DATADIR = 'artp';
     var QUOTA = 50*1024*1024; // 50MB
+    var currentStorageDataDir;
 
     var requestStorageUsingFileStorageApi = function(storageType, grantedBytes, callback) {
         window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
@@ -317,6 +326,18 @@ angular.module('portfolio.services', [])
 
                 callback();
             });
+        },
+        getBaseUrl: function(callback) {
+            requestStorage(function(dir) {
+                var baseUrl = dir.toURL();
+                if (baseUrl.substr(baseUrl.length - 1) !== '/') {
+                    baseUrl += '/';
+                }
+                console.log('sets the base dir in PS::requestStorage to:');
+                console.log(baseUrl);
+
+                callback(baseUrl);
+            }, errorHandler);
         }
     };
 
