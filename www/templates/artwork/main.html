@@ -6,20 +6,14 @@
     <button class="button button-icon icon ion-information-circled medium-icon" ng-click="displayArtworkInfo();"></button>
   </ion-nav-buttons>
   <ion-content class="has-header artwork-slidebox white-bg" has-bouncing="false">
-
     <ion-slide-box on-swipe-up="loadNext();" on-swipe-down="loadPrev();">
       <ion-slide ng-repeat="image in artwork.images">
-        <div class="slidebox100h image-detail-slide c-table">
-          <div class="c-row">
-            <div class="c-cold">
-                <img ng-src="{{ baseUrl }}{{ image.fluid_large.local_file_name }}">
-            </div>
-          </div>
+        <div class="slidebox100h">
+           <div class="image-detail-slide">
+             <img ng-src="{{ baseUrl }}{{ image.fluid_large.local_file_name }}">
+           </div>
         </div>
       </ion-slide>
     </ion-slide-box>
-
-
-
   </ion-content>
 </ion-view>
