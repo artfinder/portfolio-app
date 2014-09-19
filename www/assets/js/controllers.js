@@ -22,9 +22,6 @@ angular.module('portfolio.controllers', [])
 
   $scope.submitSubscriber = function(subscriber) {
 
-    // TODO: Validate the input:
-    // - whether email address is valid
-    // - permission checkboxes are OK
     if (typeof subscriber == 'undefined' || !subscriber.email) {
       MessagesProvider.alertPopup('Please provide an email address', 'Error');
       return;
@@ -357,7 +354,6 @@ angular.module('portfolio.controllers', [])
         RemoteDataProvider.fetchBlob(img.grid_medium.url).then(function(data){
 
           // ...save grid_medium to persistent storage.
-          console.log('save grid_medium ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
           PersistentStorageProvider.saveBlob(data.data, filename('art_grid_medium', artIdx, imgIdx), function(file) {
             rawArts[artIdx].images[imgIdx].grid_medium.local_file_name = file.name;
 
@@ -365,7 +361,6 @@ angular.module('portfolio.controllers', [])
             RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
 
               // ...save fluid_large to persistent storage.
-              console.log('save fluid_large ' + artIdx + '-' + imgIdx + ', data.size: ' + data.data.size);
               PersistentStorageProvider.saveBlob(data.data, filename('art_fluid_large', artIdx, imgIdx), function(file) {
                 rawArts[artIdx].images[imgIdx].fluid_large.local_file_name = file.name;
 
@@ -468,7 +463,7 @@ angular.module('portfolio.controllers', [])
 
     } // ENDOF: if (rawCols[colIdx])
   };
-  
+
   if (rawArts === null) {
     terminateFetcher();
     return;
@@ -489,7 +484,7 @@ angular.module('portfolio.controllers', [])
     //initialise base-url variable
     PersistentStorageProvider.getBaseUrl(function(baseUrl) {
       LocalStorageProvider.setBaseUrl(baseUrl);
-  
+
       //redirect for proper screen
       $timeout(function() {
         $state.go(LocalStorageProvider.getUsername() === null ? 'intro.welcome' : 'portfolio.artworks');
