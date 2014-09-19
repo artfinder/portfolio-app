@@ -55,13 +55,19 @@ angular.module('portfolio.controllers', [])
     });
 
   };
-
 })
 
 /**
  * Handles artworks listing
  */
-.controller('ArtworksController', function($scope, $stateParams, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
+.controller('ArtworksController', function($scope, $stateParams, $ionicViewService, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
+
+  //clears the history to prevent back button (to login screen)
+  if (!window.historyCleared) {
+	console.log('Clearing back-history in ArtworksController');
+    $ionicViewService.clearHistory();
+    window.historyCleared = true;
+  }
 
   ArtworkProvider.init();
   CollectionProvider.init();
@@ -191,7 +197,7 @@ angular.module('portfolio.controllers', [])
  */
 .controller('LoginController', function($scope, $state, $ionicPopup, $ionicLoading, RemoteDataProvider, LocalStorageProvider, MessagesProvider, $ionicViewService) {
 
-  //clears history every time it is initialised
+  //clears the history to prevent back button (when user logged out)
   $ionicViewService.clearHistory();
 
   // A generic error handler for logging process
