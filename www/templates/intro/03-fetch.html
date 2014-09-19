@@ -1,16 +1,49 @@
 <ion-view>
-  <ion-content padding="true" has-bouncing="false" class="center">
-    <h3>Please wait...</h3>
-    <p>Your Artfinder portfolio is now being downloaded to the device for offline access.<br/>This may take some time...</p>
+  <ion-content padding="false" has-bouncing="false">
+    <div class="center">
+        <h2 class="main">Just a moment…</h2>
+        <div class="main-article">
+            Our robots are hard at work downloading your Artfinder Portfolio. Once finished, you’ll be able to access it offline.
+            <br><br>
+            This should take no more than 5 minutes with a good internet connection.
+        </div>
+    </div>
 
-    <p>Downloading...</p>
+    <div class="loading-circle">
+        <div class="pie">
+            <div class="clip1">
+                <div class="slice1" style="
+            -webkit-transform: rotate({{ firstAngle }}deg);
+            -moz-transform: rotate({{ firstAngle }}deg);
+            -ms-transform: rotate({{ firstAngle }}deg);
+            -o-transform: rotate({{ firstAngle }}deg);
+            transform: rotate({{ firstAngle }}deg);
+            zoom: 1;
+            "></div>
+            </div>
+            <div class="clip2">
+                <div class="slice2" id="slice2" style="
+            -webkit-transform: rotate({{ secondAngle }}deg);
+            -moz-transform: rotate({{ secondAngle }}deg);
+            -ms-transform: rotate({{ secondAngle }}deg);
+            -o-transform: rotate({{ secondAngle }}deg);
+            transform: rotate({{ secondAngle }}deg);
+            zoom: 1;
+            "></div>
+            </div>
+            <div class="center-slide">
+                <div class="status-label">
+                    <div class="small grey">fetching</div>
+                    <div class="big">{{ counter }}<span class="grey">/{{ totalRecords }}</span>
+                    </div>
+                    <div class="small">artworks</div>
 
-    <span class="icon ion-looping"></span>
-
-    <p>{{ counter }} / {{ totalRecords }}</p>
-
-    <button class="button button-calm" ng-click="cancel();">
-        Finish later
-    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="padding-page">
+        <button class="btn btn-main extra-margin-bottom" ng-click="cancel();">Finish later</button>
+    </div>
   </ion-content>
 </ion-view>

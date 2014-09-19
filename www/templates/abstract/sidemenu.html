@@ -2,27 +2,25 @@
 
   <!-- Side menu -->
   <ion-side-menu side="left">
-    <ion-header-bar class="bar-dark">
+    <ion-header-bar class="bar-blue">
       <h1 class="title">My Artfinder Portfolio</h1>
     </ion-header-bar>
-    <ion-content>
+    <ion-content class="left-menu">
       <ion-list>
         <ion-item nav-clear menu-close href="#/portfolio/artworks">
-            Artworks
+            <i class="icon ion-image"></i> Artworks
         </ion-item>
         <ion-item nav-clear menu-close href="#/portfolio/collections">
-            Collections
+            <i class="icon ion-android-promotion"></i>Collections
         </ion-item>
         <ion-item nav-clear menu-close href="#/portfolio/subscriber">
-            Add subscriber
+            <i class="icon ion-plus-circled"></i> Add a follower
         </ion-item>
-        <!--
-        <ion-item nav-clear menu-close href="#/portfolio/settings">
+        <!--ion-item nav-clear menu-close href="#/portfolio/settings">
             Settings
-        </ion-item>
-        -->
-        <ion-item nav-clear menu-close ng-click="logout()">
-            Logout
+        </ion-item-->
+        <ion-item nav-clear menu-close href="" ng-click="logout()">
+            <i class="icon ion-log-out"></i> Logout
         </ion-item>
       </ion-list>
     </ion-content>
@@ -30,7 +28,7 @@
 
   <!-- Content -->
   <ion-side-menu-content edge-drag-threshold="true">
-    <ion-nav-bar class="bar-dark">
+    <ion-nav-bar class="bar-blue">
       <!-- <ion-nav-back-button class="button-clear"><i class="icon ion-ios7-arrow-back"></i> Back</ion-nav-back-button> -->
     </ion-nav-bar>
     <ion-nav-view name="main-content">

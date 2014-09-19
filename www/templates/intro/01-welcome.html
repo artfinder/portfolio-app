@@ -1,53 +1,56 @@
 <ion-view>
-  <ion-content padding="true" has-bouncing="false">
+    <ion-content padding="false" has-bouncing="true">
 
-    <ion-slide-box>
-      <ion-slide class="center">
-        <h1 class="title">Take your art with you</h1>
+        <ion-slide-box>
+            <ion-slide class="center relative">
+                <div class="home-logo">
+                    <img src="assets/images/logo-iphone.png">
+                </div>
+                <h1 class="af-title">Carry your entire art Portfolio in your pocket.</h1>
 
-        <p><img src="assets/samples/welcome-sample.png" style="max-width: 100%;"/></p>
+                <div class="home-banner">
+                    <span>Welcome to your Artfinder Portfolio! Download your artworks to this app to show to your collectors, fans, family and friends.</span>
+                </div>
 
-        <p>Download your entire Artfinder Portfolio and take it with you to shows, exhibitions or simply show it to your family or friends!</p>
+                <div class="swipe-info">Swipe to continue »</div>
+            </ion-slide>
+            <ion-slide>
+                <div class="padding-page">
+                    <ul class="welcome-list">
+                        <li><i class="icon ion-checkmark-circled"></i><span>Download your Artfinder Portfolio and keep it in your pocket</span></li>
+                        <li><i class="icon ion-checkmark-circled"></i>Easily navigate through your artworks and collections</li>
+                        <li><i class="icon ion-checkmark-circled"></i>Instantly sign up new followers on the spot.</li>
+                    </ul>
+                </div>
+                <div class="swipe-info">Swipe to continue »</div>
+            </ion-slide>
+            <ion-slide>
 
-        <p>Swipe to continue...</p>
+                <div class="center">
+                    <h2 class="main">Let‘s get started!</h2>
+                    <p class="main-article extra-margin-bottom">Simply log into your Artfinder store and we’ll start downloading your Portfolio. <br> Please enter the following information:</p>
+                </div>
 
-      </ion-slide>
-      <ion-slide>
-        <form ng-submit="login(user);">
+                <div class="padding-page">
+                    <form ng-submit="login(user);">
+                        <div class="main-input lgn-email">
+                            <input type="text" placeholder="your e-mail" ng-model="user.slug">
+                            <div class="warning icon ion-alert-circled"></div>
+                        </div>
+                        <div class="main-input lgn-code">
+                            <input type="text" placeholder="your unique verification code" ng-model="user.code">
+                        </div>
+                        <span class="help">*You can find this in your Artist Dashboard here</span>
 
-        <span class="center">
-          <h1>Let's get started!</h1>
-          <p>Once logged into your Artfinder account we'll begin downloading your entire Portfolio.</p>
-          <p id="info-data-charges">* Data charges may apply (check with your operator)</p>
-        </span>
 
-        <div class="list list-inset">
-          <label class="item item-input item-stacked-label">
-            <span class="input-label">Username/slug</span>
-            <input type="text" placeholder="michael-jackson" ng-model="user.slug">
-          </label>
-          <label class="item item-input item-stacked-label">
-            <span class="input-label">Verification code</span>
-            <input type="text" placeholder="123456" ng-model="user.code">
-          </label>
-        </div>
+                        <div class="center">
+                            <div id="warning"></div>
+                            <button type="submit" class="btn btn-main">Login</button>
+                        </div>
+                    </form>
+                </div>
 
-        <p>You can obtain verification code in your account settings at Artfinder.com</p>
-
-        <span class="center">
-          <div id="cellular_warning"></div>
-          <p><button type="submit" class="button button-block icon-right ion-chevron-right button-calm">Login</button></p>
-          <!-- <p><a ng-href="#/intro/fetch" class="button button-block icon-right ion-chevron-right button-calm">Login</a></p> -->
-        </span>
-
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-
-        </form>
-      </ion-slide>
-
-    </ion-slide-box>
-
-  </ion-content>
+            </ion-slide>
+        </ion-slide-box>
+    </ion-content>
 </ion-view>
