@@ -149,16 +149,27 @@ ion-side-menu{
   text-align: center;
 }
 
-/*
+
 .slider {
   height: 100%;
+  min-height:100%;
 }
 
 .pane{
   height: 100%;
+  min-height:100%;
+  .changed-slide{
+    .scroll{
+      padding-bottom:65px;
+    }
+  }
+}
 
-  .scroll{
-    min-height:100%;
+.slider-slides{
+  min-height: 100%;
+
+  .slider-slide{
+    height: 100%;
   }
 }
 
@@ -166,21 +177,14 @@ ion-nav-view{
   height:100%;
   float:left;
   width:100%;
-}*/
-
-.slider-slide{
-  /* Temporary sollution */
-  padding-bottom:50px;
 }
 
 .swipe-info{
-  position: absolute;
-  bottom: 48px;
   display:block;
   text-align: center;
   color: white;
+  padding:20px 0px;
   width:100%;
-  left:0px;
 }
 
 .slider-pager{
@@ -551,6 +555,7 @@ $circleSizeHalf: 80px;
 .artworks-listing .art-item{
   border:1px #cdcdcd solid !important;
   margin-bottom:10px !important;
+  display: inline-block;
 
   img{
     max-width: 100%;
@@ -570,4 +575,22 @@ $circleSizeHalf: 80px;
     max-width: 100%;
     max-height: 100%;
   }
+}
+
+.swipe-info-artwork{
+  float: left;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  width: 430px;
+  height: 360px;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  z-index:5;
+  display: none;
 }

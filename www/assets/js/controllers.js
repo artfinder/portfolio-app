@@ -498,7 +498,8 @@ angular.module('portfolio.controllers', [])
 })
 
 .controller('SplashScreenController', function($ionicPlatform, $state, $timeout, LocalStorageProvider, PersistentStorageProvider) {
-
+    $state.go(LocalStorageProvider.getUsername() === null ? 'intro.welcome' : 'portfolio.artworks');
+        return;
   $ionicPlatform.ready(function() {
     // Initialise base-url variable
     PersistentStorageProvider.getBaseUrl(function(baseUrl) {
