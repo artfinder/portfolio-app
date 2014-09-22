@@ -133,18 +133,27 @@ ion-side-menu h1.title {
 .center {
   text-align: center; }
 
+/*
 .slider {
-  height: 100%; }
-
-.pane {
-  height: 100%; }
-  .pane .scroll {
-    height: 100%; }
-
-ion-nav-view {
   height: 100%;
-  float: left;
-  width: 100%; }
+}
+
+.pane{
+  height: 100%;
+
+  .scroll{
+    min-height:100%;
+  }
+}
+
+ion-nav-view{
+  height:100%;
+  float:left;
+  width:100%;
+}*/
+.slider-slide {
+  /* Temporary sollution */
+  padding-bottom: 50px; }
 
 .swipe-info {
   position: absolute;
