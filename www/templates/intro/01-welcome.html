@@ -28,19 +28,20 @@
 
                 <div class="center">
                     <h2 class="main">Let‘s get started!</h2>
-                    <p class="main-article extra-margin-bottom">Simply log into your Artfinder store and we’ll start downloading your Portfolio. <br> Please enter the following information:</p>
+                    <p class="main-article">Simply log into your Artfinder store and we’ll start downloading your Portfolio. <br> Please enter the following information:</p>
                 </div>
 
                 <div class="padding-page">
                     <form ng-submit="login(user);">
-                        <div class="main-input lgn-email">
-                            <input type="text" placeholder="your e-mail" ng-model="user.slug">
+                        <div class="main-input lgn-email no-margin-top">
+                            <input type="text" placeholder="your Artfinder slug" ng-model="user.slug">
                             <div class="warning icon ion-alert-circled"></div>
                         </div>
+                        <span class="help">This is last part of URL after "artfinder.com/" (i.e. michael-jackson)</span>
                         <div class="main-input lgn-code">
                             <input type="text" placeholder="your unique verification code" ng-model="user.code">
                         </div>
-                        <span class="help">*You can find this in your Artist Dashboard here</span>
+                        <span class="help">You can find this in your Artist Dashboard here</span>
 
 
                         <div class="center">
