@@ -37,7 +37,6 @@ angular.module('portfolio.controllers', [])
 
     var username = LocalStorageProvider.getUsername();
     RemoteDataProvider.subscribe(username, subscriber).then(function(data){
-      console.log(data);
       if (data.data.added > 0) {
         MessagesProvider.alertPopup('Thank you for your subscription', 'Add subscriber');
       } else {
@@ -193,7 +192,6 @@ angular.module('portfolio.controllers', [])
 
   // A generic error handler for logging process
   var errorHandler = function(err, context, callback) {
-    console.log(err);
     $ionicLoading.hide();
     var genericErrorMessage = 'An unexpected error occurred while logging in. Perhaps you are not connected to the internet?';
     if (err.status && err.status == 404) {
@@ -212,7 +210,7 @@ angular.module('portfolio.controllers', [])
           cleanup();
       }
     } else {
-      console.log('generic error', err.status, err.data.error);
+      console.log('generic error', err, err.status, err.data.error);
       MessagesProvider.alertPopup(genericErrorMessage);
       cleanup();
     }
@@ -314,7 +312,6 @@ angular.module('portfolio.controllers', [])
     }
     $scope.firstAngle = firstHalfAngle;
     $scope.secondAngle = secondHalfAngle;
-    console.log($scope.firstAngle +" - "+ $scope.secondAngle );
   };
 
   $scope.totalRecords = numOfArtworks + numOfCollections;
@@ -361,7 +358,6 @@ angular.module('portfolio.controllers', [])
     }
 
     if (rawArts[artIdx]) {
-      console.log(rawArts[artIdx]);
 
       if (imgIdx === 0) {
         $scope.counter = ++counter;
@@ -411,8 +407,7 @@ angular.module('portfolio.controllers', [])
       } // ENDOF: if (rawArts[artIdx].images[imgIdx])
 
     } else {
-
-      console.log('Artworks fetch process completed.');
+      // Finished fetching artworks
       LocalStorageProvider.saveArtworksData(rawArts);
 
       // Carry on to fetch collections
@@ -474,8 +469,6 @@ angular.module('portfolio.controllers', [])
       } // ENDOF: if (rawCols[colIdx].cover_image)
 
     } else {
-      console.log('Collection fetch process completed');
-
       // Finished fetching collections
       LocalStorageProvider.saveCollectionsData(rawCols);
 

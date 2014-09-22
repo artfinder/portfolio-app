@@ -317,7 +317,6 @@ angular.module('portfolio.services', [])
                 var dirReader = dir.createReader();
                 dirReader.readEntries(function(files) {
                     for (var i=0; i<files.length; ++i) {
-                        console.log('Removing file: ' + files[i].toURL());
                         files[i].remove(function() {}, errorHandler);
                     }
                 });
@@ -333,8 +332,7 @@ angular.module('portfolio.services', [])
                 if (baseUrl.substr(baseUrl.length - 1) !== '/') {
                     baseUrl += '/';
                 }
-                console.log('sets the base dir in PS::requestStorage to:');
-                console.log(baseUrl);
+                // console.log(baseUrl);
 
                 callback(baseUrl);
             }, errorHandler);
