@@ -121,4 +121,43 @@
       }
     }
   }
+
+
+  .swipe-info-artwork{
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    width: 430px;
+    height: 360px;
+    border-radius: 10px;
+
+    .big-icon{
+      /*color:white;
+      font-size:45px;
+      text-align: center;
+      padding:20px 0px;*/
+
+      &.top{
+        margin-top:12px;
+      }
+
+      &.hand{
+        //font-size: 60px;
+      }
+    }
+
+    .text-info-swipe{
+      /*color: white;
+      text-align: center;
+      font-size: 22px;
+      line-height: 1.3;
+      padding:10px 0px;*/
+    }
+}
+
+
 }

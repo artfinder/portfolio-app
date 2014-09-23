@@ -1,12 +1,12 @@
 <ion-view title="{{ artwork.name }}">
   <ion-nav-buttons side="left">
-    <button class="button button-icon ion-ios7-arrow-back" ng-click="goBack();"></button>
+    <button class="button button-icon fa fa-angle-left" ng-click="goBack();"></button>
   </ion-nav-buttons>
   <ion-nav-buttons side="right">
-    <button class="button button-icon icon ion-information-circled medium-icon" ng-click="displayArtworkInfo();"></button>
+    <button class="button button-icon fa fa-info-circle medium-icon" ng-click="displayArtworkInfo();"></button>
   </ion-nav-buttons>
-  <ion-content class="has-header artwork-slidebox white-bg" has-bouncing="false" scroll="false">
-    <ion-slide-box on-swipe-up="loadNext();" on-swipe-down="loadPrev();">
+  <ion-content class="has-header artwork-slidebox white-bg" has-bouncing="false" scroll="false" on-swipe-up="loadNext();" on-swipe-down="loadPrev();">
+    <ion-slide-box>
       <ion-slide ng-repeat="image in artwork.images">
         <div class="slidebox100h">
            <div class="image-detail-slide">
@@ -15,5 +15,20 @@
         </div>
       </ion-slide>
     </ion-slide-box>
+    <div class="swipe-info-artwork">
+        <div class="big-icon top">
+            <div class="fa fa-arrow-up"></div>
+        </div>
+        <div class="big-icon hand">
+            <div class="fa fa-hand-o-up"></div>
+        </div>
+        <div class="text-info-swipe">
+            Swipe up or down to view<br>
+            next/previous artwork
+        </div>
+        <div class="big-icon">
+            <div class="fa fa-arrow-down"></div>
+        </div>
+    </div>
   </ion-content>
 </ion-view>
