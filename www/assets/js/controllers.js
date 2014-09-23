@@ -498,17 +498,12 @@ angular.module('portfolio.controllers', [])
 })
 
 .controller('SplashScreenController', function($ionicPlatform, $state, $timeout, LocalStorageProvider, PersistentStorageProvider) {
-    $state.go(LocalStorageProvider.getUsername() === null ? 'intro.welcome' : 'portfolio.artworks');
-        return;
-  $ionicPlatform.ready(function() {
-    // Initialise base-url variable
+
+  $timeout(function() {
     PersistentStorageProvider.getBaseUrl(function(baseUrl) {
       LocalStorageProvider.setBaseUrl(baseUrl);
-
-      // Redirect for relevant user-facing view
-      $timeout(function() {
-        $state.go(LocalStorageProvider.getUsername() === null ? 'intro.welcome' : 'portfolio.artworks');
-      }, 2000, false);
+      $state.go(LocalStorageProvider.getUsername() === null ? 'intro.welcome' : 'portfolio.artworks');
     });
-  });
+  }, 2000, false);
+
 });

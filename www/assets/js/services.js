@@ -103,8 +103,8 @@ angular.module('portfolio.services', [])
 .factory('RemoteDataProvider', function remoteDataProvider($http) {
 
     var apikey = '19957ec02e669s11e3ab523a0800270f67ea';
-    var webservices_base_live = 'https://www.artfinder.com/api/v1/';
-    var webservices_base_staging = 'https://artfinder:1nkandcrayon@www.staging.artfinder.com/api/v1/';
+    var webservices_base_live = 'https://www.artfinder.com/portfolio/api/v1/';
+    var webservices_base_staging = 'https://artfinder:1nkandcrayon@www.staging.artfinder.com/portfolio/api/v1/';
     var webservices = {
         auth: webservices_base_live + 'artist/$USER$/',
         artworks: webservices_base_live + 'product/$USER$/',
