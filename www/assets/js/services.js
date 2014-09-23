@@ -110,7 +110,7 @@ angular.module('portfolio.services', [])
         artworks: webservices_base_live + 'product/$USER$/',
         collections: webservices_base_live + 'collection/$USER$/',
         subscription: webservices_base_staging + 'subscriber/$USER$/'
-    }
+    };
 
     var getUrl = function(url, username) {
         return url.replace('$USER$', username);
