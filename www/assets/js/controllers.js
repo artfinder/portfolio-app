@@ -387,7 +387,7 @@ angular.module('portfolio.controllers', [])
 
                 // Populate cover_image attribute for artwork
                 if (imgIdx === 0) {
-                  rawArts[artIdx].cover_image = rawArts[artIdx].images[imgIdx].fluid_large;
+                  rawArts[artIdx].cover_image = rawArts[artIdx].images[imgIdx].fluid_small;
                 }
 
                 // Carry on to the next image in the current artwork
