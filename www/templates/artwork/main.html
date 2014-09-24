@@ -1,4 +1,4 @@
-<ion-view title="{{ artwork.name }}">
+<ion-view title="{{ title }}">
   <ion-nav-buttons side="left">
     <button class="button button-icon fa fa-angle-left" ng-click="goBack();"></button>
   </ion-nav-buttons>
@@ -7,10 +7,10 @@
   </ion-nav-buttons>
   <ion-content class="has-header artwork-slidebox white-bg" has-bouncing="true" on-swipe-up="loadNext();" on-swipe-down="loadPrev();" style="height: 100%;">
     <ion-slide-box>
-      <ion-slide ng-repeat="image in artwork.images">
+      <ion-slide ng-repeat="image in images">
         <div class="slidebox100h">
            <div class="image-detail-slide">
-             <img ng-src="{{ baseUrl }}{{ image.fluid_large.local_file_name }}">
+             <img ng-src="{{ image }}">
            </div>
         </div>
       </ion-slide>

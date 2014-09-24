@@ -103,8 +103,17 @@ angular.module('portfolio.controllers', [])
   ArtworkProvider.init();
   CollectionProvider.init();
 
-  $scope.artwork = ArtworkProvider.findById($stateParams.artId);
-  $scope.baseUrl = LocalStorageProvider.getBaseUrl();
+  var artwork = ArtworkProvider.findById($stateParams.artId);
+  var baseUrl = LocalStorageProvider.getBaseUrl();
+  var artworkImages = [];
+  for (var i in artwork.images) {
+    // Compose index of image absolute paths in JS rather than in the template
+    artworkImages.push(baseUrl + artwork.images[i].fluid_large.local_file_name);
+  }
+
+  $scope.artwork = artwork;
+  $scope.title = artwork.name;
+  $scope.images = artworkImages;
 
   // Define artwork set to help browsing
   var artworkSet = [];
@@ -119,11 +128,19 @@ angular.module('portfolio.controllers', [])
   ArtworkIteratorProvider.init(artworkSet, $stateParams.artId);
 
   $scope.loadPrev = function() {
-    $state.go('artwork.artwork', {artId: ArtworkIteratorProvider.prevId()});
+    $state.go('artwork.artwork', {
+      artId: ArtworkIteratorProvider.prevId(),
+      ref: $stateParams.ref,
+      refId: $stateParams.refId
+    });
   };
 
   $scope.loadNext = function() {
-    $state.go('artwork.artwork', {artId: ArtworkIteratorProvider.nextId()});
+    $state.go('artwork.artwork', {
+      artId: ArtworkIteratorProvider.nextId(),
+      ref: $stateParams.ref,
+      refId: $stateParams.refId
+    });
   };
 
   // Handle "Back" button depending whether we're in collections or artworks context

@@ -6,10 +6,14 @@ angular.module('portfolio.services', [])
 .factory('ArtworkProvider', function artworkProviderFactory(LocalStorageProvider, PersistentStorageProvider) {
 
     var arts = [];
+    var index = [];
 
     return {
         init: function() {
             arts = LocalStorageProvider.getArtworksData();
+            arts.map(function(a){
+                index[a.id] = a;
+            });
         },
 
         all: function() {
@@ -28,11 +32,12 @@ angular.module('portfolio.services', [])
         },
 
         findById: function(id) {
-            artwork = null;
-            arts.map(function(a) {
-                if (a.id == id) artwork = a;
-            });
-            return artwork;
+            return index[id];
+            // artwork = null;
+            // arts.map(function(a) {
+            //     if (a.id == id) artwork = a;
+            // });
+            // return artwork;
         }
 
     };
@@ -168,6 +173,12 @@ angular.module('portfolio.services', [])
     var ARTWORK_OVERLAY_FLAG = 'artwork_overlay_flag';
     var BASE_URL = 'base_url';
 
+    var cache = {
+        ARTWORKS: null,
+        COLLECTIONS: null,
+        BASE_URL: null
+    };
+
     return {
         // Setters
         saveUsername: function(username) {
@@ -197,13 +208,19 @@ angular.module('portfolio.services', [])
             return window.localStorage.getItem(USER_KEY);
         },
         getArtworksData: function() {
-            return JSON.parse(window.localStorage.getItem(ARTWORKS_INDEX_KEY));
+            if (cache.ARTWORKS === null) {
+                cache.ARTWORKS = JSON.parse(window.localStorage.getItem(ARTWORKS_INDEX_KEY));
+            }
+            return cache.ARTWORKS;
         },
         getRawArtworksData: function() {
             return JSON.parse(window.localStorage.getItem(ARTWORKS_RAW_INDEX_KEY));
         },
         getCollectionsData: function() {
-            return JSON.parse(window.localStorage.getItem(COLLECTIONS_INDEX_KEY));
+            if (cache.COLLECTIONS === null) {
+                cache.COLLECTIONS = JSON.parse(window.localStorage.getItem(COLLECTIONS_INDEX_KEY));
+            }
+            return cache.COLLECTIONS;
         },
         getRawCollectionsData: function() {
             return JSON.parse(window.localStorage.getItem(COLLECTIONS_RAW_INDEX_KEY));
@@ -212,7 +229,10 @@ angular.module('portfolio.services', [])
             return window.localStorage.getItem(ARTWORK_OVERLAY_FLAG);
         },
         getBaseUrl: function() {
-            return window.localStorage.getItem(BASE_URL);
+            if (cache.BASE_URL === null) {
+                cache.BASE_URL = window.localStorage.getItem(BASE_URL);
+            }
+            return cache.BASE_URL;
         },
 
         // Removers
@@ -230,6 +250,7 @@ angular.module('portfolio.services', [])
             window.localStorage.removeItem(COLLECTIONS_RAW_INDEX_KEY);
             window.localStorage.removeItem(ARTWORK_OVERLAY_FLAG);
             window.localStorage.removeItem(BASE_URL);
+            cache.BASE_URL = null;
         }
     };
 
