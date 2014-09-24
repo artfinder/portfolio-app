@@ -11,9 +11,11 @@ angular.module('portfolio.services', [])
     return {
         init: function() {
             arts = LocalStorageProvider.getArtworksData();
-            arts.map(function(a){
-                index[a.id] = a;
-            });
+            if (arts) {
+                arts.map(function(a){
+                    index[a.id] = a;
+                });
+            }
         },
 
         all: function() {
@@ -32,7 +34,7 @@ angular.module('portfolio.services', [])
         },
 
         findById: function(id) {
-            return index[id];
+            return index.length > 0 ? index[id] : null;
             // artwork = null;
             // arts.map(function(a) {
             //     if (a.id == id) artwork = a;
