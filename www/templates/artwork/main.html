@@ -1,24 +1,11 @@
-<ion-view title="{{ artwork.name }}" ng-controller="ArtworkDetailsController">
-  <style>
-      .slider-slides{
-        height: 100%;
-      }
-      .slidebox100h{
-          height: 100%; float:left;
-          width:100%;
-      }
-
-      .image-detail-slide{
-          height: 100%;
-      }
-  </style>
+<ion-view title="{{ artwork.name }}">
   <ion-nav-buttons side="left">
     <button class="button button-icon fa fa-angle-left" ng-click="goBack();"></button>
   </ion-nav-buttons>
   <ion-nav-buttons side="right">
     <button class="button button-icon fa fa-info-circle medium-icon" ng-click="displayArtworkInfo();"></button>
   </ion-nav-buttons>
-  <ion-content class="has-header artwork-slidebox white-bg" has-bouncing="false" on-swipe-up="loadNext();" scroll="false" on-swipe-down="loadPrev();">
+  <ion-content class="has-header artwork-slidebox white-bg" has-bouncing="true" on-swipe-up="loadNext();" on-swipe-down="loadPrev();" style="height: 100%;">
     <ion-slide-box>
       <ion-slide ng-repeat="image in artwork.images">
         <div class="slidebox100h">
