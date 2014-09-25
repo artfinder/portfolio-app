@@ -75,3 +75,21 @@ At the time of writing, the application's appearance is fairly rudimentary and u
 ### Backdoor password
 
 For the purpose of quicker development and testing, the backdoor password (verification code) has been implemented to allow bypassing user's verification code. The password is `zoya`, it will be removed for production build.
+
+## Build to Android device
+
+* Enable developer options and USB debugging on the device
+* Connect the device via USB cable
+* Run `adb devices` and ensure device is authorised, output should be sth like: 
+```
+List of devices attached
+abc0fa1a2138bdef       device
+```
+ 
+* Remove Artfinder Portfolio installed on your devices from other sources - this will cause issues
+* Then create android platform and build:
+```
+cordova platform rm android
+cordova platform add android
+cordova run android
+```
