@@ -55,6 +55,10 @@ angular.module('portfolio.services', [])
 
         getPagesCount: function() {
             return Math.ceil(arts.length / itemsPerPage);
+        },
+
+        getAllArtworksCount: function() {
+            return arts.length;
         }
     };
 })

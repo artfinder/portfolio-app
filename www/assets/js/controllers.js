@@ -98,8 +98,8 @@ angular.module('portfolio.controllers', [])
   // ...or display them all
   } else {
     $scope.artworks = ArtworkProvider.getPage($scope.page);
-    $scope.artworksCount = ($scope.artworks) ? $scope.artworks.length : 0;
-    $scope.viewTitle = "My Artworks ("+$scope.artworksCount+")";
+    $scope.artworksCount = ArtworkProvider.getAllArtworksCount();
+    $scope.viewTitle = "My Artworks (" + $scope.artworksCount + ")";
   }
 })
 
