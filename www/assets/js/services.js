@@ -7,6 +7,7 @@ angular.module('portfolio.services', [])
 
     var arts = [];
     var index = [];
+    var itemsPerPage = 5;
 
     return {
         init: function() {
@@ -40,8 +41,21 @@ angular.module('portfolio.services', [])
             //     if (a.id == id) artwork = a;
             // });
             // return artwork;
-        }
+        },
+        
+        getPage: function(no) {
+        	for (var i in arts) {
+        		console.log(arts[i].cover_image.url);
+        	}
+        	
+        	
+            console.log('Page no: ' + no);
+            return arts.slice((no - 1) * itemsPerPage, no * itemsPerPage);
+        },
 
+        getPagesCount: function() {
+            return Math.ceil(arts.length / itemsPerPage);
+        }
     };
 })
 

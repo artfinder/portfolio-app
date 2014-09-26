@@ -22,5 +22,8 @@
                 <div>It appears you don't have any artworks.</div>
             </div>
         </div>
+        
+        <ion-infinite-scroll ng-if="hasMoreData == true" on-infinite="loadMore({{ page + 1 }})" distance="0%"></ion-infinite-scroll>
+        <div ng-if="hasMoreData == false">There are no more artworks</div>
       </ion-content>
 </ion-view>
