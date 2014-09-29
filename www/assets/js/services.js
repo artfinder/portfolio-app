@@ -42,15 +42,9 @@ angular.module('portfolio.services', [])
             // });
             // return artwork;
         },
-        
-        getPage: function(no) {
-        	for (var i in arts) {
-        		console.log(arts[i].cover_image.url);
-        	}
-        	
-        	
-            console.log('Page no: ' + no);
-            return arts.slice((no - 1) * itemsPerPage, no * itemsPerPage);
+
+        getPage: function(pageNum) {
+            return arts.slice((pageNum - 1) * itemsPerPage, pageNum * itemsPerPage);
         },
 
         getPagesCount: function() {

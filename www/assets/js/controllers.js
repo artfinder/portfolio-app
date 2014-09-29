@@ -67,24 +67,24 @@ angular.module('portfolio.controllers', [])
   $scope.refId = 0;
   $scope.baseUrl = LocalStorageProvider.getBaseUrl();
   $scope.page = 1;
-  $scope.hasMoreData = ArtworkProvider.getPagesCount() > $scope.page;
-  
-  $scope.loadMore = function(page) {
-    console.log('loadMore: ' + page);
-  
+
+  $scope.loadNextPage = function() {
     $timeout(function() {
-      var nextArtworks = ArtworkProvider.getPage(page);
+      var nextPage = $scope.page + 1;
+      var nextArtworks = ArtworkProvider.getPage(nextPage);
       if (nextArtworks.length > 0) {
         for (var i in nextArtworks) {
           $scope.artworks.push(nextArtworks[i]);
         }
-        $scope.page = page;
+        $scope.page = nextPage;
       }
-      $scope.hasMoreData = ArtworkProvider.getPagesCount() > $scope.page;
-    
       $scope.$broadcast('scroll.infiniteScrollComplete');
-    }, 750);
-  }
+    }, 600);
+  };
+
+  $scope.isNextPageAvailable = function() {
+    return ArtworkProvider.getPagesCount() > $scope.page;
+  };
 
   // Display artworks that belong to collection...
   if ($stateParams.collectionSlug) {
