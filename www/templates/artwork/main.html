@@ -5,7 +5,7 @@
   <ion-nav-buttons side="right">
     <button class="button button-icon fa fa-info-circle medium-icon" ng-click="displayArtworkInfo();"></button>
   </ion-nav-buttons>
-  <ion-content class="has-header artwork-slidebox white-bg" has-bouncing="true" on-swipe-up="loadNext();" on-swipe-down="loadPrev();" style="height: 100%;">
+  <ion-content class="has-header artwork-slidebox white-bg" has-bouncing="true" on-swipe-up="loadNext();" on-swipe-down="loadPrev();">
     <ion-slide-box>
       <ion-slide ng-repeat="image in images">
         <div class="slidebox100h">
