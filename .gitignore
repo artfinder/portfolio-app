@@ -4,3 +4,7 @@ platforms/*
 *sublime-project
 *sublime-workspace
 .idea
+
+# Additional files injected by Crosswalk
+www/cordova_plugins.js
+www/plugins*
