@@ -530,4 +530,20 @@ angular.module('portfolio.controllers', [])
     });
   }, 2000, false);
 
+})
+
+/**
+ * A single artwork full-screen-view controller
+ */
+.controller('ArtworkFullscreenController', function($scope, $stateParams, ArtworkProvider, LocalStorageProvider, CollectionProvider) {
+
+  ArtworkProvider.init();
+  CollectionProvider.init();
+
+  var artwork = ArtworkProvider.findById($stateParams.artId);
+  var baseUrl = LocalStorageProvider.getBaseUrl();
+  var image = artwork.images[$stateParams.index];
+  
+  $scope.imageUrl = baseUrl + image.fluid_large.local_file_name;
+console.log($scope.imageUrl);
 });

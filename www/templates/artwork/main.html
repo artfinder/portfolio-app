@@ -10,7 +10,9 @@
       <ion-slide ng-repeat="image in images">
         <div class="slidebox100h">
            <div class="image-detail-slide">
-             <img ng-src="{{ image }}">
+             <a href="#/artwork-fs/{{ artwork.id }}/{{ $index }}">
+               <img ng-src="{{ image }}">
+             </a>
            </div>
         </div>
       </ion-slide>
