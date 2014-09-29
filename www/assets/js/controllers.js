@@ -114,10 +114,7 @@ angular.module('portfolio.controllers', [])
   $scope.artwork = artwork;
   $scope.title = artwork.name;
   $scope.images = artworkImages;
-console.log('flag:', LocalStorageProvider.getArtworkInstructionsOverlayFlag());
-  $scope.hideInfoOverlay = 
-    (LocalStorageProvider.getArtworkInstructionsOverlayFlag() === null) ?
-    '' : ', hidden';
+  $scope.hideInfoOverlay = (LocalStorageProvider.getArtworkInstructionsOverlayFlag() === null) ? '' : ' hidden';
 
   // Define artwork set to help browsing
   var artworkSet = [];
@@ -182,7 +179,7 @@ console.log('flag:', LocalStorageProvider.getArtworkInstructionsOverlayFlag());
 
   $scope.dismissInstructionsOverlay = function() {
     LocalStorageProvider.setArtworkInstructionsOverlayFlag();
-    document.getElementById('artworkDisplayInfoOverlay').className += ', hidden';
+    document.getElementById('artworkDisplayInfoOverlay').className += ' hidden';
   };
 })
 
