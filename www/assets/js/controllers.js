@@ -57,7 +57,7 @@ angular.module('portfolio.controllers', [])
 /**
  * Handles artworks listing
  */
-.controller('ArtworksController', function($scope, $stateParams, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
+.controller('ArtworksController', function($scope, $stateParams, $timeout, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
 
   ArtworkProvider.init();
   CollectionProvider.init();
@@ -66,6 +66,25 @@ angular.module('portfolio.controllers', [])
   $scope.ref = 'artworks';
   $scope.refId = 0;
   $scope.baseUrl = LocalStorageProvider.getBaseUrl();
+  $scope.page = 1;
+
+  $scope.loadNextPage = function() {
+    $timeout(function() {
+      var nextPage = $scope.page + 1;
+      var nextArtworks = ArtworkProvider.getPage(nextPage);
+      if (nextArtworks.length > 0) {
+        for (var i in nextArtworks) {
+          $scope.artworks.push(nextArtworks[i]);
+        }
+        $scope.page = nextPage;
+      }
+      $scope.$broadcast('scroll.infiniteScrollComplete');
+    }, 600);
+  };
+
+  $scope.isNextPageAvailable = function() {
+    return ArtworkProvider.getPagesCount() > $scope.page;
+  };
 
   // Display artworks that belong to collection...
   if ($stateParams.collectionSlug) {
@@ -78,9 +97,9 @@ angular.module('portfolio.controllers', [])
 
   // ...or display them all
   } else {
-    $scope.artworks = ArtworkProvider.all();
-    $scope.artworksCount = ($scope.artworks) ? $scope.artworks.length : 0;
-    $scope.viewTitle = "My Artworks ("+$scope.artworksCount+")";
+    $scope.artworks = ArtworkProvider.getPage($scope.page);
+    $scope.artworksCount = ArtworkProvider.getAllArtworksCount();
+    $scope.viewTitle = "My Artworks (" + $scope.artworksCount + ")";
   }
 })
 

@@ -22,5 +22,8 @@
                 <div>It appears you don't have any artworks.</div>
             </div>
         </div>
+
+        <ion-infinite-scroll ng-if="isNextPageAvailable();" on-infinite="loadNextPage();" distance="0%"></ion-infinite-scroll>
+        <div ng-if="isNextPageAvailable() === false;" class="center">This is the end.</div>
       </ion-content>
 </ion-view>
