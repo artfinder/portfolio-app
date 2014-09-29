@@ -114,6 +114,10 @@ angular.module('portfolio.controllers', [])
   $scope.artwork = artwork;
   $scope.title = artwork.name;
   $scope.images = artworkImages;
+console.log('flag:', LocalStorageProvider.getArtworkInstructionsOverlayFlag());
+  $scope.hideInfoOverlay = 
+    (LocalStorageProvider.getArtworkInstructionsOverlayFlag() === null) ?
+    '' : ', hidden';
 
   // Define artwork set to help browsing
   var artworkSet = [];
@@ -176,23 +180,10 @@ angular.module('portfolio.controllers', [])
     window.plugins.socialsharing.share('Hi there, check out my artwork!', null, artworkUrl, 'http://www.artfinder.com');
   };
 
-  /**
-   * Instructions overlay that uses $ionicLoading component has been disabled
-   * as it caused massive performance issue on a device (not in a browser window
-   * tough). Needs different solution.
-   */
-  // $scope.dismissInstructionsOverlay = function() {
-  //   LocalStorageProvider.setArtworkInstructionsOverlayFlag();
-  //   $ionicLoading.hide();
-  // };
-
-  // Display swiping instructions overlay if not previously displayed
-  // if (LocalStorageProvider.getArtworkInstructionsOverlayFlag() === null) {
-  //   $ionicLoading.show({
-  //     templateUrl: 'templates/artwork/info-overlay.html'
-  //   });
-  // }
-
+  $scope.dismissInstructionsOverlay = function() {
+    LocalStorageProvider.setArtworkInstructionsOverlayFlag();
+    document.getElementById('artworkDisplayInfoOverlay').className += ', hidden';
+  };
 })
 
 .controller('IntroController', function($scope) {
