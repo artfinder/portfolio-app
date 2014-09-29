@@ -253,6 +253,8 @@ angular.module('portfolio.services', [])
             window.localStorage.removeItem(ARTWORK_OVERLAY_FLAG);
             window.localStorage.removeItem(BASE_URL);
             cache.BASE_URL = null;
+            cache.ARTWORKS = null;
+            cache.COLLECTIONS = null;
         }
     };
 
