@@ -1,5 +1,6 @@
-<ion-scroll zooming="true" direction="xy" locking="false">
-  <div style="width: {{image.width}}px; height: {{image.height}}px;
-    background: url('{{ image.imageUrl }}') repeat" ng-click="goBack()"
-  ></div>
-</ion-scroll>
+<!-- zooming="true" minZoom="'0.01'" maxZoom="'50.0'" zoomLevel="'0.3'" -->
+<ion-view direction="xy" locking="false"
+  style="text-align: center;"
+>
+  <img id="fullscrImage" src="{{ image.imageUrl }}" ng-click="goBack()" style="max-height: 100%;"/>
+</ion-view>

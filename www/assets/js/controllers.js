@@ -535,7 +535,7 @@ angular.module('portfolio.controllers', [])
 /**
  * A single artwork full-screen-view controller
  */
-.controller('ArtworkFullscreenController', function($scope, $state, $stateParams, $ionicViewService, ArtworkProvider, LocalStorageProvider, CollectionProvider) {
+.controller('ArtworkFullscreenController', function($scope, $state, $stateParams, $ionicViewService, $ionicPlatform, ArtworkProvider, LocalStorageProvider, CollectionProvider) {
 
   ArtworkProvider.init();
   CollectionProvider.init();
@@ -544,9 +544,54 @@ angular.module('portfolio.controllers', [])
   var baseUrl = LocalStorageProvider.getBaseUrl();
   var image = artwork.images[$stateParams.index].fluid_large;
   image.imageUrl = baseUrl + image.local_file_name;
+  imageElement = document.getElementById('fullscrImage');
   $scope.image = image;
   
   $scope.goBack = function() {
+	//ionic.offGesture('pinch', pinchGestureHandle, imageElement);
     $ionicViewService.getBackView().go();
   }
+  
+  pinchGestureHandle = function(e) {
+	console.log('pinch event');
+	console.log(e.gesture.deltaX);
+	console.log(e.gesture.deltaY);
+	console.log(e.gesture.deltaTime);
+	console.log(e.gesture.scale);
+	console.log(e.gesture.distance);
+  }
+  
+  //registers pinch
+  ionic.onGesture('pinch', pinchGestureHandle, imageElement);
+  
+  //tmp
+  ionic.onGesture('swipe', function(a, b, c, d) {
+    console.log('swipe event', a, b, c, d);
+  }, imageElement);
+  
+  /*
+  //changing initial scale of the ion-scale div
+  $ionicPlatform.ready(function() {
+	  console.log('start');
+	  
+	  var div = document.getElementsByClassName('scroll');
+	  if (div[0]) {
+		//document.getElementsByClassName('scroll')[0].style.webkitTransform = 'translate3d(0px, 0px, 0px) scale(0.3'
+		console.log('in-if');
+	    div = div[0];
+	    console.log('div');
+	    var cssTransform = div.style.webkitTransform;
+	    console.log('style');
+	    console.log(cssTransform);
+	    console.log(cssTransform.length);
+	    console.log('document.body.clientHeight: ', document.body.clientHeight, ', image: ', image.width);
+	    cssTransform = 'translate3d(0px, 0px, 0px) scale(' + document.body.clientHeight / image.width + ')';
+	    console.log('sets the trans to:');
+	    console.log(cssTransform);
+	    div.style.webkitTransform = cssTransform;
+	    console.log('end');
+	  }
+	  else { console.log('not found div[0]'); } 
+  });
+  */ 
 });
