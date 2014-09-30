@@ -535,15 +535,18 @@ angular.module('portfolio.controllers', [])
 /**
  * A single artwork full-screen-view controller
  */
-.controller('ArtworkFullscreenController', function($scope, $stateParams, ArtworkProvider, LocalStorageProvider, CollectionProvider) {
+.controller('ArtworkFullscreenController', function($scope, $state, $stateParams, $ionicViewService, ArtworkProvider, LocalStorageProvider, CollectionProvider) {
 
   ArtworkProvider.init();
   CollectionProvider.init();
 
   var artwork = ArtworkProvider.findById($stateParams.artId);
   var baseUrl = LocalStorageProvider.getBaseUrl();
-  var image = artwork.images[$stateParams.index];
+  var image = artwork.images[$stateParams.index].fluid_large;
+  image.imageUrl = baseUrl + image.local_file_name;
+  $scope.image = image;
   
-  $scope.imageUrl = baseUrl + image.fluid_large.local_file_name;
-console.log($scope.imageUrl);
+  $scope.goBack = function() {
+    $ionicViewService.getBackView().go();
+  }
 });

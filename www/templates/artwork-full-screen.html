@@ -1,3 +1,5 @@
-<ion-scroll zooming="true" direction="xy">
-  <img src="{{ imageUrl }}">
+<ion-scroll zooming="true" direction="xy" locking="false">
+  <div style="width: {{image.width}}px; height: {{image.height}}px;
+    background: url('{{ image.imageUrl }}') repeat" ng-click="goBack()"
+  ></div>
 </ion-scroll>
