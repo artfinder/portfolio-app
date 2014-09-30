@@ -2,10 +2,13 @@
   <ion-nav-buttons side="left">
     <button class="button button-icon fa fa-angle-left" ng-click="goBack();"></button>
   </ion-nav-buttons>
+  <style>
+      .scroll{height: 100%;}
+  </style>
   <ion-nav-buttons side="right">
     <button class="button button-icon fa fa-info-circle medium-icon" ng-click="displayArtworkInfo();"></button>
   </ion-nav-buttons>
-  <ion-content class="has-header artwork-slidebox white-bg" has-bouncing="true" on-swipe-up="loadNext();" on-swipe-down="loadPrev();">
+  <ion-content class="has-header artwork-slidebox white-bg" has-bouncing="true" on-swipe-up="loadNext();" on-swipe-down="loadPrev();" ng-click="dismissInstructionsOverlay()">
     <ion-slide-box>
       <ion-slide ng-repeat="image in images">
         <div class="slidebox100h">
@@ -15,7 +18,7 @@
         </div>
       </ion-slide>
     </ion-slide-box>
-    <div id="artworkDisplayInfoOverlay" class="swipe-info-artwork{{ hideInfoOverlay }}" ng-click="dismissInstructionsOverlay()">
+    <div id="artworkDisplayInfoOverlay" class="swipe-info-artwork{{ hideInfoOverlay }}">
         <div class="big-icon top">
             <div class="fa fa-arrow-up"></div>
         </div>

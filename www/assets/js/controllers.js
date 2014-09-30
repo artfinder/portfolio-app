@@ -267,7 +267,7 @@ angular.module('portfolio.controllers', [])
   // Login entry point
   $scope.login = function(user) {
     if (!user || !user.slug) {
-      MessagesProvider.alertPopup('Please provide email');
+      MessagesProvider.alertPopup('Please provide SLUG');
       return false;
     }
 

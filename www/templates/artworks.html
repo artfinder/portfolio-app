@@ -24,6 +24,6 @@
         </div>
 
         <ion-infinite-scroll ng-if="isNextPageAvailable();" on-infinite="loadNextPage();" distance="0%"></ion-infinite-scroll>
-        <div ng-if="isNextPageAvailable() === false;" class="center">This is the end.</div>
+        <div ng-if="isNextPageAvailable() === false;" class="center"></div>
       </ion-content>
 </ion-view>
