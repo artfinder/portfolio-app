@@ -83,7 +83,7 @@ angular.module('portfolio.controllers', [])
   };
 
   $scope.isNextPageAvailable = function() {
-    return ArtworkProvider.getPagesCount() > $scope.page;
+    return (!$stateParams.collectionSlug && ArtworkProvider.getPagesCount() > $scope.page);
   };
 
   // Display artworks that belong to collection...
