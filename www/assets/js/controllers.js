@@ -254,6 +254,16 @@ angular.module('portfolio.controllers', [])
     $state.go('intro.fetch');
   };
 
+  // A workaround function for launching artbitrary URLs in system's default
+  // browser rahter than within the application itself
+  // NOTE: Requires org.apache.cordova.inappbrowser plugin
+  // Reference:
+  // http://forum.ionicframework.com/t/how-to-opening-links-in-content-in-system-browser-instead-of-cordova-browser-wrapper/2427
+  // http://intown.biz/2014/03/30/cordova-ionic-links-in-browser/
+  $scope.openExternalUrl = function(url) {
+    window.open(url, '_system');
+  };
+
   // Login entry point
   $scope.login = function(user) {
     if (!user || !user.slug) {
