@@ -234,7 +234,10 @@ angular.module('portfolio.controllers', [])
           cleanup();
       }
     } else {
-      console.log('generic error', err, err.status, err.data.error);
+      console.log('Generic error');
+      console.log(err);
+      console.log(err.status);
+      console.log(err.data.error);
       MessagesProvider.alertPopup(genericErrorMessage);
       cleanup();
     }
