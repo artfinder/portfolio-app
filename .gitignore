@@ -9,3 +9,4 @@ platforms/*
 www/cordova_plugins.js
 www/cordova.js
 www/plugins*
+xwalk*
