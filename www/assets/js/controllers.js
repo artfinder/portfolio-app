@@ -578,7 +578,7 @@ angular.module('portfolio.controllers', [])
 
   $timeout(function() {
     PersistentStorageProvider.getBaseUrl(function(baseUrl) {
-      LocalStorageProvider.setBaseUrl(baseUrl);
+      LocalStorageProvider.saveBaseUrl(baseUrl);
       $state.go(LocalStorageProvider.getUsername() === null ? 'intro.welcome' : 'portfolio.artworks');
     });
   }, 2000, false);
