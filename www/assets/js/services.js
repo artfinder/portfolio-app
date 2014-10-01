@@ -187,6 +187,7 @@ angular.module('portfolio.services', [])
     var COLLECTIONS_INDEX_KEY = 'collections';
     var ARTWORK_OVERLAY_FLAG = 'artwork_overlay_flag';
     var BASE_URL = 'base_url';
+    var DOWNLOAD_PROCESS_COMPLETED = 'download_process_completed';
 
     var cache = {
         ARTWORKS: null,
@@ -216,6 +217,9 @@ angular.module('portfolio.services', [])
         },
         setBaseUrl: function(data) {
             window.localStorage.setItem(BASE_URL, data);
+        },
+        saveDownloadProcessCompleted: function(data) {
+            window.localStorage.setItem(DOWNLOAD_PROCESS_COMPLETED, data);
         },
 
         // Getters
@@ -249,6 +253,9 @@ angular.module('portfolio.services', [])
             }
             return cache.BASE_URL;
         },
+        getDownloadProcessCompleted: function() {
+           return window.localStorage.getItem(DOWNLOAD_PROCESS_COMPLETED);
+        },
 
         // Removers
         removeRawArtworksData: function() {
@@ -265,6 +272,7 @@ angular.module('portfolio.services', [])
             window.localStorage.removeItem(COLLECTIONS_RAW_INDEX_KEY);
             window.localStorage.removeItem(ARTWORK_OVERLAY_FLAG);
             window.localStorage.removeItem(BASE_URL);
+            window.localStorage.removeItem(DOWNLOAD_PROCESS_COMPLETED);
             cache.BASE_URL = null;
             cache.ARTWORKS = null;
             cache.COLLECTIONS = null;

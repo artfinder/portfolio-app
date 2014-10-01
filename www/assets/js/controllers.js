@@ -60,7 +60,14 @@ angular.module('portfolio.controllers', [])
 /**
  * Handles artworks listing
  */
-.controller('ArtworksController', function($scope, $stateParams, $timeout, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
+.controller('ArtworksController', function($scope, $stateParams, $timeout, $ionicViewService, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
+
+  //clears the history to prevent back button (to login screen)
+  if (!window.historyCleared) {
+    console.log('Clearing back-history in ArtworksController');
+    $ionicViewService.clearHistory();
+    window.historyCleared = true;
+  }
 
   ArtworkProvider.init();
   CollectionProvider.init();
@@ -215,7 +222,10 @@ angular.module('portfolio.controllers', [])
  * - saves data into local storage
  * - redirects to the next step (FetcherController)
  */
-.controller('LoginController', function($scope, $state, $ionicPopup, $ionicLoading, RemoteDataProvider, LocalStorageProvider, MessagesProvider) {
+.controller('LoginController', function($scope, $state, $ionicPopup, $ionicLoading, $ionicViewService, RemoteDataProvider, LocalStorageProvider, MessagesProvider) {
+
+  //clears the history to prevent back button (when user logged out)
+  $ionicViewService.clearHistory();
 
   // A generic error handler for logging process
   var errorHandler = function(err, context, callback) {
@@ -378,6 +388,8 @@ angular.module('portfolio.controllers', [])
   };
 
   var terminateFetcher = function() {
+    document.removeEventListener("backbutton", backButtonHandle); //removes listener
+
     PersistentStorageProvider.purge(function() {
       LocalStorageProvider.purge();
       $ionicLoading.hide();
@@ -511,6 +523,8 @@ angular.module('portfolio.controllers', [])
     } else {
       // Finished fetching collections
       LocalStorageProvider.saveCollectionsData(rawCols);
+      LocalStorageProvider.saveDownloadProcessCompleted(1);
+      document.removeEventListener("backbutton", backButtonHandle); //removes back-button handle
 
       // Initialise base-url variable (as it may be claered if user logged out)
       PersistentStorageProvider.getBaseUrl(function(baseUrl) {
@@ -527,13 +541,35 @@ angular.module('portfolio.controllers', [])
     terminateFetcher();
     return;
   }
+  
+  //backbutton handle (to cancel when downloading)
+  var backButtonHandle = function(e) {
+    console.log('Backbutton detected');
+    e.preventDefault();
+    $scope.cancel();
+    document.removeEventListener("backbutton", backButtonHandle);
+  }
+
 
   /**
    * MAIN ENTRY POINT
    *
    * Execute fetching by calling a recursive function
    */
-  fetchAndSaveArtworks(0, 0, 'artworks');
+  if (!LocalStorageProvider.getDownloadProcessCompleted()) {
+    //register back-butthon handle
+    document.addEventListener("deviceready", function() {
+      document.addEventListener("backbutton", backButtonHandle, false);
+    }, false);
+
+    //call load function
+    fetchAndSaveArtworks(0, 0);  
+  }
+  else {
+    //handle for user back button on download completed page
+    document.removeEventListener("backbutton", backButtonHandle); //disables back-button handle
+    $state.go('intro.complete');
+  }
 
 })
 
