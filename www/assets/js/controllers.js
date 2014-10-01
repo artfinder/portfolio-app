@@ -52,6 +52,9 @@ angular.module('portfolio.controllers', [])
 
   };
 
+  $scope.menuGo = function(url) {
+    $state.go(url, null, { reload: true });
+  }
 })
 
 /**

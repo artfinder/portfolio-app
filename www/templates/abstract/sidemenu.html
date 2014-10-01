@@ -7,19 +7,19 @@
     </ion-header-bar>
     <ion-content class="left-menu">
       <ion-list>
-        <ion-item nav-clear menu-close href="#/portfolio/artworks">
+        <ion-item href="" ng-click="menuGo('portfolio.artworks');">
             <i class="icon ion-image"></i> Artworks
         </ion-item>
-        <ion-item nav-clear menu-close href="#/portfolio/collections">
+        <ion-item href="" ng-click="menuGo('portfolio.collections');">
             <i class="icon ion-android-promotion"></i>Collections
         </ion-item>
-        <ion-item nav-clear menu-close href="#/portfolio/subscriber">
+        <ion-item href="" ng-click="menuGo('portfolio.subscriber');">
             <i class="icon ion-plus-circled"></i> Add a follower
         </ion-item>
         <!--ion-item nav-clear menu-close href="#/portfolio/settings">
             Settings
         </ion-item-->
-        <ion-item nav-clear menu-close href="" ng-click="logout()">
+        <ion-item menu-close href="" ng-click="logout()">
             <i class="icon ion-log-out"></i> Logout
         </ion-item>
       </ion-list>
