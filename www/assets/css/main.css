@@ -506,3 +506,7 @@ h2.main {
 .hidden {
 	display: none;
 }
+
+.fullscreen-box {
+	text-align: center;
+}

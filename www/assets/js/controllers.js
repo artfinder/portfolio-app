@@ -544,38 +544,26 @@ angular.module('portfolio.controllers', [])
   var baseUrl = LocalStorageProvider.getBaseUrl();
   var image = artwork.images[$stateParams.index].fluid_large;
   image.imageUrl = baseUrl + image.local_file_name;
-  imageElement = document.getElementById('fullscrImage');
+  image.ratio = image.width / image.height;
   $scope.image = image;
-  var displayElement; //cache for image
-  var eventLastDeltaTime, eventStartVal;
   
+  //calculate "to display" div dimensions
+  image.startWidth = document.body.clientWidth * 2;
+  image.startHeight = Math.floor(image.startWidth / image.ratio);
+  if (image.startHeight > image.startWidth && image.startHeight > (document.body.clientHeight * 2)) {
+	  //if image is more tall than wide, scale it to display height as 100%
+	  image.startHeight = document.body.clientHeight * 2;
+	  image.startWidth = Math.floor(image.startHeight * image.ratio);
+  }
+  //and set initial zoom
+  setTimeout(function() {
+    $ionicScrollDelegate.zoomTo(0.5);
+  }, 10);
+
   $scope.goBack = function() {
 	//ionic.offGesture('pinch', pinchGestureHandle, imageElement);
     $ionicViewService.getBackView().go();
   }
-  
-  getDisplayElement = function() {
-    if (!displayElement) {
-      displayElement = document.getElementById('fullscrImage');
-    }
-    return displayElement;
-  }
-  
-  pinchGestureHandle = function(e) {
-	var img = getDisplayElement(), calcVal;
-	
-	if (!eventLastDeltaTime || e.gesture.deltaTime < eventLastDeltaTime) {
-		calcVal = eventStartVal = parseFloat(img.style.width);
-	}
-	else {
-		calcVal = eventStartVal;
-	}
-	eventLastDeltaTime = e.gesture.deltaTime
-	img.style.width = (calcVal * e.gesture.scale) + '%';
-  }
-  
-  //registers pinch
-  ionic.onGesture('pinch', pinchGestureHandle, imageElement);
-  
+
   
 });
