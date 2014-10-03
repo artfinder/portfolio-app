@@ -64,7 +64,6 @@ angular.module('portfolio.controllers', [])
 
   //clears the history to prevent back button (to login screen)
   if (!window.historyCleared) {
-    console.log('Clearing back-history in ArtworksController');
     $ionicViewService.clearHistory();
     window.historyCleared = true;
   }
@@ -96,7 +95,6 @@ angular.module('portfolio.controllers', [])
 	var baseUrl = LocalStorageProvider.getBaseUrl();
 	
     for (var i in artworks) {
-      console.log(i);
       artworks[i].imageOpenHref = '#/artwork/' + artworks[i].id + '/' + ref + '/' + refId;
       artworks[i].imageSrc = baseUrl + artworks[i].cover_image.local_file_name;
     }
