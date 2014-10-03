@@ -60,7 +60,7 @@ angular.module('portfolio.controllers', [])
 /**
  * Handles artworks listing
  */
-.controller('ArtworksController', function($scope, $stateParams, $timeout, $ionicViewService, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
+.controller('ArtworksController', function($scope, $state, $stateParams, $timeout, $ionicViewService, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
 
   //clears the history to prevent back button (to login screen)
   if (!window.historyCleared) {
@@ -90,12 +90,20 @@ angular.module('portfolio.controllers', [])
   $scope.isNextPageAvailable = function() {
     return (!$stateParams.collectionSlug && ArtworkProvider.getPagesCount() > $scope.page);
   };
+  
+  $scope.openArtwork = function(artId) {
+    $state.go('artwork.artwork', {
+      artId: artId,
+      ref: ($stateParams.collectionSlug) ? $stateParams.collectionSlug : 'artworks',
+      refId: ($stateParams.refId) ? $stateParams.refId : 0 
+    }, { reload: true });
+  };
 
   var handleTemplateData = function(artworks, ref, refId) {
 	var baseUrl = LocalStorageProvider.getBaseUrl();
 	
     for (var i in artworks) {
-      artworks[i].imageOpenHref = '#/artwork/' + artworks[i].id + '/' + ref + '/' + refId;
+      //artworks[i].imageOpenHref = '#/artwork/' + artworks[i].id + '/' + ref + '/' + refId; //not necessary due to openArtwork() func
       artworks[i].imageSrc = baseUrl + artworks[i].cover_image.local_file_name;
     }
     return artworks;
