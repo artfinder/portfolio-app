@@ -84,6 +84,11 @@ angular.module('portfolio.routes', [])
       }
     })
 
+    .state('artwork-fullscreen', {
+      url: '/artwork-fs/:artId/:index',
+      templateUrl: 'templates/artwork-full-screen.html',
+      controller: 'ArtworkFullscreenController'
+    })
 
     /*
      * User introduction/login routes

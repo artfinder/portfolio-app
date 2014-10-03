@@ -582,4 +582,40 @@ angular.module('portfolio.controllers', [])
     });
   }, 2000, false);
 
+})
+
+/**
+ * A single artwork full-screen-view controller
+ */
+.controller('ArtworkFullscreenController', function($scope, $state, $stateParams, $ionicViewService, $ionicPlatform, $ionicScrollDelegate, ArtworkProvider, LocalStorageProvider, CollectionProvider) {
+
+  ArtworkProvider.init();
+  CollectionProvider.init();
+
+  var artwork = ArtworkProvider.findById($stateParams.artId);
+  var baseUrl = LocalStorageProvider.getBaseUrl();
+  var image = artwork.images[$stateParams.index].fluid_large;
+  image.imageUrl = baseUrl + image.local_file_name;
+  image.ratio = image.width / image.height;
+  $scope.image = image;
+  
+  //calculate "to display" div dimensions
+  image.startWidth = document.body.clientWidth * 2;
+  image.startHeight = Math.floor(image.startWidth / image.ratio);
+  if (image.startHeight > image.startWidth && image.startHeight > (document.body.clientHeight * 2)) {
+	  //if image is more tall than wide, scale it to display height as 100%
+	  image.startHeight = document.body.clientHeight * 2;
+	  image.startWidth = Math.floor(image.startHeight * image.ratio);
+  }
+  //and set initial zoom
+  setTimeout(function() {
+    $ionicScrollDelegate.zoomTo(0.5);
+  }, 10);
+
+  $scope.goBack = function() {
+	//ionic.offGesture('pinch', pinchGestureHandle, imageElement);
+    $ionicViewService.getBackView().go();
+  }
+
+  
 });
