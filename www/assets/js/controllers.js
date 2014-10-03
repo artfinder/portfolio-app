@@ -72,16 +72,12 @@ angular.module('portfolio.controllers', [])
   ArtworkProvider.init();
   CollectionProvider.init();
 
-  $scope.viewTitle = 'My Artworks ('+12+')';
-  $scope.ref = 'artworks';
-  $scope.refId = 0;
-  $scope.baseUrl = LocalStorageProvider.getBaseUrl();
   $scope.page = 1;
 
   $scope.loadNextPage = function() {
     $timeout(function() {
       var nextPage = $scope.page + 1;
-      var nextArtworks = ArtworkProvider.getPage(nextPage);
+      var nextArtworks = handleTemplateData(ArtworkProvider.getPage(nextPage), 'artworks', 0);
       if (nextArtworks.length > 0) {
         for (var i in nextArtworks) {
           $scope.artworks.push(nextArtworks[i]);
@@ -96,21 +92,35 @@ angular.module('portfolio.controllers', [])
     return (!$stateParams.collectionSlug && ArtworkProvider.getPagesCount() > $scope.page);
   };
 
+  var handleTemplateData = function(artworks, ref, refId) {
+	var baseUrl = LocalStorageProvider.getBaseUrl();
+	
+    for (var i in artworks) {
+      console.log(i);
+      artworks[i].imageOpenHref = '#/artwork/' + artworks[i].id + '/' + ref + '/' + refId;
+      artworks[i].imageSrc = baseUrl + artworks[i].cover_image.local_file_name;
+    }
+    return artworks;
+  };
+  
   // Display artworks that belong to collection...
   if ($stateParams.collectionSlug) {
     var collection = CollectionProvider.findBySlug($stateParams.collectionSlug);
-    $scope.artworks = ArtworkProvider.allByCollection(collection);
+    $scope.artworks = handleTemplateData(ArtworkProvider.allByCollection(collection),
+    		'collection', collection.slug
+    		);
     $scope.artworksCount = ($scope.artworks) ? $scope.artworks.length : 0;
     $scope.viewTitle = collection.name+" ("+$scope.artworksCount+")";
-    $scope.ref = 'collection';
-    $scope.refId = collection.slug;
-
   // ...or display them all
   } else {
-    $scope.artworks = ArtworkProvider.getPage($scope.page);
+    $scope.artworks = handleTemplateData(ArtworkProvider.getPage($scope.page),
+    		'artworks', 0
+    		);
     $scope.artworksCount = ArtworkProvider.getAllArtworksCount();
     $scope.viewTitle = "My Artworks (" + $scope.artworksCount + ")";
   }
+
+
 })
 
 /**
