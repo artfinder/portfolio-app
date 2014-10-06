@@ -191,8 +191,8 @@ angular.module('portfolio.controllers', [])
 
   // Handle "Back" button depending whether we're in collections or artworks context
   $scope.goBack = function() {
-    if ($stateParams.ref == 'collection') {
-      $state.go('portfolio.bycollection', {collectionSlug: $stateParams.refId});
+    if ($stateParams.ref !== 'artworks') {
+      $state.go('portfolio.bycollection', {collectionSlug: $stateParams.ref});
     } else {
       $state.go('portfolio.artworks');
     }
@@ -629,7 +629,6 @@ angular.module('portfolio.controllers', [])
   }, 10);
 
   $scope.goBack = function() {
-	//ionic.offGesture('pinch', pinchGestureHandle, imageElement);
     $ionicViewService.getBackView().go();
   }
 
