@@ -6,7 +6,7 @@
         <div class="artworks-listing">
             <div class="artwork-box" ng-repeat="art in artworks">
                 <div class="art-item">
-                    <a on-tap="openArtwork({{ art.id }});">
+                    <a id="artwork{{ art.id }}" on-tap="openArtwork({{ art.id }});">
                         <img ng-src="{{ art.imageSrc }}">
                     </a>
                     <div class="artwork-description">

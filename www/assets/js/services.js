@@ -53,6 +53,22 @@ angular.module('portfolio.services', [])
 
         getAllArtworksCount: function() {
             return arts.length;
+        },
+        
+        getPageRange: function(startPage, stopPage) {
+            return arts.slice((startPage - 1) * itemsPerPage, stopPage * itemsPerPage);
+        },
+        
+        getItemsRange: function(startNo, stopNo) {
+            return arts.slice(startNo, stopNo);
+        },
+        
+        getNextPageItems: function(currentItemPos) {
+            return arts.slice(currentItemPos, currentItemPos + itemsPerPage);
+        },
+        
+        getItemsPerPageCount: function() {
+           return itemsPerPage;
         }
     };
 })
@@ -378,7 +394,6 @@ angular.module('portfolio.services', [])
                 if (baseUrl.substr(baseUrl.length - 1) !== '/') {
                     baseUrl += '/';
                 }
-                // console.log(baseUrl);
 
                 callback(baseUrl);
             }, errorHandler);

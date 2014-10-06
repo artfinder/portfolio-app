@@ -60,7 +60,7 @@ angular.module('portfolio.controllers', [])
 /**
  * Handles artworks listing
  */
-.controller('ArtworksController', function($scope, $state, $stateParams, $timeout, $ionicViewService, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
+.controller('ArtworksController', function($scope, $state, $stateParams, $timeout, $ionicViewService, $ionicScrollDelegate, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
 
   //clears the history to prevent back button (to login screen)
   if (!window.historyCleared) {
@@ -71,24 +71,24 @@ angular.module('portfolio.controllers', [])
   ArtworkProvider.init();
   CollectionProvider.init();
 
-  $scope.page = 1;
+  var displayedItems = sessionStorage.getItem('displayedItems') ? 
+    sessionStorage.getItem('displayedItems') : ArtworkProvider.getItemsPerPageCount(); 
 
   $scope.loadNextPage = function() {
     $timeout(function() {
-      var nextPage = $scope.page + 1;
-      var nextArtworks = handleTemplateData(ArtworkProvider.getPage(nextPage), 'artworks', 0);
+      var nextArtworks = handleTemplateData(ArtworkProvider.getNextPageItems($scope.artworks.length), 'artworks', 0);
       if (nextArtworks.length > 0) {
         for (var i in nextArtworks) {
           $scope.artworks.push(nextArtworks[i]);
         }
-        $scope.page = nextPage;
       }
       $scope.$broadcast('scroll.infiniteScrollComplete');
+      sessionStorage.setItem('displayedItems', $scope.artworks.length);
     }, 600);
   };
 
   $scope.isNextPageAvailable = function() {
-    return (!$stateParams.collectionSlug && ArtworkProvider.getPagesCount() > $scope.page);
+    return (!$stateParams.collectionSlug && ArtworkProvider.getAllArtworksCount() > $scope.artworks.length);
   };
   
   $scope.openArtwork = function(artId) {
@@ -119,14 +119,24 @@ angular.module('portfolio.controllers', [])
     $scope.viewTitle = collection.name+" ("+$scope.artworksCount+")";
   // ...or display them all
   } else {
-    $scope.artworks = handleTemplateData(ArtworkProvider.getPage($scope.page),
+    $scope.artworks = handleTemplateData(ArtworkProvider.getItemsRange(0, displayedItems),
     		'artworks', 0
     		);
     $scope.artworksCount = ArtworkProvider.getAllArtworksCount();
     $scope.viewTitle = "My Artworks (" + $scope.artworksCount + ")";
   }
 
-
+  //scroll to element when artwork id parameter is passed
+  if ($stateParams.artId) {
+    $timeout(function() {
+      var scrollTo = ionic.DomUtil.getPositionInParent(
+        document.getElementById('artwork' + $stateParams.artId)
+      );
+      if (scrollTo.top) {
+        $ionicScrollDelegate.scrollTo(0, scrollTo.top, false);
+      }
+	}, 10);
+  }
 })
 
 /**
@@ -192,9 +202,9 @@ angular.module('portfolio.controllers', [])
   // Handle "Back" button depending whether we're in collections or artworks context
   $scope.goBack = function() {
     if ($stateParams.ref !== 'artworks') {
-      $state.go('portfolio.bycollection', {collectionSlug: $stateParams.ref});
+      $state.go('portfolio.bycollection', {collectionSlug: $stateParams.ref, artId: $stateParams.artId});
     } else {
-      $state.go('portfolio.artworks');
+      $state.go('portfolio.artworks', {artId: $stateParams.artId});
     }
   };
 
@@ -560,7 +570,6 @@ angular.module('portfolio.controllers', [])
   
   //backbutton handle (to cancel when downloading)
   var backButtonHandle = function(e) {
-    console.log('Backbutton detected');
     e.preventDefault();
     $scope.cancel();
     document.removeEventListener("backbutton", backButtonHandle);

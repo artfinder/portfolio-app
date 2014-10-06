@@ -15,7 +15,7 @@ angular.module('portfolio.routes', [])
     })
 
     .state('portfolio.artworks', {
-      url: '/artworks',
+      url: '/artworks/:artId',
       views: {
         'main-content': {
             templateUrl: 'templates/artworks.html',
@@ -35,7 +35,7 @@ angular.module('portfolio.routes', [])
     })
 
     .state('portfolio.bycollection', {
-      url: '/by-collection/:collectionSlug',
+      url: '/by-collection/:collectionSlug/:artId',
       views: {
         'main-content': {
             templateUrl: 'templates/artworks.html',
