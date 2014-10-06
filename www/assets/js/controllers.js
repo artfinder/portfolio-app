@@ -92,6 +92,7 @@ angular.module('portfolio.controllers', [])
   };
   
   $scope.openArtwork = function(artId) {
+    sessionStorage.setItem('backArtworkId', artId);
     $state.go('artwork.artwork', {
       artId: artId,
       ref: ($stateParams.collectionSlug) ? $stateParams.collectionSlug : 'artworks',
@@ -201,10 +202,12 @@ angular.module('portfolio.controllers', [])
 
   // Handle "Back" button depending whether we're in collections or artworks context
   $scope.goBack = function() {
+	var artId = sessionStorage.getItem('backArtworkId', artId) ? 
+      sessionStorage.getItem('backArtworkId', artId) : $stateParams.artId;
     if ($stateParams.ref !== 'artworks') {
-      $state.go('portfolio.bycollection', {collectionSlug: $stateParams.ref, artId: $stateParams.artId});
+      $state.go('portfolio.bycollection', {collectionSlug: $stateParams.ref, artId: artId});
     } else {
-      $state.go('portfolio.artworks', {artId: $stateParams.artId});
+      $state.go('portfolio.artworks', {artId: artId});
     }
   };
 
