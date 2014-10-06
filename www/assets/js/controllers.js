@@ -615,7 +615,7 @@ angular.module('portfolio.controllers', [])
 /**
  * A single artwork full-screen-view controller
  */
-.controller('ArtworkFullscreenController', function($scope, $state, $stateParams, $ionicViewService, $ionicPlatform, $ionicScrollDelegate, ArtworkProvider, LocalStorageProvider, CollectionProvider) {
+.controller('ArtworkFullscreenController', function($scope, $state, $stateParams, $ionicViewService, $ionicPlatform, $ionicScrollDelegate, $timeout, ArtworkProvider, LocalStorageProvider, CollectionProvider) {
 
   ArtworkProvider.init();
   CollectionProvider.init();
@@ -626,6 +626,7 @@ angular.module('portfolio.controllers', [])
   image.imageUrl = baseUrl + image.local_file_name;
   image.ratio = image.width / image.height;
   $scope.image = image;
+  window.doubleClickStarted = false;
   
   //calculate "to display" div dimensions
   image.startWidth = document.body.clientWidth * 2;
@@ -640,18 +641,51 @@ angular.module('portfolio.controllers', [])
     $ionicScrollDelegate.zoomTo(0.5);
   }, 10);
   
-  $scope.goBack = function() {
-	if (window.cordova) {
-	  StatusBar.show();
+  $scope.tapHandle = function() {
+	if (window.doubleClickStarted) {
+      doubleTapToZoom();
 	}
-	document.removeEventListener("backbutton", $scope.goBack);
-    $ionicViewService.getBackView().go();
+	else {
+	  singleTapToGoBack();
+	}
+  }
+  
+  var singleTapToGoBack = function() {
+    window.doubleClickStarted = true;
+    $timeout(function() {
+      if (window.doubleClickStarted) {
+        window.doubleClickStarted = false;
+        if (window.cordova) {
+          StatusBar.show();
+        }
+        document.removeEventListener("backbutton", singleTapToGoBack);
+        $ionicViewService.getBackView().go();
+      }
+    }, 300);
+  }
+  
+  var doubleTapToZoom = function() {
+    window.doubleClickStarted = false; //clears dblClick flag not to fire on single click
+    var element = document.getElementsByClassName('scroll')[0];
+    if (element) {
+      var scale = parseFloat(element.style.cssText.match('scale\\((-?\\d*\\.?\\d+)\\)')[1]);
+      if (scale > 0.5) {
+    	$ionicScrollDelegate.zoomTo(0.5, true);
+      }
+      else {
+    	$ionicScrollDelegate.zoomBy(2, true);
+      }
+    }
   }
 
   ionic.Platform.ready(function() {
-	document.addEventListener("backbutton", $scope.goBack, false);
+	document.addEventListener("backbutton", singleTapToGoBack, false);
 	if (window.cordova) {
       StatusBar.hide();
 	}
-  });  
+  });
+  
+  window.getScrollDelegate = function() {
+	return $ionicScrollDelegate;
+  }
 });
