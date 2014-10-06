@@ -639,10 +639,19 @@ angular.module('portfolio.controllers', [])
   setTimeout(function() {
     $ionicScrollDelegate.zoomTo(0.5);
   }, 10);
-
+  
   $scope.goBack = function() {
+	if (window.cordova) {
+	  StatusBar.show();
+	}
+	document.removeEventListener("backbutton", $scope.goBack);
     $ionicViewService.getBackView().go();
   }
 
-  
+  ionic.Platform.ready(function() {
+	document.addEventListener("backbutton", $scope.goBack, false);
+	if (window.cordova) {
+      StatusBar.hide();
+	}
+  });  
 });
