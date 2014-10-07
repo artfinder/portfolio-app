@@ -103,13 +103,17 @@ angular.module('portfolio.controllers', [])
     }, { reload: true });
   };
   
-  $scope.searchArtworks = function($event) {
-    console.log($event);
-    console.log($event.target.value);
-    $scope.search = $event.target.value;
+  $scope.searchArtworks = function() {
+    $scope.search = document.getElementById('input_search').value;
     ArtworkProvider.search($scope.search);
     sessionStorage.setItem('searchKeyword', $scope.search);
     displayItems();
+  }
+  
+  $scope.clearSearch = function() {
+    var objInput = document.getElementById('input_search');
+    objInput.value = '';
+    $scope.searchArtworks.call($scope.$parent);
   }
 
   var displayItems = function() {

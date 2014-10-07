@@ -2,10 +2,11 @@
     <ion-nav-buttons side="left">
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
+    <div class="search-box">
+        <input id="input_search" value="{{ search }}" placeholder="Search" ng-keyup="searchArtworks()"/>
+        <a ng-click="clearSearch()" class="icon ion-close-circled"></a>
+    </div>
     <ion-content padding="true" class="has-header white-bg" paging="true">
-        <div class="search-box">
-            <input id="input_search" value="{{ search }}" placeholder="Search" ng-keyup="searchArtworks($event)"/>
-        </div>
         <div class="artworks-listing">
             <div class="artwork-box" ng-repeat="art in artworks">
                 <div class="art-item">

@@ -512,6 +512,20 @@ h2.main {
 }
 
 .search-box {
-	width: 100%;
-	background-color: gray;
+  width: 100%;
+  background-color: gray;
+  top: 45px;
+  z-index: 1;
+  position: absolute;
+  opacity: 0.7;
+  text-align: center;
+}
+
+.search-box input {
+  text-align: center;
+  width: 95%;
+}
+
+.search-box button {
+	float: right;
 }
