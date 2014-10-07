@@ -510,3 +510,8 @@ h2.main {
 .fullscreen-box {
 	text-align: center;
 }
+
+.search-box {
+	width: 100%;
+	background-color: gray;
+}

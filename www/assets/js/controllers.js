@@ -53,6 +53,8 @@ angular.module('portfolio.controllers', [])
   };
 
   $scope.menuGo = function(url) {
+    sessionStorage.removeItem('searchKeyword');
+    sessionStorage.removeItem('displayedItems');
     $state.go(url, null, { reload: true });
   }
 })
@@ -68,7 +70,8 @@ angular.module('portfolio.controllers', [])
     window.historyCleared = true;
   }
 
-  ArtworkProvider.init();
+  $scope.search = sessionStorage.getItem('searchKeyword') ? sessionStorage.getItem('searchKeyword') : '';
+  ArtworkProvider.init($scope.search);
   CollectionProvider.init();
 
   var displayedItems = sessionStorage.getItem('displayedItems') ? 
@@ -99,6 +102,33 @@ angular.module('portfolio.controllers', [])
       refId: ($stateParams.refId) ? $stateParams.refId : 0 
     }, { reload: true });
   };
+  
+  $scope.searchArtworks = function($event) {
+    console.log($event);
+    console.log($event.target.value);
+    $scope.search = $event.target.value;
+    ArtworkProvider.search($scope.search);
+    sessionStorage.setItem('searchKeyword', $scope.search);
+    displayItems();
+  }
+
+  var displayItems = function() {
+    if ($stateParams.collectionSlug) {
+      var collection = CollectionProvider.findBySlug($stateParams.collectionSlug);
+      $scope.artworks = handleTemplateData(ArtworkProvider.allByCollection(collection),
+        'collection', collection.slug
+        );
+      $scope.artworksCount = ($scope.artworks) ? $scope.artworks.length : 0;
+      $scope.viewTitle = collection.name+" ("+$scope.artworksCount+")";
+    // ...or display them all
+    } else {
+      $scope.artworks = handleTemplateData(ArtworkProvider.getItemsRange(0, displayedItems),
+        'artworks', 0
+        );
+      $scope.artworksCount = ArtworkProvider.getAllArtworksCount();
+      $scope.viewTitle = "My Artworks (" + $scope.artworksCount + ")";
+    }
+  }
 
   var handleTemplateData = function(artworks, ref, refId) {
 	var baseUrl = LocalStorageProvider.getBaseUrl();
@@ -111,21 +141,7 @@ angular.module('portfolio.controllers', [])
   };
   
   // Display artworks that belong to collection...
-  if ($stateParams.collectionSlug) {
-    var collection = CollectionProvider.findBySlug($stateParams.collectionSlug);
-    $scope.artworks = handleTemplateData(ArtworkProvider.allByCollection(collection),
-    		'collection', collection.slug
-    		);
-    $scope.artworksCount = ($scope.artworks) ? $scope.artworks.length : 0;
-    $scope.viewTitle = collection.name+" ("+$scope.artworksCount+")";
-  // ...or display them all
-  } else {
-    $scope.artworks = handleTemplateData(ArtworkProvider.getItemsRange(0, displayedItems),
-    		'artworks', 0
-    		);
-    $scope.artworksCount = ArtworkProvider.getAllArtworksCount();
-    $scope.viewTitle = "My Artworks (" + $scope.artworksCount + ")";
-  }
+  displayItems();
 
   //scroll to element when artwork id parameter is passed
   if ($stateParams.artId) {
@@ -684,8 +700,4 @@ angular.module('portfolio.controllers', [])
       StatusBar.hide();
 	}
   });
-  
-  window.getScrollDelegate = function() {
-	return $ionicScrollDelegate;
-  }
 });

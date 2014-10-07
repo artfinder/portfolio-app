@@ -9,14 +9,33 @@ angular.module('portfolio.services', [])
     var index = [];
     var itemsPerPage = 5;
 
-    return {
-        init: function() {
-            arts = LocalStorageProvider.getArtworksData();
-            if (arts) {
-                arts.map(function(a){
-                    index[a.id] = a;
-                });
+    var executeSearchBy = function(search) {
+        var allArts = LocalStorageProvider.getArtworksData(); //this is cached
+        if (search) {
+            search = search.toLowerCase();
+            arts = [];
+            for (var i in allArts) {
+                if (allArts[i].name.toLowerCase().indexOf(search) > -1) {
+                    arts.push(allArts[i]);
+                }
             }
+        }
+        else {
+            arts = allArts;
+        }
+        
+        index = [];
+        if (arts) {
+            arts.map(function(a){
+                index[a.id] = a;
+            });
+        }
+    };
+    
+    return {
+        init: function(search) {
+            //execute do search by, to initialize the collection
+            executeSearchBy(search);
         },
 
         all: function() {
@@ -24,11 +43,14 @@ angular.module('portfolio.services', [])
         },
 
         allByCollection: function(collection) {
-            var artworks = [];
+            var artworks = [], searched;
             if (collection && collection.artwork_ids.length > 0) {
                 for (var i in collection.artwork_ids) {
                     artId = collection.artwork_ids[i];
-                    artworks.push(this.findById(artId));
+                    searched = this.findById(artId);
+                    if (searched) {
+                        artworks.push(searched);
+                    }
                 }
             }
             return artworks;
@@ -68,7 +90,11 @@ angular.module('portfolio.services', [])
         },
         
         getItemsPerPageCount: function() {
-           return itemsPerPage;
+            return itemsPerPage;
+        },
+
+        search: function(str) {
+            executeSearchBy(str);
         }
     };
 })
