@@ -117,6 +117,22 @@ angular.module('portfolio.controllers', [])
     objInput.value = '';
     $scope.searchArtworks.call($scope.$parent);
   }
+  
+  $scope.searchBoxToggle = function() {
+    var searchBox = document.getElementById('searchBox');
+    if (!searchBox) {
+      throw new Error('Cannot find searchBox element');
+    }
+    var boxVisibility = sessionStorage.getItem('showSearchBox') == 1;
+    
+    if (boxVisibility) {
+      searchBox.classList.add('hidden');
+    }
+    else {
+      searchBox.classList.remove('hidden');
+	}
+    sessionStorage.setItem('showSearchBox', boxVisibility ? 0 : 1);
+  }
 
   var displayItems = function() {
     if ($stateParams.collectionSlug) {
@@ -135,6 +151,7 @@ angular.module('portfolio.controllers', [])
       $scope.viewTitle = "My Artworks (" + $scope.artworksCount + ")";
     }
   }
+  $scope.searchBoxVisiblity = sessionStorage.getItem('showSearchBox') == 1 ? '' : 'hidden';
 
   var handleTemplateData = function(artworks, ref, refId) {
 	var baseUrl = LocalStorageProvider.getBaseUrl();

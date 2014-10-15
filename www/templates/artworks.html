@@ -2,7 +2,10 @@
     <ion-nav-buttons side="left">
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
-    <div class="search-box">
+    <ion-nav-buttons side="right">
+        <a on-tap="searchBoxToggle()" class="button button-icon icon ion-search"></a>
+    </ion-nav-buttons>
+    <div id="searchBox" class="search-box {{ searchBoxVisiblity }}">
         <input id="input_search" value="{{ search }}" placeholder="Search" ng-keyup="searchArtworks()"/>
         <a ng-click="clearSearch()" class="icon ion-close-circled"></a>
     </div>
