@@ -197,7 +197,6 @@ angular.module('portfolio.services', [])
         fetchBlob: function(url) {
             // Dirty workaround for access-origin errors
             url = url.replace('d30dcznuokq8w8.cloudfront.net', 's3.amazonaws.com/artfinder');
-            console.log(url);
             return $http.get(url, {
                 responseType: 'blob',
                 cache: false,
@@ -381,7 +380,7 @@ angular.module('portfolio.services', [])
         }
 
         console.log('Persistent storage error: ' + error.name + ', code: ' + error.code + ', message: ' + msg);
-        console.log(error);
+        console.log(angular.toJson(error));
     };
 
     return {
@@ -390,7 +389,6 @@ angular.module('portfolio.services', [])
                 dir.getFile(filename, { create: true }, function(file) {
                     file.createWriter(function(writer) {
                         writer.onwriteend = function(e) {
-                            console.log(file.toURL());
                             callback(file);
                         };
                         writer.write(data);

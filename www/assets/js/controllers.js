@@ -316,9 +316,7 @@ angular.module('portfolio.controllers', [])
       }
     } else {
       console.log('Generic error');
-      console.log(err);
-      console.log(err.status);
-      console.log(err.data.error);
+      console.log(angular.toJson(err));
       MessagesProvider.alertPopup(genericErrorMessage);
       cleanup();
     }
@@ -450,7 +448,7 @@ angular.module('portfolio.controllers', [])
 
   var errorHandler = function(err, imgVariant, recordIdx, imgIdx) {
     console.log('Error while fetching img variant: ' + imgVariant + '; record idx: ' + recordIdx + '; image idx: ' + imgIdx);
-    console.log(err);
+    console.log(angular.toJson(err));
     MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Error');
     terminateFetcher();
   };
