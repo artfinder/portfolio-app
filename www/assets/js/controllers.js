@@ -108,6 +108,8 @@ angular.module('portfolio.controllers', [])
     ArtworkProvider.search($scope.search);
     sessionStorage.setItem('searchKeyword', $scope.search);
     displayItems();
+    $ionicScrollDelegate.resize(); //this scrolls the screen to the top when search results 
+                                   //are smaller than scrolled position of the screen
   }
   
   $scope.clearSearch = function() {
