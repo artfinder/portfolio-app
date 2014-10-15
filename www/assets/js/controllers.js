@@ -100,7 +100,7 @@ angular.module('portfolio.controllers', [])
       artId: artId,
       ref: ($stateParams.collectionSlug) ? $stateParams.collectionSlug : 'artworks',
       refId: ($stateParams.refId) ? $stateParams.refId : 0 
-    }, { reload: true });
+    });
   };
   
   $scope.searchArtworks = function() {
@@ -701,9 +701,8 @@ angular.module('portfolio.controllers', [])
   }
 
   ionic.Platform.ready(function() {
-	document.addEventListener("backbutton", singleTapToGoBack, false);
-	if (window.cordova) {
+    if (window.cordova) {
       StatusBar.hide();
-	}
+    }
   });
 });
