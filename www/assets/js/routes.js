@@ -110,6 +110,16 @@ angular.module('portfolio.routes', [])
             }
         }
     })
+    
+    .state('intro.login_user', {
+        url: '/login/:slug/:code',
+        views: {
+            'intro-content': {
+                templateUrl: 'templates/intro/01-welcome.html',
+                controller: 'LoginController'
+            }
+        }
+    })
 
     // TODO: Possibly obsolete route/view since intro.welcome is now a slider view
     // handling two pages at once.

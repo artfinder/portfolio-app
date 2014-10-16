@@ -38,12 +38,13 @@
                     <div class="padding-page">
                         <form ng-submit="login(user);">
                             <div class="main-input lgn-email no-margin-top">
-                                <input type="text" placeholder="your Artfinder slug" ng-model="user.slug">
+                                vals form URL { slug: "{{ slug }}", code: "{{ code }}" }
+                                <input type="text" placeholder="your Artfinder slug" ng-model="user.slug" value="{{ slug }}">
                                 <div class="warning icon ion-alert-circled"></div>
                             </div>
                             <span class="help">This is last part of URL after "artfinder.com/" (i.e. michael-jackson)</span>
                             <div class="main-input lgn-code">
-                                <input type="text" placeholder="your unique verification code" ng-model="user.code">
+                                <input type="text" placeholder="your unique verification code" ng-model="user.code" value="{{ code }}">
                             </div>
                             <span class="help">You can find this in your Artist Dashboard <a ng-click="openExternalUrl('https://www.artfinder.com/manage/portfolio-app/');">here</a></span>
 

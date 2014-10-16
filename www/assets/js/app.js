@@ -37,3 +37,14 @@ angular.module('portfolio', [
     // }
   });
 });
+
+/**
+ * Function for handling external URLs
+ * @see http://calendee.com/2014/05/12/custom-urls-in-ionic-cordova-apps/
+ * @param url
+ */
+function handleOpenURL(url) {
+  var body = document.getElementsByClassName('splash-screen-info')[0];
+  var splashScreenController = angular.element(body).scope();
+  splashScreenController.reportAppLaunched(url);
+}

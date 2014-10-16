@@ -290,7 +290,7 @@ angular.module('portfolio.controllers', [])
  * - saves data into local storage
  * - redirects to the next step (FetcherController)
  */
-.controller('LoginController', function($scope, $state, $ionicPopup, $ionicLoading, $ionicViewService, RemoteDataProvider, LocalStorageProvider, MessagesProvider) {
+.controller('LoginController', function($scope, $state, $stateParams, $ionicPopup, $ionicLoading, $ionicViewService, $ionicSlideBoxDelegate, RemoteDataProvider, LocalStorageProvider, MessagesProvider) {
 
   //clears the history to prevent back button (when user logged out)
   $ionicViewService.clearHistory();
@@ -394,6 +394,13 @@ angular.module('portfolio.controllers', [])
       }, function(e) { errorHandler(e, 'artworks'); });
     }, function(e) { errorHandler(e, 'auth'); });
   };
+
+  $scope.slug = $stateParams.slug;
+  $scope.code = $stateParams.code;
+  if ($scope.slug && $scope.code) {
+    console.log('slide to 3rd box with parameters code: "' + $stateParams.code + '" and slug: "' + $stateParams.slug + '"');
+    $ionicSlideBoxDelegate.slide(2);
+  }
 })
 
 /**
@@ -638,12 +645,56 @@ angular.module('portfolio.controllers', [])
 
 })
 
-.controller('SplashScreenController', function($ionicPlatform, $state, $timeout, LocalStorageProvider, PersistentStorageProvider) {
+.controller('SplashScreenController', function($ionicPlatform, $state, $scope, $timeout, $stateParams, LocalStorageProvider, PersistentStorageProvider) {
+//console.log('stateParams@SplashScreenController');
+//console.log($stateParams.slug);
+//console.log($stateParams.code);
+//console.log(angular.toJson($stateParams));
+//console.log(window.location.href);
+  var launchedByExternalUrl = false;
+  
+  var gup = function(url, param) {
+    param = param.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    var regex = new RegExp("[\\?&]" + param + "=([^&#]*)");
+    var results = regex.exec(url);
+    return (results == null) ? null : results[1]; 
+  }
+  
+  $scope.reportAppLaunched = function(url) {
+	console.log('Executed reportAppLaunched');
+    launchedByExternalUrl = url;
+  }
 
   $timeout(function() {
+    console.log('launched by ext url:');
+    console.log(launchedByExternalUrl);
+
     PersistentStorageProvider.getBaseUrl(function(baseUrl) {
       LocalStorageProvider.setBaseUrl(baseUrl);
-      $state.go(LocalStorageProvider.getUsername() === null ? 'intro.welcome' : 'portfolio.artworks');
+      
+      if (LocalStorageProvider.getUsername() === null) {
+        if (launchedByExternalUrl) {
+          var slug = gup(launchedByExternalUrl, 'slug');
+          var code = gup(launchedByExternalUrl, 'code');
+console.log('slug');
+console.log(slug);
+console.log('code');
+console.log(code);
+          if (slug && code) {
+console.log('opening login_user page');
+            $state.go('intro.login_user', { code: code, slug: slug });
+          }
+          else {
+            $state.go('intro.welcome');
+          }
+        }
+        else {
+          $state.go('intro.welcome');
+        }
+      }
+      else {
+        $state.go('portfolio.artworks');
+      }
     });
   }, 2000, false);
 
