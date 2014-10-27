@@ -665,14 +665,30 @@ angular.module('portfolio.controllers', [])
   $scope.image = image;
   window.doubleClickStarted = false;
   
-  //calculate "to display" div dimensions
-  image.startWidth = document.body.clientWidth * 2;
-  image.startHeight = Math.floor(image.startWidth / image.ratio);
-  if (image.startHeight > image.startWidth && image.startHeight > (document.body.clientHeight * 2)) {
-	  //if image is more tall than wide, scale it to display height as 100%
-	  image.startHeight = document.body.clientHeight * 2;
-	  image.startWidth = Math.floor(image.startHeight * image.ratio);
+  var isLandscapeOrientation = function() {
+    return window.matchMedia("(orientation: landscape)").matches;
   }
+  
+  var getClientWidht = function() {
+    return isLandscapeOrientation() ? document.body.clientHeight : document.body.clientWidth;
+  }
+  
+  var getClientHeight = function() {
+    return isLandscapeOrientation() ? document.body.clientWidth : document.body.clientHeight;
+  }
+  
+  var calculateImageSizes = function() {
+    image.startWidth = document.body.clientWidth * 2;
+    image.startHeight = Math.floor(image.startWidth / image.ratio);
+    if (image.startHeight > document.body.clientHeight * 2) {
+      //if image is more tall than wide, scale it to display height as 100%
+      image.startHeight = document.body.clientHeight * 2;
+      image.startWidth = Math.floor(image.startHeight * image.ratio);
+    }
+  }
+
+  //calculate "to display" div dimensions
+  calculateImageSizes();
   //and set initial zoom
   setTimeout(function() {
     $ionicScrollDelegate.zoomTo(0.5);
@@ -717,12 +733,7 @@ angular.module('portfolio.controllers', [])
   }
   
   var setViewClientHeight = function() {
-    if (window.matchMedia("(orientation: landscape)").matches) {
-      $scope.calculatedClientHeight = (isNaN(window.innerWidth) ? window.clientWidth : window.innerWidth) + 38;
-	}
-    else {
-      $scope.calculatedClientHeight = (isNaN(window.innerHeight) ? window.clientHeight : window.innerHeight) + 38;
-    }
+    $scope.calculatedClientHeight = getClientHeight() + 38; //increased by width of status-bar
   }
 
   ionic.Platform.ready(function() {
@@ -733,6 +744,7 @@ angular.module('portfolio.controllers', [])
   });
   
   var orientationHandle = function() {
+	calculateImageSizes();
     setViewClientHeight();
   }
   
