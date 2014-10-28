@@ -197,7 +197,7 @@ angular.module('portfolio.controllers', [])
 /**
  * A single artwork view controller
  */
-.controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, $ionicLoading, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
+.controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, $ionicLoading, $ionicSlideBoxDelegate, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
 
   ArtworkProvider.init();
   CollectionProvider.init();
@@ -214,6 +214,7 @@ angular.module('portfolio.controllers', [])
   $scope.title = artwork.name;
   $scope.images = artworkImages;
   $scope.hideInfoOverlay = (LocalStorageProvider.getArtworkInstructionsOverlayFlag() === null) ? '' : ' hidden';
+  $scope.currSlide = 0;
 
   // Define artwork set to help browsing
   var artworkSet = [];
@@ -281,6 +282,10 @@ angular.module('portfolio.controllers', [])
   $scope.dismissInstructionsOverlay = function() {
     LocalStorageProvider.setArtworkInstructionsOverlayFlag();
     document.getElementById('artworkDisplayInfoOverlay').className += ' hidden';
+  };
+  
+  $scope.slideChange = function() {
+    $scope.currSlide = $ionicSlideBoxDelegate.currentIndex();
   };
 })
 
