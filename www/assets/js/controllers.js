@@ -739,8 +739,8 @@ angular.module('portfolio.controllers', [])
   ionic.Platform.ready(function() {
     if (window.cordova) {
       StatusBar.hide();
-      $timeout(setViewClientHeight, 200);
     }
+    $timeout(setViewClientHeight, 200);
   });
   
   var orientationHandle = function() {
