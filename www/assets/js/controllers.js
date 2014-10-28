@@ -383,6 +383,7 @@ angular.module('portfolio.controllers', [])
       RemoteDataProvider.fetchArtworksForUser(username).then(function(data_arts) {
         if (!data_arts.data.objects || data_arts.data.objects.length === 0) {
           MessagesProvider.alertPopup('It appears that you have no artworks in your portfolio.');
+          $ionicLoading.hide();
         } else {
           LocalStorageProvider.saveUsername(username);
           LocalStorageProvider.saveRawArtworksData(data_arts.data.objects);
@@ -403,12 +404,14 @@ angular.module('portfolio.controllers', [])
       }, function(e) { errorHandler(e, 'artworks'); });
     }, function(e) { errorHandler(e, 'auth'); });
   };
+  
+  $scope.reportAppLaunched = function(params) {
+    /* these redirects if actually app is open on welcome page and user click on url-credentials link */
+    $state.go('intro.login_user', { code: params.code, slug: params.slug })
+  }
 
-  $scope.slug = $stateParams.slug;
-  $scope.code = $stateParams.code;
-  if ($scope.slug && $scope.code) {
-    console.log('slide to 3rd box with parameters code: "' + $stateParams.code + '" and slug: "' + $stateParams.slug + '"');
-    $ionicSlideBoxDelegate.slide(2);
+  if ($stateParams.slug && $stateParams.code) {
+    $scope.user = { slug: $stateParams.slug, code: $stateParams.code};
   }
 })
 
@@ -655,47 +658,19 @@ angular.module('portfolio.controllers', [])
 })
 
 .controller('SplashScreenController', function($ionicPlatform, $state, $scope, $timeout, $stateParams, LocalStorageProvider, PersistentStorageProvider) {
-//console.log('stateParams@SplashScreenController');
-//console.log($stateParams.slug);
-//console.log($stateParams.code);
-//console.log(angular.toJson($stateParams));
-//console.log(window.location.href);
   var launchedByExternalUrl = false;
   
-  var gup = function(url, param) {
-    param = param.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-    var regex = new RegExp("[\\?&]" + param + "=([^&#]*)");
-    var results = regex.exec(url);
-    return (results == null) ? null : results[1]; 
-  }
-  
-  $scope.reportAppLaunched = function(url) {
-	console.log('Executed reportAppLaunched');
-    launchedByExternalUrl = url;
+  $scope.reportAppLaunched = function(params) {
+    launchedByExternalUrl = params;
   }
 
   $timeout(function() {
-    console.log('launched by ext url:');
-    console.log(launchedByExternalUrl);
-
     PersistentStorageProvider.getBaseUrl(function(baseUrl) {
       LocalStorageProvider.setBaseUrl(baseUrl);
       
       if (LocalStorageProvider.getUsername() === null) {
         if (launchedByExternalUrl) {
-          var slug = gup(launchedByExternalUrl, 'slug');
-          var code = gup(launchedByExternalUrl, 'code');
-console.log('slug');
-console.log(slug);
-console.log('code');
-console.log(code);
-          if (slug && code) {
-console.log('opening login_user page');
-            $state.go('intro.login_user', { code: code, slug: slug });
-          }
-          else {
-            $state.go('intro.welcome');
-          }
+          $state.go('intro.login_user', { code: launchedByExternalUrl.code, slug: launchedByExternalUrl.slug });//, { location: 'replace', reload: true });
         }
         else {
           $state.go('intro.welcome');

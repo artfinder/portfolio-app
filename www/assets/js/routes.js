@@ -115,7 +115,8 @@ angular.module('portfolio.routes', [])
         url: '/login/:slug/:code',
         views: {
             'intro-content': {
-                templateUrl: 'templates/intro/01-welcome.html',
+                //templateUrl: 'templates/intro/01-welcome.html',
+                templateUrl: 'templates/login-user-by-url.html',
                 controller: 'LoginController'
             }
         }

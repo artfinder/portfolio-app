@@ -1,5 +1,5 @@
 <ion-view class="blue-bg">
-    <ion-content padding="false" has-bouncing="false" scroll="false" style="height: 100%;">
+    <ion-content class="login-main-content" padding="false" has-bouncing="false" scroll="false" style="height: 100%;">
 
         <ion-slide-box class="changed-slide">
             <ion-slide class="center relative">
@@ -38,7 +38,6 @@
                     <div class="padding-page">
                         <form ng-submit="login(user);">
                             <div class="main-input lgn-email no-margin-top">
-                                vals form URL { slug: "{{ slug }}", code: "{{ code }}" }
                                 <input type="text" placeholder="your Artfinder slug" ng-model="user.slug" value="{{ slug }}">
                                 <div class="warning icon ion-alert-circled"></div>
                             </div>
