@@ -187,7 +187,11 @@ angular.module('portfolio.controllers', [])
     var collections = CollectionProvider.all();
     $scope.collections = collections;
     $scope.collectionsCount = (collections) ? collections.length : 0;
-    $scope.baseUrl = LocalStorageProvider.getBaseUrl();
+    var baseUrl = LocalStorageProvider.getBaseUrl();
+    for (var i in collections) {
+      collections[i].cover_image.imageUrl = baseUrl + ((collections[i].cover_image.grid_medium.local_file_name) ?
+        collections[i].cover_image.grid_medium.local_file_name : collections[i].cover_image.fluid_large. local_file_name); 
+    }
 })
 
 /**
