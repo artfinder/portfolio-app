@@ -187,13 +187,17 @@ angular.module('portfolio.controllers', [])
     var collections = CollectionProvider.all();
     $scope.collections = collections;
     $scope.collectionsCount = (collections) ? collections.length : 0;
-    $scope.baseUrl = LocalStorageProvider.getBaseUrl();
+    var baseUrl = LocalStorageProvider.getBaseUrl();
+    for (var i in collections) {
+      collections[i].cover_image.imageUrl = baseUrl + ((collections[i].cover_image.grid_medium.local_file_name) ?
+        collections[i].cover_image.grid_medium.local_file_name : collections[i].cover_image.fluid_large. local_file_name); 
+    }
 })
 
 /**
  * A single artwork view controller
  */
-.controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, $ionicLoading, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
+.controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, $ionicLoading, $ionicSlideBoxDelegate, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
 
   ArtworkProvider.init();
   CollectionProvider.init();
@@ -210,6 +214,7 @@ angular.module('portfolio.controllers', [])
   $scope.title = artwork.name;
   $scope.images = artworkImages;
   $scope.hideInfoOverlay = (LocalStorageProvider.getArtworkInstructionsOverlayFlag() === null) ? '' : ' hidden';
+  $scope.currSlide = 0;
 
   // Define artwork set to help browsing
   var artworkSet = [];
@@ -277,6 +282,10 @@ angular.module('portfolio.controllers', [])
   $scope.dismissInstructionsOverlay = function() {
     LocalStorageProvider.setArtworkInstructionsOverlayFlag();
     document.getElementById('artworkDisplayInfoOverlay').className += ' hidden';
+  };
+  
+  $scope.slideChange = function() {
+    $scope.currSlide = $ionicSlideBoxDelegate.currentIndex();
   };
 })
 
@@ -495,12 +504,12 @@ angular.module('portfolio.controllers', [])
 
         // IMAGE SIZES 280  580  735  500x500
 
-        // Fetch fluid_small...
-        RemoteDataProvider.fetchBlob(img.fluid_small.url).then(function(data){
+        // Fetch small_square...
+        RemoteDataProvider.fetchBlob(img.small_square.url).then(function(data){
 
-          // ...save fluid_small to persistent storage.
-          PersistentStorageProvider.saveBlob(data.data, filename('art_fluid_small', artIdx, imgIdx), function(file) {
-            rawArts[artIdx].images[imgIdx].fluid_small.local_file_name = file.name;
+          // ...save small_square to persistent storage.
+          PersistentStorageProvider.saveBlob(data.data, filename('art_small_square', artIdx, imgIdx), function(file) {
+            rawArts[artIdx].images[imgIdx].small_square.local_file_name = file.name;
 
             // Fetch fluid_large...
             RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
@@ -512,7 +521,7 @@ angular.module('portfolio.controllers', [])
 
                 // Populate cover_image attribute for artwork
                 if (imgIdx === 0) {
-                  rawArts[artIdx].cover_image = rawArts[artIdx].images[imgIdx].fluid_small;
+                  rawArts[artIdx].cover_image = rawArts[artIdx].images[imgIdx].small_square;
                 }
 
                 // Carry on to the next image in the current artwork
@@ -523,7 +532,7 @@ angular.module('portfolio.controllers', [])
 
           });
 
-        }, function(error) { errorHandler(error, 'fluid_small', artIdx, imgIdx); });
+        }, function(error) { errorHandler(error, 'small_square', artIdx, imgIdx); });
 
       } else {
         // Carry on to the next artwork
@@ -563,12 +572,12 @@ angular.module('portfolio.controllers', [])
 
         var img = rawCols[colIdx].cover_image;
 
-        // Fetch fluid_small...
-        RemoteDataProvider.fetchBlob(img.fluid_small.url).then(function(data){
+        // Fetch grid_medium...
+        RemoteDataProvider.fetchBlob(img.grid_medium.url).then(function(data){
 
-          // ...save fluid_small to persistent storage.
-          PersistentStorageProvider.saveBlob(data.data, filename('col_fluid_small', colIdx), function(file) {
-            rawCols[colIdx].cover_image.fluid_small.local_file_name = file.name;
+          // ...save grid_medium to persistent storage.
+          PersistentStorageProvider.saveBlob(data.data, filename('col_grid_medium', colIdx), function(file) {
+            rawCols[colIdx].cover_image.grid_medium.local_file_name = file.name;
 
             // Fetch fluid_large...
             RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
@@ -585,7 +594,7 @@ angular.module('portfolio.controllers', [])
 
           });
 
-        }, function(error){ errorHandler(error, 'fluid_small', colIdx, 0); });
+        }, function(error){ errorHandler(error, 'grid_medium', colIdx, 0); });
 
       } else {
         // Carry on to the next collection
@@ -716,14 +725,30 @@ console.log('opening login_user page');
   $scope.image = image;
   window.doubleClickStarted = false;
   
-  //calculate "to display" div dimensions
-  image.startWidth = document.body.clientWidth * 2;
-  image.startHeight = Math.floor(image.startWidth / image.ratio);
-  if (image.startHeight > image.startWidth && image.startHeight > (document.body.clientHeight * 2)) {
-	  //if image is more tall than wide, scale it to display height as 100%
-	  image.startHeight = document.body.clientHeight * 2;
-	  image.startWidth = Math.floor(image.startHeight * image.ratio);
+  var isLandscapeOrientation = function() {
+    return window.matchMedia("(orientation: landscape)").matches;
   }
+  
+  var getClientWidht = function() {
+    return isLandscapeOrientation() ? document.body.clientHeight : document.body.clientWidth;
+  }
+  
+  var getClientHeight = function() {
+    return isLandscapeOrientation() ? document.body.clientWidth : document.body.clientHeight;
+  }
+  
+  var calculateImageSizes = function() {
+    image.startWidth = document.body.clientWidth * 2;
+    image.startHeight = Math.floor(image.startWidth / image.ratio);
+    if (image.startHeight > document.body.clientHeight * 2) {
+      //if image is more tall than wide, scale it to display height as 100%
+      image.startHeight = document.body.clientHeight * 2;
+      image.startWidth = Math.floor(image.startHeight * image.ratio);
+    }
+  }
+
+  //calculate "to display" div dimensions
+  calculateImageSizes();
   //and set initial zoom
   setTimeout(function() {
     $ionicScrollDelegate.zoomTo(0.5);
@@ -746,7 +771,8 @@ console.log('opening login_user page');
         if (window.cordova) {
           StatusBar.show();
         }
-        document.removeEventListener("backbutton", singleTapToGoBack);
+        window.removeEventListener('orientationchange', orientationHandle, false);
+        document.removeEventListener('backbutton', backButtonHandle);
         $ionicViewService.getBackView().go();
       }
     }, 300);
@@ -765,10 +791,28 @@ console.log('opening login_user page');
       }
     }
   }
+  
+  var setViewClientHeight = function() {
+    $scope.calculatedClientHeight = getClientHeight() + 38; //increased by width of status-bar
+  }
 
   ionic.Platform.ready(function() {
     if (window.cordova) {
       StatusBar.hide();
     }
+    $timeout(setViewClientHeight, 200);
   });
+  
+  var orientationHandle = function() {
+	calculateImageSizes();
+    setViewClientHeight();
+  }
+  
+  var backButtonHandle = function(e) {
+    document.removeEventListener('backbutton', backButtonHandle);
+    window.removeEventListener('orientationchange', orientationHandle, false);
+  }
+  
+  window.addEventListener('orientationchange', orientationHandle, false);
+  document.addEventListener('backbutton', backButtonHandle);
 });
