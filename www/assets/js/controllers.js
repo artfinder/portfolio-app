@@ -488,12 +488,12 @@ angular.module('portfolio.controllers', [])
 
         // IMAGE SIZES 280  580  735  500x500
 
-        // Fetch fluid_small...
-        RemoteDataProvider.fetchBlob(img.fluid_small.url).then(function(data){
+        // Fetch small_square...
+        RemoteDataProvider.fetchBlob(img.small_square.url).then(function(data){
 
-          // ...save fluid_small to persistent storage.
-          PersistentStorageProvider.saveBlob(data.data, filename('art_fluid_small', artIdx, imgIdx), function(file) {
-            rawArts[artIdx].images[imgIdx].fluid_small.local_file_name = file.name;
+          // ...save small_square to persistent storage.
+          PersistentStorageProvider.saveBlob(data.data, filename('art_small_square', artIdx, imgIdx), function(file) {
+            rawArts[artIdx].images[imgIdx].small_square.local_file_name = file.name;
 
             // Fetch fluid_large...
             RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
@@ -505,7 +505,7 @@ angular.module('portfolio.controllers', [])
 
                 // Populate cover_image attribute for artwork
                 if (imgIdx === 0) {
-                  rawArts[artIdx].cover_image = rawArts[artIdx].images[imgIdx].fluid_small;
+                  rawArts[artIdx].cover_image = rawArts[artIdx].images[imgIdx].small_square;
                 }
 
                 // Carry on to the next image in the current artwork
@@ -516,7 +516,7 @@ angular.module('portfolio.controllers', [])
 
           });
 
-        }, function(error) { errorHandler(error, 'fluid_small', artIdx, imgIdx); });
+        }, function(error) { errorHandler(error, 'small_square', artIdx, imgIdx); });
 
       } else {
         // Carry on to the next artwork
