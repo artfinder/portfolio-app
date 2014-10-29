@@ -320,6 +320,8 @@ angular.module('portfolio.controllers', [])
           callback();
           break;
         default:
+          console.log('Unexpected error occured while logging in');
+          console.log(angular.toJson(err);
           MessagesProvider.alertPopup(genericErrorMessage);
           cleanup();
       }
