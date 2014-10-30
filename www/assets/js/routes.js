@@ -62,6 +62,16 @@ angular.module('portfolio.routes', [])
         }
       }
     })
+    
+    .state('portfolio.updateArtworks', {
+      url: '/update-artworks',
+      views: {
+        'main-content': {
+            templateUrl: 'templates/update-data.html',
+            controller: 'RefreshArtworksController'
+        }
+      }
+    })
 
     /*
      * Single artwork route

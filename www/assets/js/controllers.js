@@ -418,6 +418,8 @@ angular.module('portfolio.controllers', [])
   }
 })
 
+
+
 /**
  * A controller which handles actual artworks fetching to local persistent storage
  * - reads json data from local storage (saved at the login step)
@@ -484,6 +486,8 @@ angular.module('portfolio.controllers', [])
       $state.go('intro.welcome');
     });
   };
+
+
 
   /**
    * Recursive function to fetch binary images for artworks
@@ -660,6 +664,11 @@ angular.module('portfolio.controllers', [])
 
 })
 
+
+
+/**
+ * Initial (splash-screen) controller
+ */
 .controller('SplashScreenController', function($ionicPlatform, $state, $scope, $timeout, $stateParams, LocalStorageProvider, PersistentStorageProvider) {
   var launchedByExternalUrl = false;
   
@@ -686,6 +695,8 @@ angular.module('portfolio.controllers', [])
   }, 2000, false);
 
 })
+
+
 
 /**
  * A single artwork full-screen-view controller
@@ -793,4 +804,79 @@ angular.module('portfolio.controllers', [])
   
   window.addEventListener('orientationchange', orientationHandle, false);
   document.addEventListener('backbutton', backButtonHandle);
+})
+
+
+
+/**
+ * Controller for updating artworks
+ *   It process list, delete unused items and redirect to fetcher to download new images (if any)
+ */
+.controller('RefreshArtworksController', function($scope, ArtworkProvider, CollectionProvider, LocalStorageProvider, RemoteDataProvider) {
+
+  ArtworkProvider.init();
+  CollectionProvider.init();
+  
+  var currentArtworks = LocalStorageProvider.getArtworksData();
+console.log('currentArtworks', currentArtworks);
+  var artworksToAdd = [];
+  var artworksToRemove = [];
+
+  // A generic error handler
+  var errorHandler = function(err) {
+    console.log('Generic error in update-data');
+    console.log(angular.toJson(err));
+  };
+
+  // Fetch artworks and save response to local storage
+  $scope.artworksFetchInfo = 'Fetching artworks data...';
+  console.log('start');
+  
+  var i, j, loadedArtwork, currenArtwork, foundMatch;
+  RemoteDataProvider.fetchArtworksForUser(LocalStorageProvider.getUsername()).then(function(data_arts) {
+    console.log(data_arts);
+    $scope.artworksFetchInfo = 'Data fetched';
+    
+    
+    for (i in data_arts.data.objects) {
+      loadedArtwork = data_arts.data.objects[i];
+      foundMatch = false;
+      
+      for (j in currentArtworks) {
+        currenArtwork = currentArtworks[j];
+        if (loadedArtwork.slug == currenArtwork.slug) {
+          foundMatch = true;
+          break;
+        }
+      }
+      
+      if (!foundMatch) {
+        artworksToAdd.push(loadedArtwork);
+      }
+    }
+    
+    for (i in currentArtworks) {
+      currenArtwork = currentArtworks[i];
+      foundMatch = false;
+      
+      for (j in data_arts.data.objects) {
+        loadedArtwork = data_arts.data.objects[j];
+        if (loadedArtwork.slug == currenArtwork.slug) {
+          foundMatch = true;
+          break;
+        }
+      }
+      
+      if (!foundMatch) {
+        artworksToRemove.push(currenArtwork);
+      }
+    }
+    
+    
+    console.log('artworksToAdd', artworksToAdd);
+    console.log('artworksToRemove', artworksToRemove);
+    //LocalStorageProvider.saveRawArtworksData(data_arts.data.objects);
+    
+    
+  }, function(e) { errorHandler(e); });
 });
