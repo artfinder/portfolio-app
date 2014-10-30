@@ -389,12 +389,12 @@ angular.module('portfolio.controllers', [])
           $ionicLoading.hide();
         } else {
           LocalStorageProvider.saveUsername(username);
-          LocalStorageProvider.saveRawArtworksData(data_arts.data.objects);
+          LocalStorageProvider.saveProcessDownloadArtworksData(data_arts.data.objects);
 
           // Fetch collections and save response to local storage
           RemoteDataProvider.fetchCollectionsForUser(username).then(function(data_cols){
             if (data_cols.data.objects && data_cols.data.objects.length > 0) {
-              LocalStorageProvider.saveRawCollectionsData(data_cols.data.objects);
+              LocalStorageProvider.saveProcessDownloadCollectionsData(data_cols.data.objects);
             }
 
             // Redirect to intro.fetch view to begin artwork/collections fetching
@@ -431,8 +431,8 @@ angular.module('portfolio.controllers', [])
 .controller('FetcherController', function($scope, $state, $ionicLoading, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider, MessagesProvider, ArtworkProvider) {
   var killswitch = 0;
   var username = LocalStorageProvider.getUsername();
-  var rawArts = LocalStorageProvider.getRawArtworksData();
-  var rawCols = LocalStorageProvider.getRawCollectionsData();
+  var rawArts = LocalStorageProvider.getProcessDownloadArtworksData();
+  var rawCols = LocalStorageProvider.getProcessDownloadCollectionsData();
   var numOfArtworks = rawArts !== null ? rawArts.length : 0;
   var numOfCollections = rawCols !== null ? rawCols.length : 0;
   var counter = 0;
@@ -552,7 +552,7 @@ angular.module('portfolio.controllers', [])
 
     } else {
       // Finished fetching artworks
-      LocalStorageProvider.saveArtworksData(rawArts);
+      LocalStorageProvider.saveNewArtwoksData(rawArts);
 
       // Carry on to fetch collections
       fetchAndSaveCollections(0);
@@ -614,8 +614,10 @@ angular.module('portfolio.controllers', [])
 
     } else {
       // Finished fetching collections
-      LocalStorageProvider.saveCollectionsData(rawCols);
+      LocalStorageProvider.saveNewCollectionsData(rawCols);
       LocalStorageProvider.saveDownloadProcessCompleted(1);
+      LocalStorageProvider.removeProcessDownloadArtworksData();
+      LocalStorageProvider.removeProcessDownloadCollectionsData();
       document.removeEventListener("backbutton", backButtonHandle); //removes back-button handle
 
       // Initialise base-url variable (as it may be claered if user logged out)
