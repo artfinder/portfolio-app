@@ -846,7 +846,7 @@ console.log('currentArtworks', currentArtworks);
       
       for (j in currentArtworks) {
         currenArtwork = currentArtworks[j];
-        if (loadedArtwork.slug == currenArtwork.slug) {
+        if (loadedArtwork.id == currenArtwork.id) {
           foundMatch = true;
           break;
         }
@@ -863,7 +863,7 @@ console.log('currentArtworks', currentArtworks);
       
       for (j in data_arts.data.objects) {
         loadedArtwork = data_arts.data.objects[j];
-        if (loadedArtwork.slug == currenArtwork.slug) {
+        if (loadedArtwork.id == currenArtwork.id) {
           foundMatch = true;
           break;
         }
@@ -874,10 +874,17 @@ console.log('currentArtworks', currentArtworks);
       }
     }
     
-    
     console.log('artworksToAdd', artworksToAdd);
     console.log('artworksToRemove', artworksToRemove);
-    //LocalStorageProvider.saveRawArtworksData(data_arts.data.objects);
+    
+    //remove unused items
+    for (i in artworksToRemove) {
+      j = currentArtworks.indexOf(artworksToRemove[i]);
+      currentArtworks.splice(j, 1);
+    }
+    LocalStorageProvider.saveArtworksData(currentArtworks);
+    
+    //todo: test and exec fetcher
     
     
   }, function(e) { errorHandler(e); });
