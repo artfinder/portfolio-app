@@ -13,6 +13,7 @@ angular.module('portfolio.controllers', [])
       if (response) {
         PersistentStorageProvider.purge(function(){
           LocalStorageProvider.purge();
+          window.historyCleared = null;
           $state.go('intro.welcome');
         });
       }
