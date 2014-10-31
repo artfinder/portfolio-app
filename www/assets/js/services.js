@@ -441,6 +441,14 @@ angular.module('portfolio.services', [])
 
                 callback(baseUrl);
             }, errorHandler);
+        },
+        removeBlob: function(filename, callback) {
+            console.log('Remove blob: ' + filename);
+            requestStorage(function(dir) {
+                dir.getFile(filename, { create: true }, function(file) {
+                    file.remove(callback, errorHandler);
+                });
+            }, errorHandler);
         }
     };
 

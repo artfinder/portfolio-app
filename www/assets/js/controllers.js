@@ -433,6 +433,7 @@ angular.module('portfolio.controllers', [])
   var username = LocalStorageProvider.getUsername();
   var rawArts = LocalStorageProvider.getProcessDownloadArtworksData();
   var rawCols = LocalStorageProvider.getProcessDownloadCollectionsData();
+console.log('fetcher: ', rawArts, rawCols);
   var numOfArtworks = rawArts !== null ? rawArts.length : 0;
   var numOfCollections = rawCols !== null ? rawCols.length : 0;
   var counter = 0;
@@ -791,7 +792,7 @@ angular.module('portfolio.controllers', [])
  * Controller for updating artworks
  *   It process list, delete unused items and redirect to fetcher to download new images (if any)
  */
-.controller('RefreshArtworksController', function($scope, ArtworkProvider, CollectionProvider, LocalStorageProvider, RemoteDataProvider) {
+.controller('RefreshArtworksController', function($scope, $state, ArtworkProvider, CollectionProvider, LocalStorageProvider, RemoteDataProvider, PersistentStorageProvider) {
 
   ArtworkProvider.init();
   CollectionProvider.init();
@@ -800,6 +801,7 @@ angular.module('portfolio.controllers', [])
 console.log('currentArtworks', currentArtworks);
   var artworksToAdd = [];
   var artworksToRemove = [];
+  var filesToRemove = [], removeFilesIndex = 0;
 
   // A generic error handler
   var errorHandler = function(err) {
@@ -817,6 +819,7 @@ console.log('currentArtworks', currentArtworks);
     $scope.artworksFetchInfo = 'Data fetched';
     
     
+    // artworks to add
     for (i in data_arts.data.objects) {
       loadedArtwork = data_arts.data.objects[i];
       foundMatch = false;
@@ -833,7 +836,13 @@ console.log('currentArtworks', currentArtworks);
         artworksToAdd.push(loadedArtwork);
       }
     }
+    console.log('artworksToAdd', artworksToAdd);
+    if (artworksToAdd.length > 0) {
+      LocalStorageProvider.saveProcessDownloadArtworksData(artworksToAdd);
+    }
     
+    
+    // artworks to remove
     for (i in currentArtworks) {
       currenArtwork = currentArtworks[i];
       foundMatch = false;
@@ -850,19 +859,52 @@ console.log('currentArtworks', currentArtworks);
         artworksToRemove.push(currenArtwork);
       }
     }
-    
-    console.log('artworksToAdd', artworksToAdd);
     console.log('artworksToRemove', artworksToRemove);
-    
-    //remove unused items
-    for (i in artworksToRemove) {
-      j = currentArtworks.indexOf(artworksToRemove[i]);
-      currentArtworks.splice(j, 1);
+    $scope.artworksComparingInfo = 'Found ' + artworksToAdd.length + ' new items and ' + 
+      artworksToRemove.length + ' items to remove';
+
+    if (artworksToRemove.length > 0) {
+      // remove unused items
+      for (i in artworksToRemove) {
+        for (j in artworksToRemove[i].images) {
+          filesToRemove.push(artworksToRemove[i].images[j].fluid_large.local_file_name);
+          filesToRemove.push(artworksToRemove[i].images[j].small_square.local_file_name);
+        }
+
+        j = currentArtworks.indexOf(artworksToRemove[i]);
+        currentArtworks.splice(j, 1);
+      }
+      //LocalStorageProvider.saveArtworksData(currentArtworks);
     }
-    LocalStorageProvider.saveArtworksData(currentArtworks);
+    console.log('filesToRemove', filesToRemove);
     
-    //todo: test and exec fetcher
+    
+    //fetch collections
+    $scope.collectionsFetchInfo = 'Fetching collections...'
+    RemoteDataProvider.fetchCollectionsForUser(LocalStorageProvider.getUsername()).then(function(data_cols){
+      if (data_cols.data.objects && data_cols.data.objects.length > 0) {
+        LocalStorageProvider.saveProcessDownloadCollectionsData(data_cols.data.objects);
+      }
+      $scope.collectionsFetchInfo = 'Collections fetched.'
+
+      removeArtworksFiles();
+    }, function(e) { errorHandler(e); });
     
     
   }, function(e) { errorHandler(e); });
+  
+  var removeArtworksFiles = function() {
+    if (filesToRemove[removeFilesIndex]) {
+      PersistentStorageProvider.removeBlob(filesToRemove[removeFilesIndex], function() {
+        ++removeFilesIndex;
+        removeArtworksFiles();
+      });
+    }
+    else {
+      // Redirect to intro.fetch view to begin artwork/collections fetching
+      setTimeout(function() {
+        $state.go('intro.fetch');
+      }, 2000)
+    }
+  }
 });
