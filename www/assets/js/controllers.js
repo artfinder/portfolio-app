@@ -454,7 +454,7 @@ angular.module('portfolio.controllers', [])
     $scope.secondAngle = secondHalfAngle;
   };
 
-  $scope.totalRecords = numOfArtworks + numOfCollections;
+  $scope.totalRecords = numOfArtworks;
 
   // Cancel ongoing, recursive fetch process
   // Sets the killswitch to tell recursive function that process needs to stop
@@ -553,6 +553,7 @@ angular.module('portfolio.controllers', [])
     } else {
       // Finished fetching artworks
       LocalStorageProvider.saveNewArtwoksData(rawArts);
+      ArtworkProvider.init();
 
       // Carry on to fetch collections
       fetchAndSaveCollections(0);
@@ -573,44 +574,20 @@ angular.module('portfolio.controllers', [])
     }
 
     if (rawCols && rawCols[colIdx]) {
+      /**
+       * After talking with Gump on 2014-10-30 we decided to use Artwork image as
+       * Collection's cover. Last commit fetching collection files was e3f49f3
+       */
 
-      if (rawCols[colIdx].cover_image) {
+      var collectionArtwork = ArtworkProvider.findById(rawCols[colIdx].artwork_ids[0]);
 
-        $scope.counter = ++counter;
+      rawCols[colIdx].cover_image.grid_medium.local_file_name =
+        collectionArtwork.images[0].small_square.local_file_name;
+      rawCols[colIdx].cover_image.fluid_large.local_file_name =
+    	collectionArtwork.images[0].fluid_large.local_file_name;
 
-        updateLoadingBar($scope.counter, $scope.totalRecords);
-
-        var img = rawCols[colIdx].cover_image;
-
-        // Fetch grid_medium...
-        RemoteDataProvider.fetchBlob(img.grid_medium.url).then(function(data){
-
-          // ...save grid_medium to persistent storage.
-          PersistentStorageProvider.saveBlob(data.data, filename('col_grid_medium', colIdx), function(file) {
-            rawCols[colIdx].cover_image.grid_medium.local_file_name = file.name;
-
-            // Fetch fluid_large...
-            RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
-
-              // ...save fluid_large to persistent storage.
-              PersistentStorageProvider.saveBlob(data.data, filename('col_fluid_large', colIdx), function(file) {
-                rawCols[colIdx].cover_image.fluid_large.local_file_name = file.name;
-
-                // Carry on to the next collection
-                fetchAndSaveCollections(colIdx+1);
-              });
-
-            }, function(error) { errorHandler(error, 'fluid_large', colIdx, 0); });
-
-          });
-
-        }, function(error){ errorHandler(error, 'grid_medium', colIdx, 0); });
-
-      } else {
-        // Carry on to the next collection
-        fetchAndSaveCollections(colIdx+1);
-
-      } // ENDOF: if (rawCols[colIdx].cover_image)
+      // Carry on to the next collection
+      fetchAndSaveCollections(colIdx+1);
 
     } else {
       // Finished fetching collections
