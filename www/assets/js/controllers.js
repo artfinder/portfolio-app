@@ -881,7 +881,26 @@ angular.module('portfolio.controllers', [])
     $scope.collectionsFetchInfo = 'Fetching collections...'
     RemoteDataProvider.fetchCollectionsForUser(LocalStorageProvider.getUsername()).then(function(data_cols){
       if (data_cols.data.objects && data_cols.data.objects.length > 0) {
-        LocalStorageProvider.saveProcessDownloadCollectionsData(data_cols.data.objects);
+        if (artworksToAdd.length > 0) {
+          //collections will be updated by fetcher
+          LocalStorageProvider.saveCollectionsData([]);
+          LocalStorageProvider.saveProcessDownloadCollectionsData(data_cols.data.objects);
+        }
+        else {
+          //collection must be updated as fetcher wouldnt be called
+          for (i in data_cols.data.objects) {            
+            var collectionObject = data_cols.data.objects[i];
+            
+            var collectionArtwork = ArtworkProvider.findById(collectionObject.artwork_ids[0]);
+            
+            collectionObject.cover_image.grid_medium.local_file_name =
+              collectionArtwork.images[0].small_square.local_file_name;
+            collectionObject.cover_image.fluid_large.local_file_name =
+    	      collectionArtwork.images[0].fluid_large.local_file_name;
+          }
+          
+          LocalStorageProvider.saveCollectionsData(data_cols.data.objects);
+        }
       }
       $scope.collectionsFetchInfo = 'Collections fetched.'
 
