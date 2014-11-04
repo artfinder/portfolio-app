@@ -433,7 +433,6 @@ angular.module('portfolio.controllers', [])
   var username = LocalStorageProvider.getUsername();
   var rawArts = LocalStorageProvider.getProcessDownloadArtworksData();
   var rawCols = LocalStorageProvider.getProcessDownloadCollectionsData();
-console.log('fetcher: ', rawArts, rawCols);
   var numOfArtworks = rawArts !== null ? rawArts.length : 0;
   var numOfCollections = rawCols !== null ? rawCols.length : 0;
   var counter = 0;
@@ -593,7 +592,7 @@ console.log('fetcher: ', rawArts, rawCols);
     } else {
       // Finished fetching collections
       LocalStorageProvider.saveNewCollectionsData(rawCols);
-      LocalStorageProvider.saveDownloadProcessCompleted(1);
+      LocalStorageProvider.saveDownloadProcessCompleted();
       LocalStorageProvider.removeProcessDownloadArtworksData();
       LocalStorageProvider.removeProcessDownloadCollectionsData();
       document.removeEventListener("backbutton", backButtonHandle); //removes back-button handle
@@ -792,13 +791,12 @@ console.log('fetcher: ', rawArts, rawCols);
  * Controller for updating artworks
  *   It process list, delete unused items and redirect to fetcher to download new images (if any)
  */
-.controller('RefreshArtworksController', function($scope, $state, ArtworkProvider, CollectionProvider, LocalStorageProvider, RemoteDataProvider, PersistentStorageProvider) {
+.controller('RefreshArtworksController', function($scope, $state, $ionicViewService, ArtworkProvider, CollectionProvider, LocalStorageProvider, RemoteDataProvider, PersistentStorageProvider) {
 
   ArtworkProvider.init();
   CollectionProvider.init();
   
-  var currentArtworks = LocalStorageProvider.getArtworksData();
-console.log('currentArtworks', currentArtworks);
+  var currentArtworks = LocalStorageProvider.getArtworksData(true);
   var artworksToAdd = [];
   var artworksToRemove = [];
   var filesToRemove = [], removeFilesIndex = 0;
@@ -811,7 +809,6 @@ console.log('currentArtworks', currentArtworks);
 
   // Fetch artworks and save response to local storage
   $scope.artworksFetchInfo = 'Fetching artworks data...';
-  console.log('start');
   
   var i, j, loadedArtwork, currenArtwork, foundMatch;
   RemoteDataProvider.fetchArtworksForUser(LocalStorageProvider.getUsername()).then(function(data_arts) {
@@ -874,7 +871,8 @@ console.log('currentArtworks', currentArtworks);
         j = currentArtworks.indexOf(artworksToRemove[i]);
         currentArtworks.splice(j, 1);
       }
-      //LocalStorageProvider.saveArtworksData(currentArtworks);
+      console.log('saving the spliced currentArtorks: ', currentArtworks);
+      LocalStorageProvider.saveArtworksData(currentArtworks);
     }
     console.log('filesToRemove', filesToRemove);
     
@@ -903,7 +901,13 @@ console.log('currentArtworks', currentArtworks);
     else {
       // Redirect to intro.fetch view to begin artwork/collections fetching
       setTimeout(function() {
-        $state.go('intro.fetch');
+        if (artworksToAdd.length > 0) {
+    	  LocalStorageProvider.removeDownloadProcessCompleted();
+          $state.go('intro.fetch');
+        }
+        else {
+          $ionicViewService.getBackView().go();
+        }
       }, 2000)
     }
   }

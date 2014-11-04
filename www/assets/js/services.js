@@ -275,16 +275,16 @@ angular.module('portfolio.services', [])
         setBaseUrl: function(data) {
             window.localStorage.setItem(BASE_URL, data);
         },
-        saveDownloadProcessCompleted: function(data) {
-            window.localStorage.setItem(DOWNLOAD_PROCESS_COMPLETED, data);
+        saveDownloadProcessCompleted: function() {
+            window.localStorage.setItem(DOWNLOAD_PROCESS_COMPLETED, 1);
         },
 
         // Getters
         getUsername: function() {
             return window.localStorage.getItem(USER_KEY);
         },
-        getArtworksData: function() {
-            if (cache.ARTWORKS === null) {
+        getArtworksData: function(noCache) {
+            if (cache.ARTWORKS === null || noCache) {
                 var strData = window.localStorage.getItem(ARTWORKS_INDEX_KEY);
                 (!strData) ? strData = '[]' : null;
                 cache.ARTWORKS = JSON.parse(strData);
@@ -324,6 +324,9 @@ angular.module('portfolio.services', [])
         },
         removeProcessDownloadCollectionsData: function() {
             window.localStorage.removeItem(COLLECTIONS_PROCESS_DOWNLOAD_INDEX_KEY);
+        },
+        removeDownloadProcessCompleted: function() {
+            window.localStorage.removeItem(DOWNLOAD_PROCESS_COMPLETED);
         },
         purge: function() {
             window.localStorage.removeItem(USER_KEY);
