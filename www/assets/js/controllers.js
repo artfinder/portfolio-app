@@ -489,8 +489,8 @@ angular.module('portfolio.controllers', [])
   };
 
   // Helper function to generate an image filename
-  var filename = function(type, artIdx, imgIdx) {
-    return username + '-' + type + '-' + artIdx + '-' + imgIdx + '.jpg';
+  var filename = function(type, artNo, imgNo) {
+    return username + '-' + type + '-' + artNo + '-' + imgNo + '.jpg';
   };
 
   var errorHandler = function(err, imgVariant, recordIdx, imgIdx) {
@@ -541,14 +541,14 @@ angular.module('portfolio.controllers', [])
         RemoteDataProvider.fetchBlob(img.small_square.url).then(function(data){
 
           // ...save small_square to persistent storage.
-          PersistentStorageProvider.saveBlob(data.data, filename('art_small_square', artIdx, imgIdx), function(file) {
+          PersistentStorageProvider.saveBlob(data.data, filename('art_small_square', rawArts[artIdx].id, imgIdx), function(file) {
             rawArts[artIdx].images[imgIdx].small_square.local_file_name = file.name;
 
             // Fetch fluid_large...
             RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
 
               // ...save fluid_large to persistent storage.
-              PersistentStorageProvider.saveBlob(data.data, filename('art_fluid_large', artIdx, imgIdx), function(file) {
+              PersistentStorageProvider.saveBlob(data.data, filename('art_fluid_large', rawArts[artIdx].id, imgIdx), function(file) {
                 rawArts[artIdx].images[imgIdx].fluid_large.local_file_name = file.name;
 
 
