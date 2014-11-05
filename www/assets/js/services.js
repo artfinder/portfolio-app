@@ -164,8 +164,8 @@ angular.module('portfolio.services', [])
 .factory('RemoteDataProvider', function remoteDataProvider($http) {
 
     var apikey = '19957ec02e669s11e3ab523a0800270f67ea';
-    var webservices_base_staging = 'https://www.artfinder.com/portfolio/api/v1/';
-    var webservices_base_live = 'https://artfinder:1nkandcrayon@www.staging.artfinder.com/portfolio/api/v1/';
+    var webservices_base_live = 'https://www.artfinder.com/portfolio/api/v1/';
+    var webservices_base_staging = 'https://artfinder:1nkandcrayon@www.staging.artfinder.com/portfolio/api/v1/';
     var webservices = {
         auth: webservices_base_live + 'artist/$USER$/',
         artworks: webservices_base_live + 'product/$USER$/',
@@ -446,7 +446,6 @@ angular.module('portfolio.services', [])
             }, errorHandler);
         },
         removeBlob: function(filename, callback) {
-            console.log('Remove blob: ' + filename);
             requestStorage(function(dir) {
                 dir.getFile(filename, { create: true }, function(file) {
                     file.remove(callback, errorHandler);
@@ -497,15 +496,12 @@ angular.module('portfolio.services', [])
 	var artworksToRemove = [];
     artworksToAdd = []; filesToRemove = [], removeFilesIndex = 0;
 	  
-    console.log('processArtworks executed');
-
     ArtworkProvider.init();
     CollectionProvider.init();
 
     
     //Fetch artworks and save response to local storage
     RemoteDataProvider.fetchArtworksForUser(LocalStorageProvider.getUsername()).then(function(data_arts) {
-      console.log(data_arts);
     
       // artworks to add
       for (i in data_arts.data.objects) {
@@ -524,7 +520,6 @@ angular.module('portfolio.services', [])
           artworksToAdd.push(loadedArtwork);
         }
       }
-      console.log('artworksToAdd', artworksToAdd);
       if (artworksToAdd.length > 0) {
         LocalStorageProvider.saveProcessDownloadArtworksData(artworksToAdd);
       }
@@ -547,7 +542,6 @@ angular.module('portfolio.services', [])
           artworksToRemove.push(currenArtwork);
         }
       }
-      console.log('artworksToRemove', artworksToRemove);
 
       if (artworksToRemove.length > 0) {
         // remove unused items
@@ -560,10 +554,8 @@ angular.module('portfolio.services', [])
           j = currentArtworks.indexOf(artworksToRemove[i]);
           currentArtworks.splice(j, 1);
         }
-        console.log('saving the spliced currentArtorks: ', currentArtworks);
         LocalStorageProvider.saveArtworksData(currentArtworks);
       }
-      console.log('filesToRemove', filesToRemove);
 
 
       //fetch collections
