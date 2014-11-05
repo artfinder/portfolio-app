@@ -481,9 +481,7 @@ angular.module('portfolio.services', [])
 .factory('RefreshArtworksProvider', function refreshArtworksProvider(/*$scope, $state, $ionicViewService,*/ ArtworkProvider, CollectionProvider, LocalStorageProvider, RemoteDataProvider, PersistentStorageProvider) {
 
   var currentArtworks = LocalStorageProvider.getArtworksData(true);
-  var artworksToAdd = [];
-  var artworksToRemove = [];
-  var filesToRemove = [], removeFilesIndex = 0;
+  var artworksToAdd, artworksToRemove, filesToRemove, removeFilesIndex;
   var execCallbackDownloadNewImages, execCallbackNoNewDataAvailable;
 
   // A generic error handler
@@ -495,7 +493,10 @@ angular.module('portfolio.services', [])
   var i, j, loadedArtwork, currenArtwork, foundMatch;
 
   var processArtworks = function() {
-    console.log('RefreshArtworksController');
+    //init variables
+    artworksToAdd = []; artworksToRemove = []; filesToRemove = [], removeFilesIndex = 0;
+	  
+    console.log('processArtworks executed');
 
     ArtworkProvider.init();
     CollectionProvider.init();
