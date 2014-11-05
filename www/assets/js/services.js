@@ -164,8 +164,8 @@ angular.module('portfolio.services', [])
 .factory('RemoteDataProvider', function remoteDataProvider($http) {
 
     var apikey = '19957ec02e669s11e3ab523a0800270f67ea';
-    var webservices_base_live = 'https://www.artfinder.com/portfolio/api/v1/';
-    var webservices_base_staging = 'https://artfinder:1nkandcrayon@www.staging.artfinder.com/portfolio/api/v1/';
+    var webservices_base_staging = 'https://www.artfinder.com/portfolio/api/v1/';
+    var webservices_base_live = 'https://artfinder:1nkandcrayon@www.staging.artfinder.com/portfolio/api/v1/';
     var webservices = {
         auth: webservices_base_live + 'artist/$USER$/',
         artworks: webservices_base_live + 'product/$USER$/',
@@ -480,8 +480,7 @@ angular.module('portfolio.services', [])
  */
 .factory('RefreshArtworksProvider', function refreshArtworksProvider(/*$scope, $state, $ionicViewService,*/ ArtworkProvider, CollectionProvider, LocalStorageProvider, RemoteDataProvider, PersistentStorageProvider) {
 
-  var currentArtworks = LocalStorageProvider.getArtworksData(true);
-  var artworksToAdd, artworksToRemove, filesToRemove, removeFilesIndex;
+  var artworksToAdd, filesToRemove, removeFilesIndex;
   var execCallbackDownloadNewImages, execCallbackNoNewDataAvailable;
 
   // A generic error handler
@@ -494,7 +493,9 @@ angular.module('portfolio.services', [])
 
   var processArtworks = function() {
     //init variables
-    artworksToAdd = []; artworksToRemove = []; filesToRemove = [], removeFilesIndex = 0;
+	var currentArtworks = LocalStorageProvider.getArtworksData(true);
+	var artworksToRemove = [];
+    artworksToAdd = []; filesToRemove = [], removeFilesIndex = 0;
 	  
     console.log('processArtworks executed');
 
