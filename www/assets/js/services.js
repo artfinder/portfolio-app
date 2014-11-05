@@ -457,6 +457,7 @@ angular.module('portfolio.services', [])
 
 })
 
+
 /**
  * A service for displaying user messages, alerts
  */
@@ -471,4 +472,155 @@ angular.module('portfolio.services', [])
             });
         }
     };
+})
+
+
+/**
+ * A service for refreshing artworks
+ */
+.factory('RefreshArtworksProvider', function refreshArtworksProvider(/*$scope, $state, $ionicViewService,*/ ArtworkProvider, CollectionProvider, LocalStorageProvider, RemoteDataProvider, PersistentStorageProvider) {
+
+  var currentArtworks = LocalStorageProvider.getArtworksData(true);
+  var artworksToAdd = [];
+  var artworksToRemove = [];
+  var filesToRemove = [], removeFilesIndex = 0;
+  var execCallbackDownloadNewImages, execCallbackNoNewDataAvailable;
+
+  // A generic error handler
+  var errorHandler = function(err) {
+    console.log('Generic error in update-data');
+    console.log(angular.toJson(err));
+  };
+
+  var i, j, loadedArtwork, currenArtwork, foundMatch;
+
+  var processArtworks = function() {
+    console.log('RefreshArtworksController');
+
+    ArtworkProvider.init();
+    CollectionProvider.init();
+
+    
+    //Fetch artworks and save response to local storage
+    RemoteDataProvider.fetchArtworksForUser(LocalStorageProvider.getUsername()).then(function(data_arts) {
+      console.log(data_arts);
+    
+      // artworks to add
+      for (i in data_arts.data.objects) {
+        loadedArtwork = data_arts.data.objects[i];
+        foundMatch = false;
+      
+        for (j in currentArtworks) {
+          currenArtwork = currentArtworks[j];
+          if (loadedArtwork.id == currenArtwork.id) {
+            foundMatch = true;
+            break;
+          }
+        }
+        
+        if (!foundMatch) {
+          artworksToAdd.push(loadedArtwork);
+        }
+      }
+      console.log('artworksToAdd', artworksToAdd);
+      if (artworksToAdd.length > 0) {
+        LocalStorageProvider.saveProcessDownloadArtworksData(artworksToAdd);
+      }
+
+
+      // artworks to remove
+      for (i in currentArtworks) {
+        currenArtwork = currentArtworks[i];
+        foundMatch = false;
+
+        for (j in data_arts.data.objects) {
+          loadedArtwork = data_arts.data.objects[j];
+          if (loadedArtwork.id == currenArtwork.id) {
+            foundMatch = true;
+            break;
+          }
+        }
+
+        if (!foundMatch) {
+          artworksToRemove.push(currenArtwork);
+        }
+      }
+      console.log('artworksToRemove', artworksToRemove);
+
+      if (artworksToRemove.length > 0) {
+        // remove unused items
+        for (i in artworksToRemove) {
+          for (j in artworksToRemove[i].images) {
+            filesToRemove.push(artworksToRemove[i].images[j].fluid_large.local_file_name);
+            filesToRemove.push(artworksToRemove[i].images[j].small_square.local_file_name);
+          }
+
+          j = currentArtworks.indexOf(artworksToRemove[i]);
+          currentArtworks.splice(j, 1);
+        }
+        console.log('saving the spliced currentArtorks: ', currentArtworks);
+        LocalStorageProvider.saveArtworksData(currentArtworks);
+      }
+      console.log('filesToRemove', filesToRemove);
+
+
+      //fetch collections
+      RemoteDataProvider.fetchCollectionsForUser(LocalStorageProvider.getUsername()).then(function(data_cols){
+        if (data_cols.data.objects && data_cols.data.objects.length > 0) {
+          if (artworksToAdd.length > 0) {
+            //collections will be updated by fetcher
+            LocalStorageProvider.saveCollectionsData([]);
+            LocalStorageProvider.saveProcessDownloadCollectionsData(data_cols.data.objects);
+          }
+          else {
+            //collection must be updated as fetcher wouldnt be called
+            for (i in data_cols.data.objects) {            
+              var collectionObject = data_cols.data.objects[i];
+
+              var collectionArtwork = ArtworkProvider.findById(collectionObject.artwork_ids[0]);
+
+              collectionObject.cover_image.grid_medium.local_file_name =
+                collectionArtwork.images[0].small_square.local_file_name;
+              collectionObject.cover_image.fluid_large.local_file_name =
+    	        collectionArtwork.images[0].fluid_large.local_file_name;
+            }
+
+            LocalStorageProvider.saveCollectionsData(data_cols.data.objects);
+          }
+        }
+
+        removeArtworksFiles();
+      }, function(e) { errorHandler(e); });
+
+
+    }, function(e) { errorHandler(e); });    
+  }
+
+
+  var removeArtworksFiles = function() {
+    if (filesToRemove[removeFilesIndex]) {
+      PersistentStorageProvider.removeBlob(filesToRemove[removeFilesIndex], function() {
+        ++removeFilesIndex;
+        removeArtworksFiles();
+      });
+    }
+    else {
+      if (artworksToAdd.length > 0) {
+        LocalStorageProvider.removeDownloadProcessCompleted();
+        //Redirect to intro.fetch view to begin artwork/collections fetching
+        execCallbackDownloadNewImages();
+      }
+      else {
+        execCallbackNoNewDataAvailable();
+      }
+    }
+  }
+    
+  return {
+    handleNewData: function(callbackDownloadNew, callbackNoNewData) {
+      execCallbackDownloadNewImages = callbackDownloadNew;
+      execCallbackNoNewDataAvailable = callbackNoNewData;
+   	  processArtworks();
+    }
+  }
 });
