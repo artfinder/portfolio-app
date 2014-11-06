@@ -548,7 +548,11 @@ angular.module('portfolio.services', [])
         for (i in artworksToRemove) {
           for (j in artworksToRemove[i].images) {
             filesToRemove.push(artworksToRemove[i].images[j].fluid_large.local_file_name);
-            filesToRemove.push(artworksToRemove[i].images[j].small_square.local_file_name);
+            filesToRemove.push(
+              (artworksToRemove[i].images[j].small_square) ?
+              artworksToRemove[i].images[j].small_square.local_file_name :
+              artworksToRemove[i].images[j].fluid_small.local_file_name
+              );
           }
 
           j = currentArtworks.indexOf(artworksToRemove[i]);
@@ -574,7 +578,9 @@ angular.module('portfolio.services', [])
               var collectionArtwork = ArtworkProvider.findById(collectionObject.artwork_ids[0]);
 
               collectionObject.cover_image.grid_medium.local_file_name =
-                collectionArtwork.images[0].small_square.local_file_name;
+                (collectionArtwork.images[0].small_square) ?
+                collectionArtwork.images[0].small_square.local_file_name :
+                collectionArtwork.images[0].fluid_small.local_file_name;
               collectionObject.cover_image.fluid_large.local_file_name =
     	        collectionArtwork.images[0].fluid_large.local_file_name;
             }

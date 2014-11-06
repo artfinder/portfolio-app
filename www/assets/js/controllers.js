@@ -605,7 +605,9 @@ angular.module('portfolio.controllers', [])
       var collectionArtwork = ArtworkProvider.findById(rawCols[colIdx].artwork_ids[0]);
 
       rawCols[colIdx].cover_image.grid_medium.local_file_name =
-        collectionArtwork.images[0].small_square.local_file_name;
+        (collectionArtwork.images[0].small_square) ? 
+        collectionArtwork.images[0].small_square.local_file_name :
+        collectionArtwork.images[0].fluid_small.local_file_name;
       rawCols[colIdx].cover_image.fluid_large.local_file_name =
     	collectionArtwork.images[0].fluid_large.local_file_name;
 
