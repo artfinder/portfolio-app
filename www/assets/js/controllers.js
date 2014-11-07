@@ -764,8 +764,7 @@ angular.module('portfolio.controllers', [])
         if (window.cordova) {
           StatusBar.show();
         }
-        window.removeEventListener('orientationchange', orientationHandle, false);
-        document.removeEventListener('backbutton', backButtonHandle);
+        backButtonHandle();
         $ionicViewService.getBackView().go();
       }
     }, 300);
@@ -786,7 +785,7 @@ angular.module('portfolio.controllers', [])
   }
   
   var setViewClientHeight = function() {
-    $scope.calculatedClientHeight = getClientHeight() + 38; //increased by width of status-bar
+    $scope.calculatedClientHeight = getClientHeight();
   }
 
   ionic.Platform.ready(function() {
@@ -803,9 +802,9 @@ angular.module('portfolio.controllers', [])
   
   var backButtonHandle = function(e) {
     document.removeEventListener('backbutton', backButtonHandle);
-    window.removeEventListener('orientationchange', orientationHandle, false);
+    window.removeEventListener('resize', orientationHandle, false);
   }
   
-  window.addEventListener('orientationchange', orientationHandle, false);
+  window.addEventListener('resize', orientationHandle, false);
   document.addEventListener('backbutton', backButtonHandle);
 });
