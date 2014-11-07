@@ -722,7 +722,7 @@ angular.module('portfolio.controllers', [])
     return window.matchMedia("(orientation: landscape)").matches;
   }
   
-  var getClientWidht = function() {
+  var getClientWidth = function() {
     return isLandscapeOrientation() ? document.body.clientHeight : document.body.clientWidth;
   }
   
@@ -785,14 +785,15 @@ angular.module('portfolio.controllers', [])
   }
   
   var setViewClientHeight = function() {
-    $scope.calculatedClientHeight = getClientHeight();
+    $scope.calculatedClientHeight = document.body.clientHeight;
+    $scope.calculatedClientWidth = document.body.clientWidth;
   }
 
   ionic.Platform.ready(function() {
     if (window.cordova) {
       StatusBar.hide();
     }
-    $timeout(setViewClientHeight, 200);
+    setViewClientHeight();
   });
   
   var orientationHandle = function() {
