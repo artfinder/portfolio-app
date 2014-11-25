@@ -144,6 +144,7 @@ angular.module('portfolio.controllers', [])
   
   $scope.searchBoxToggle = function() {
     var searchBox = document.getElementById('searchBox');
+    var searchIcon = document.getElementById('searchBoxIcon');
     if (!searchBox) {
       throw new Error('Cannot find searchBox element');
     }
@@ -151,9 +152,11 @@ angular.module('portfolio.controllers', [])
     
     if (boxVisibility) {
       searchBox.classList.add('hidden');
+      searchIcon.classList.remove('active');
     }
     else {
       searchBox.classList.remove('hidden');
+      searchIcon.classList.add('active');
 	}
     sessionStorage.setItem('showSearchBox', boxVisibility ? 0 : 1);
   }
