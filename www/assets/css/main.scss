@@ -168,6 +168,10 @@ ion-side-menu{
   background-color: white;
 }
 
+.bar .title{
+  text-transform: none;
+}
+
 .bar.bar-blue{
   background-color: $accentColor;
   border-bottom:1px $accentLightColor solid;

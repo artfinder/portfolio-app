@@ -132,6 +132,9 @@ ion-side-menu h1.title {
 .white-bg {
   background-color: white; }
 
+.bar .title {
+  text-transform: none; }
+
 .bar.bar-blue {
   background-color: #1285b5;
   border-bottom: 1px #139bd4 solid; }
