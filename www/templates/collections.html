@@ -11,15 +11,9 @@
               <a href="#/portfolio/by-collection/{{ collection.slug }}/">
                   <img ng-src="{{ collection.cover_image.imageUrl }}" />
               </a>
-              <div class="sub-images clearfix">
-                  <div class="image">
-                      <img ng-src="{{ collection.cover_image.imageUrl }}" />
-                  </div>
-                  <div class="image">
-                      <img ng-src="{{ collection.cover_image.imageUrl }}" />
-                  </div>
-                  <div class="image">
-                      <img ng-src="{{ collection.cover_image.imageUrl }}" />
+              <div class="sub-images clearfix" ng-if="collection.sub_images">
+                  <div class="image" ng-repeat="sub_image in collection.sub_images">
+                      <img ng-src="{{ sub_image.imageUrl }}" />
                   </div>
               </div>
               <div class="artwork-description">
