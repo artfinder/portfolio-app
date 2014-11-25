@@ -2,6 +2,21 @@
 
 img{vertical-align: top !important;}
 
+
+.clearfix{
+  clear: both;
+
+  &:before{
+    display: table;
+    content: "";
+    line-height: 0px;
+  }
+
+  &:after{
+    clear: both;
+  }
+}
+
 .artworks-listing {
   width: 100%;
   padding-top: 10px;
@@ -14,6 +29,38 @@ img{vertical-align: top !important;}
     *{
       float: none;
       display: block !important;
+    }
+  }
+
+  .collection{
+    a{
+      overflow: hidden;
+      img{
+        margin: -20% 0;
+      }
+    }
+  }
+
+  .sub-images{
+    clear: both;
+    padding: 10px 0 10px 10px;
+    background-color: #f4f4f4;
+    border-bottom: 1px #e8e8e8 solid;
+
+    .image{
+      float: left;
+      width: 31%;
+      &:not(:last-child){
+        margin-right: 2%;
+      }
+      min-height: 98px;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px #e8e8e8 solid;
+      background-color: white;
+      -webkit-box-sizing: box-sizing;
+      -moz-box-sizing: box-sizing;
+      box-sizing: box-sizing;
     }
   }
 }
@@ -569,8 +616,10 @@ $circleSizeHalf: 80px;
 }
 
 .artworks-listing .art-item{
-  border:1px #cdcdcd solid !important;
+  border:1px #E8E8E8 solid !important;
   margin-bottom:10px !important;
+  border-radius: 3px;
+  overflow: hidden;
   display: inline-block;
 
   img{

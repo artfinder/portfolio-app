@@ -24,6 +24,15 @@ $accentLightColor:  #71d1e2;
 img {
   vertical-align: top !important; }
 
+.clearfix {
+  clear: both; }
+  .clearfix:before {
+    display: table;
+    content: "";
+    line-height: 0px; }
+  .clearfix:after {
+    clear: both; }
+
 .artworks-listing {
   width: 100%;
   padding-top: 10px; }
@@ -34,6 +43,28 @@ img {
     .artworks-listing .artwork-box * {
       float: none;
       display: block !important; }
+  .artworks-listing .collection a {
+    overflow: hidden; }
+    .artworks-listing .collection a img {
+      margin: -20% 0; }
+  .artworks-listing .sub-images {
+    clear: both;
+    padding: 10px 0 10px 10px;
+    background-color: #f4f4f4;
+    border-bottom: 1px #e8e8e8 solid; }
+    .artworks-listing .sub-images .image {
+      float: left;
+      width: 31%;
+      min-height: 98px;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px #e8e8e8 solid;
+      background-color: white;
+      -webkit-box-sizing: box-sizing;
+      -moz-box-sizing: box-sizing;
+      box-sizing: box-sizing; }
+      .artworks-listing .sub-images .image:not(:last-child) {
+        margin-right: 2%; }
 
 @media (max-width: 767px) {
   .artworks-listing .artwork-box {
@@ -456,8 +487,10 @@ h2.main {
   font-size: 120px; }
 
 .artworks-listing .art-item {
-  border: 1px #cdcdcd solid !important;
+  border: 1px #E8E8E8 solid !important;
   margin-bottom: 10px !important;
+  border-radius: 3px;
+  overflow: hidden;
   display: inline-block; }
   .artworks-listing .art-item img {
     max-width: 100%; }

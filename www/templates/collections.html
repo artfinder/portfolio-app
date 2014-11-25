@@ -6,11 +6,22 @@
   <ion-content padding="false" class="has-header white-bg">
 
   <div class="artworks-listing" ng-if="collections">
-      <div class="artwork-box" ng-repeat="collection in collections">
+      <div class="artwork-box collection" ng-repeat="collection in collections">
           <div class="art-item">
               <a href="#/portfolio/by-collection/{{ collection.slug }}/">
                   <img ng-src="{{ collection.cover_image.imageUrl }}" />
               </a>
+              <div class="sub-images clearfix">
+                  <div class="image">
+                      <img ng-src="{{ collection.cover_image.imageUrl }}" />
+                  </div>
+                  <div class="image">
+                      <img ng-src="{{ collection.cover_image.imageUrl }}" />
+                  </div>
+                  <div class="image">
+                      <img ng-src="{{ collection.cover_image.imageUrl }}" />
+                  </div>
+              </div>
               <div class="artwork-description">
                   <span class="title">{{ collection.name }}</span>
               </div>
