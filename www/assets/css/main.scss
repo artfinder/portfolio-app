@@ -21,6 +21,11 @@ img{vertical-align: top !important;}
   width: 100%;
   padding-top: 10px;
 
+  a{
+    text-decoration: none;
+    color: black;
+  }
+
   .artwork-box{
     float:left;
     width: 32%;
@@ -33,7 +38,7 @@ img{vertical-align: top !important;}
   }
 
   .collection{
-    a{
+    .main-image{
       overflow: hidden;
       img{
         margin: -20% 0;

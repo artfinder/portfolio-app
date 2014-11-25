@@ -6,7 +6,7 @@
       .scroll{height: 100%;}
   </style>
   <ion-nav-buttons side="right">
-    <a class="button button-icon fa ion-ios7-search-strong medium-icon" href="#/artwork-fs/{{ artwork.id }}/{{ currSlide }}"></a>
+    <a class="button button-icon fa fa-search-plus medium-icon" href="#/artwork-fs/{{ artwork.id }}/{{ currSlide }}"></a>
     <button class="button button-icon fa fa-info-circle medium-icon" ng-click="displayArtworkInfo();"></button>
   </ion-nav-buttons>
   <ion-content class="has-header artwork-slidebox white-bg" has-bouncing="true" on-swipe-up="loadNext();" on-swipe-down="loadPrev();" ng-click="dismissInstructionsOverlay()">

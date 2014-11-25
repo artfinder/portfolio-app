@@ -36,6 +36,9 @@ img {
 .artworks-listing {
   width: 100%;
   padding-top: 10px; }
+  .artworks-listing a {
+    text-decoration: none;
+    color: black; }
   .artworks-listing .artwork-box {
     float: left;
     width: 32%;
@@ -43,9 +46,9 @@ img {
     .artworks-listing .artwork-box * {
       float: none;
       display: block !important; }
-  .artworks-listing .collection a {
+  .artworks-listing .collection .main-image {
     overflow: hidden; }
-    .artworks-listing .collection a img {
+    .artworks-listing .collection .main-image img {
       margin: -20% 0; }
   .artworks-listing .sub-images {
     clear: both;
@@ -523,13 +526,14 @@ h2.main {
       -ms-transform: translate(0, -50%); }
 
 #fullscrImage {
-  position: relative;
-  margin-top: 50%;
-  transform: translate(0, -50%);
-  -webkit-transform: translate(0, -50%);
-  -moz-transform: translate(0, -50%);
-  -o-transform: translate(0, -50%);
-  -ms-transform: translate(0, -50%); }
+            /*
+position: relative;
+margin-top: 50%;
+transform: translate(0, -50%);
+-webkit-transform: translate(0, -50%);
+-moz-transform: translate(0, -50%);
+-o-transform: translate(0, -50%);
+-ms-transform: translate(0, -50%);*/ }
 
 .swipe-info-artwork {
   float: left;
