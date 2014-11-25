@@ -42,7 +42,8 @@ img {
   .artworks-listing .artwork-box {
     float: left;
     width: 32%;
-    margin: 0 0 0 1%; }
+    margin: 0 0 0 1%;
+    background-color: white; }
     .artworks-listing .artwork-box * {
       float: none;
       display: block !important; }
