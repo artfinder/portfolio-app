@@ -9,7 +9,7 @@
         <input id="input_search" value="{{ search }}" placeholder="Search" ng-keyup="searchArtworks()"/>
         <a ng-click="clearSearch()" class="icon ion-close-circled"></a>
     </div>
-    <ion-content padding="true" class="has-header white-bg" paging="true">
+    <ion-content padding="false" class="has-header white-bg" paging="true">
         <div class="artworks-listing">
             <div class="artwork-box" ng-repeat="art in artworks">
                 <div class="art-item">
