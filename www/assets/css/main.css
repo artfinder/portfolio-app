@@ -59,7 +59,6 @@ img {
     .artworks-listing .sub-images .image {
       float: left;
       width: 31%;
-      min-height: 98px;
       border-radius: 4px;
       overflow: hidden;
       border: 1px #e8e8e8 solid;
@@ -83,8 +82,8 @@ img {
 @media (max-width: 480px) {
   .artworks-listing .artwork-box {
     float: left;
-    width: 96%;
-    margin: 0 0 0 2%; } }
+    width: 94%;
+    margin: 0 0 0 3%; } }
 body, input, textarea, h1, h2, h3, h4, h5 {
   font-family: "BrandonText", Arial !important; }
 

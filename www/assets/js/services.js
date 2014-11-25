@@ -7,7 +7,7 @@ angular.module('portfolio.services', [])
 
     var arts = [];
     var index = [];
-    var itemsPerPage = 5;
+    var itemsPerPage = 6;
 
     var executeSearchBy = function(search) {
         var allArts = LocalStorageProvider.getArtworksData(); //this is cached
