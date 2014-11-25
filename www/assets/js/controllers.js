@@ -214,8 +214,14 @@ angular.module('portfolio.controllers', [])
     var baseUrl = LocalStorageProvider.getBaseUrl();
     for (var i in collections) {
       collections[i].cover_image.imageUrl = baseUrl + ((collections[i].cover_image.grid_medium.local_file_name) ?
-        collections[i].cover_image.grid_medium.local_file_name : collections[i].cover_image.fluid_large. local_file_name); 
+        collections[i].cover_image.grid_medium.local_file_name : collections[i].cover_image.fluid_large. local_file_name);
+
+      for (var j in collections[i].sub_images) {
+        collections[i].sub_images[j].imageUrl = baseUrl + collections[i].sub_images[j].local_file_name;
+      }
     }
+    
+console.log(collections);
 })
 
 /**
@@ -606,10 +612,22 @@ angular.module('portfolio.controllers', [])
 
       rawCols[colIdx].cover_image.grid_medium.local_file_name =
         (collectionArtwork.images[0].small_square) ? 
-        collectionArtwork.images[0].small_square.local_file_name :
-        collectionArtwork.images[0].fluid_small.local_file_name;
+          collectionArtwork.images[0].small_square.local_file_name :
+          collectionArtwork.images[0].fluid_small.local_file_name;
       rawCols[colIdx].cover_image.fluid_large.local_file_name =
     	collectionArtwork.images[0].fluid_large.local_file_name;
+
+      //handle collections sub-images (preview - first three artworks in collection)
+      rawCols[colIdx].sub_images = [];
+      for (var i=1; i < rawCols[colIdx].artwork_ids.length; ++i) {
+        collectionArtwork = ArtworkProvider.findById(rawCols[colIdx].artwork_ids[i]);
+
+        rawCols[colIdx].sub_images.push({ local_file_name: collectionArtwork.images[0].small_square.local_file_name});
+
+        if (i >= 3) {
+          break;
+        }
+      }
 
       // Carry on to the next collection
       fetchAndSaveCollections(colIdx+1);
