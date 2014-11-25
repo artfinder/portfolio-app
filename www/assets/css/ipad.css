@@ -14,12 +14,6 @@
   src: url("../fonts/BrandonText-Light/260266_A_0.eot");
   src: url("../fonts/BrandonText-Light/260266_A_0.eot?#iefix") format("embedded-opentype"), url("../fonts/BrandonText-Light/260266_A_0.woff") format("woff"), url("../fonts/BrandonText-Light/260266_A_0.ttf") format("truetype");
   font-weight: lighter; }
-/*
-$accentColor:       #02adcc;
-$accentDarkColor:   #009fbb;
-$unActiveDotColor:  #00839f;
-$accentLightColor:  #71d1e2;
-*/
 /* FONT SIZES */
 @media (min-width: 768px) {
   .home-logo img {
@@ -122,18 +116,7 @@ $accentLightColor:  #71d1e2;
     -o-transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
     width: 430px;
-    height: 396px;
+    height: 360px;
     border-radius: 10px; }
-    .swipe-info-artwork .big-icon {
-      /*color:white;
-      font-size:45px;
-      text-align: center;
-      padding:20px 0px;*/ }
-      .swipe-info-artwork .big-icon.top {
-        margin-top: 12px; }
-    .swipe-info-artwork .text-info-swipe {
-      /*color: white;
-      text-align: center;
-      font-size: 22px;
-      line-height: 1.3;
-      padding:10px 0px;*/ } }
+    .swipe-info-artwork .big-icon.top {
+      margin-top: 12px; } }

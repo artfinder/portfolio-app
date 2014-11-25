@@ -14,12 +14,6 @@
   src: url("../fonts/BrandonText-Light/260266_A_0.eot");
   src: url("../fonts/BrandonText-Light/260266_A_0.eot?#iefix") format("embedded-opentype"), url("../fonts/BrandonText-Light/260266_A_0.woff") format("woff"), url("../fonts/BrandonText-Light/260266_A_0.ttf") format("truetype");
   font-weight: lighter; }
-/*
-$accentColor:       #02adcc;
-$accentDarkColor:   #009fbb;
-$unActiveDotColor:  #00839f;
-$accentLightColor:  #71d1e2;
-*/
 /* FONT SIZES */
 img {
   vertical-align: top !important; }
