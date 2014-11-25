@@ -622,7 +622,11 @@ console.log(collections);
       for (var i=1; i < rawCols[colIdx].artwork_ids.length; ++i) {
         collectionArtwork = ArtworkProvider.findById(rawCols[colIdx].artwork_ids[i]);
 
-        rawCols[colIdx].sub_images.push({ local_file_name: collectionArtwork.images[0].small_square.local_file_name});
+        rawCols[colIdx].sub_images.push({ 
+          local_file_name: collectionArtwork.images[0].small_square ?
+            collectionArtwork.images[0].small_square.local_file_name :
+            collectionArtwork.images[0].fluid_small.local_file_name
+          });
 
         if (i >= 3) {
           break;
