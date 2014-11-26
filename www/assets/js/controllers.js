@@ -504,7 +504,7 @@ angular.module('portfolio.controllers', [])
   var errorHandler = function(err, imgVariant, recordIdx, imgIdx) {
     console.log('Error while fetching img variant: ' + imgVariant + '; record idx: ' + recordIdx + '; image idx: ' + imgIdx);
     console.log(angular.toJson(err));
-    if (artIdx > 0 && err && err.status && ((err.status / 100).toPrecision(1) == 5)) {
+    if (recordIdx > 0 && err && err.status && ((err.status / 100).toPrecision(1) == 5)) {
       //handle error 500: proceed to next artwork
       LocalStorageProvider.increaseDownloadErrorsCount();
       fetchAndSaveArtworks(recordIdx+1, 0);
