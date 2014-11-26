@@ -507,7 +507,7 @@ angular.module('portfolio.controllers', [])
     if (artIdx > 0 && err && err.status && ((err.status / 100).toPrecision(1) == 5)) {
       //handle error 500: proceed to next artwork
       LocalStorageProvider.increaseDownloadErrorsCount();
-      fetchAndSaveArtworks(artIdx+1, 0);
+      fetchAndSaveArtworks(recordIdx+1, 0);
     }
     else {
       MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Error');
