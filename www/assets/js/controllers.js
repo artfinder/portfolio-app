@@ -223,8 +223,6 @@ angular.module('portfolio.controllers', [])
         collections[i].sub_images[j].imageUrl = baseUrl + collections[i].sub_images[j].local_file_name;
       }
     }
-    
-console.log(collections);
 })
 
 /**
