@@ -37,7 +37,8 @@ img {
     display: inline-block;
     width: 32%;
     margin: 0 0 0 1%;
-    background-color: white; }
+    background-color: white;
+    vertical-align: top; }
     .artworks-listing .artwork-box * {
       float: left;
       display: block !important; }
@@ -47,6 +48,7 @@ img {
       margin: -20% 0; }
   .artworks-listing .sub-images {
     clear: both;
+    width: 100%;
     padding: 10px 0 10px 10px;
     background-color: #f4f4f4;
     border-bottom: 1px #e8e8e8 solid; }
@@ -62,6 +64,8 @@ img {
       box-sizing: box-sizing; }
       .artworks-listing .sub-images .image:not(:last-child) {
         margin-right: 2%; }
+      .artworks-listing .sub-images .image img {
+        width: 100%; }
 
 @media (max-width: 767px) {
   .artworks-listing .artwork-box {
@@ -494,7 +498,8 @@ h2.main {
   margin-bottom: 10px !important;
   border-radius: 3px;
   overflow: hidden;
-  display: inline-block; }
+  display: inline-block;
+  vertical-align: top; }
   .artworks-listing .art-item img {
     max-width: 100%; }
 
