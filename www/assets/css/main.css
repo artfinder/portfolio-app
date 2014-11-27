@@ -65,17 +65,14 @@ img {
 
 @media (max-width: 767px) {
   .artworks-listing .artwork-box {
-    float: left;
     width: 48%;
     margin: 0 0 0 1%; } }
 @media (max-width: 600px) {
   .artworks-listing .artwork-box {
-    float: left;
     width: 47%;
     margin: 0 0 0 2%; } }
 @media (max-width: 480px) {
   .artworks-listing .artwork-box {
-    float: left;
     width: 94%;
     margin: 0 0 0 3%; } }
 body, input, textarea, h1, h2, h3, h4, h5 {

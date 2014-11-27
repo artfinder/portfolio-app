@@ -73,7 +73,6 @@ img{vertical-align: top !important;}
 @media (max-width: 767px) {
   .artworks-listing {
     .artwork-box{
-      float:left;
       width: 48%;
       margin: 0 0 0 1%;
     }
@@ -82,7 +81,6 @@ img{vertical-align: top !important;}
 @media (max-width: 600px) {
   .artworks-listing {
     .artwork-box{
-      float:left;
       width: 47%;
       margin: 0 0 0 2%;
     }
@@ -91,7 +89,6 @@ img{vertical-align: top !important;}
 @media (max-width: 480px) {
   .artworks-listing {
     .artwork-box{
-      float:left;
       width: 94%;
       margin: 0 0 0 3%;
     }
