@@ -630,13 +630,18 @@ $circleSizeHalf: 80px;
 }
 /* END LOADING CIRCLE */
 
+
+.item.item-complex{
+  background-color: transparent !important;
+}
+
 .complete-icon{
   color:white;
   font-size:120px;
 }
 
 .artworks-listing .art-item{
-  border:1px #E8E8E8 solid !important;
+  border:1px #DADADA solid !important;
   margin-bottom:10px !important;
   border-radius: 3px;
   overflow: hidden;
