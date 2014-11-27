@@ -27,7 +27,7 @@ img{vertical-align: top !important;}
   }
 
   .artwork-box{
-    float:left;
+    display: inline-block;
     width: 32%;
     margin: 0 0 0 1%;
     background-color: white;
@@ -643,8 +643,21 @@ $circleSizeHalf: 80px;
   }
 }
 
+.close-fullscreen{
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  color: white;
+  padding: 5px 8px;
+  background-color: rgba(0, 0, 0, 0.29);
+  border-radius: 4px;
+  z-index: 1;
+}
+
 .artwork-description{
   padding:12px 8px 8px 8px;
+  height: 60px;
+  overflow: hidden;
   font-size: $mediumFont;
 }
 
