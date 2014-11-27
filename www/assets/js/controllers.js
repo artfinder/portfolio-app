@@ -123,7 +123,7 @@ angular.module('portfolio.controllers', [])
     $state.go('artwork.artwork', {
       artId: artId,
       ref: ($stateParams.collectionSlug) ? $stateParams.collectionSlug : 'artworks',
-      refId: ($stateParams.refId) ? $stateParams.refId : 0 
+      refId: ($stateParams.refId) ? $stateParams.refId : 0
     });
   };
   
@@ -228,7 +228,7 @@ angular.module('portfolio.controllers', [])
 /**
  * A single artwork view controller
  */
-.controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, $ionicLoading, $ionicSlideBoxDelegate, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
+.controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, $ionicLoading, $ionicSlideBoxDelegate, $timeout, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
 
   ArtworkProvider.init();
   CollectionProvider.init();
@@ -245,7 +245,18 @@ angular.module('portfolio.controllers', [])
   $scope.title = artwork.name;
   $scope.images = artworkImages;
   $scope.hideInfoOverlay = (LocalStorageProvider.getArtworkInstructionsOverlayFlag() === null) ? '' : ' hidden';
-  $scope.currSlide = 0;
+  $scope.currSlide = window.sessionStorage.getItem('fullscrenItemIndex');
+  if ($scope.currSlide !== null) {
+	window.sessionStorage.removeItem('fullscrenItemIndex');
+	if ($scope.currSlide != 0) {
+      $timeout(function() {
+        $ionicSlideBoxDelegate.slide($scope.currSlide);
+      }, 100);
+    }
+  }
+  else {
+	$scope.currSlide = 0;
+  }
 
   // Define artwork set to help browsing
   var artworkSet = [];
@@ -751,6 +762,9 @@ angular.module('portfolio.controllers', [])
   image.ratio = image.width / image.height;
   $scope.image = image;
   window.doubleClickStarted = false;
+  
+  //saves opened item.index to handle it when going back
+  window.sessionStorage.setItem('fullscrenItemIndex', $stateParams.index);
   
   var isLandscapeOrientation = function() {
     return window.matchMedia("(orientation: landscape)").matches;
