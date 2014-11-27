@@ -157,7 +157,8 @@ angular.module('portfolio.routes', [])
         url: '/complete',
         views: {
             'intro-content': {
-                templateUrl: 'templates/intro/04-complete.html'
+                templateUrl: 'templates/intro/04-complete.html',
+                controller:	 'DonwloadCompletedController'
             }
         }
     })

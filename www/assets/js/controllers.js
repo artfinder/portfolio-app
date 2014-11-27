@@ -223,8 +223,6 @@ angular.module('portfolio.controllers', [])
         collections[i].sub_images[j].imageUrl = baseUrl + collections[i].sub_images[j].local_file_name;
       }
     }
-    
-console.log(collections);
 })
 
 /**
@@ -465,6 +463,7 @@ console.log(collections);
   var username = LocalStorageProvider.getUsername();
   var rawArts = LocalStorageProvider.getProcessDownloadArtworksData();
   var rawCols = LocalStorageProvider.getProcessDownloadCollectionsData();
+  var downloadedArtworks = [];
   var numOfArtworks = rawArts !== null ? rawArts.length : 0;
   var numOfCollections = rawCols !== null ? rawCols.length : 0;
   var counter = 0;
@@ -505,8 +504,15 @@ console.log(collections);
   var errorHandler = function(err, imgVariant, recordIdx, imgIdx) {
     console.log('Error while fetching img variant: ' + imgVariant + '; record idx: ' + recordIdx + '; image idx: ' + imgIdx);
     console.log(angular.toJson(err));
-    MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Error');
-    terminateFetcher();
+    if (recordIdx > 0 && err && err.status && ((err.status / 100).toPrecision(1) == 5)) {
+      //handle error 500: proceed to next artwork
+      LocalStorageProvider.increaseDownloadErrorsCount();
+      fetchAndSaveArtworks(recordIdx+1, 0);
+    }
+    else {
+      MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Error');
+      terminateFetcher();
+    }
   };
 
   var terminateFetcher = function() {
@@ -544,8 +550,6 @@ console.log(collections);
 
         var img = rawArts[artIdx].images[imgIdx];
 
-        // IMAGE SIZES 280  580  735  500x500
-
         // Fetch small_square...
         RemoteDataProvider.fetchBlob(img.small_square.url).then(function(data){
 
@@ -578,13 +582,14 @@ console.log(collections);
 
       } else {
         // Carry on to the next artwork
+    	downloadedArtworks.push(rawArts[artIdx]);
         fetchAndSaveArtworks(artIdx+1, 0);
 
       } // ENDOF: if (rawArts[artIdx].images[imgIdx])
 
     } else {
       // Finished fetching artworks
-      LocalStorageProvider.saveNewArtwoksData(rawArts);
+      LocalStorageProvider.saveNewArtwoksData(downloadedArtworks);
       ArtworkProvider.init();
 
       // Carry on to fetch collections
@@ -610,28 +615,32 @@ console.log(collections);
        * After talking with Gump on 2014-10-30 we decided to use Artwork image as
        * Collection's cover. Last commit fetching collection files was e3f49f3
        */
-
-      var collectionArtwork = ArtworkProvider.findById(rawCols[colIdx].artwork_ids[0]);
-
-      rawCols[colIdx].cover_image.grid_medium.local_file_name =
-        (collectionArtwork.images[0].small_square) ? 
+      var collectionArtwork, collectionArtworkSmallImageFilename;
+      rawCols[colIdx].sub_images = [];
+      for (var i=0; i < rawCols[colIdx].artwork_ids.length; ++i) {
+        collectionArtwork = ArtworkProvider.findById(rawCols[colIdx].artwork_ids[i]);
+        if (!collectionArtwork) {
+          continue; //handle for not-downloaded image
+        }
+        collectionArtworkSmallImageFilename = collectionArtwork.images[0].small_square ?
           collectionArtwork.images[0].small_square.local_file_name :
           collectionArtwork.images[0].fluid_small.local_file_name;
-      rawCols[colIdx].cover_image.fluid_large.local_file_name =
-    	collectionArtwork.images[0].fluid_large.local_file_name;
 
-      //handle collections sub-images (preview - first three artworks in collection)
-      rawCols[colIdx].sub_images = [];
-      for (var i=1; i < rawCols[colIdx].artwork_ids.length; ++i) {
-        collectionArtwork = ArtworkProvider.findById(rawCols[colIdx].artwork_ids[i]);
-
-        rawCols[colIdx].sub_images.push({ 
-          local_file_name: collectionArtwork.images[0].small_square ?
-            collectionArtwork.images[0].small_square.local_file_name :
-            collectionArtwork.images[0].fluid_small.local_file_name
+        if (!rawCols[colIdx].cover_image.grid_medium.local_file_name) {
+          //main collection image
+          rawCols[colIdx].cover_image.grid_medium.local_file_name =
+            collectionArtworkSmallImageFilename;
+          rawCols[colIdx].cover_image.fluid_large.local_file_name =
+            collectionArtwork.images[0].fluid_large.local_file_name;
+        }
+        else {
+          //collections sub-images (preview - first three artworks in collection)
+          rawCols[colIdx].sub_images.push({ 
+            local_file_name: collectionArtworkSmallImageFilename
           });
+        }
 
-        if (i >= 3) {
+        if (rawCols[colIdx].sub_images.length >= 3) {
           break;
         }
       }
@@ -833,4 +842,26 @@ console.log(collections);
   
   window.addEventListener('resize', orientationHandle, false);
   document.addEventListener('backbutton', backButtonHandle);
+})
+
+
+
+/**
+ * Controler for handling display of download-complete infos
+ */
+.controller('DonwloadCompletedController', function(MessagesProvider, ArtworkProvider, LocalStorageProvider, $timeout) {
+  var errorsCount = LocalStorageProvider.getDownloadErrorsCount();
+  if (errorsCount > 0) {
+	ArtworkProvider.init();
+    MessagesProvider.alertPopup(
+      'Please note there were unexepcted problems while fetching your artworks and '
+        + ArtworkProvider.getAllArtworksCount() 
+        + ' out of ' + (ArtworkProvider.getAllArtworksCount() + errorsCount)
+        + ' artworks in total have been downloaded. Please use "Refresh artworks"'
+        + ' facility to download missing artworks at a later date.',
+      'Warining'
+    );
+    $timeout(LocalStorageProvider.removeDownloadErrorsCount, 200);
+  }
+  
 });

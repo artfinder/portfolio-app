@@ -229,6 +229,7 @@ angular.module('portfolio.services', [])
     var ARTWORK_OVERLAY_FLAG = 'artwork_overlay_flag';
     var BASE_URL = 'base_url';
     var DOWNLOAD_PROCESS_COMPLETED = 'download_process_completed';
+    var DOWNLOAD_ERRORS_COUNT = 'download_errors_count';
 
     var cache = {
         ARTWORKS: null,
@@ -278,6 +279,10 @@ angular.module('portfolio.services', [])
         saveDownloadProcessCompleted: function() {
             window.localStorage.setItem(DOWNLOAD_PROCESS_COMPLETED, 1);
         },
+        increaseDownloadErrorsCount: function() {
+        	currentVal = this.getDownloadErrorsCount();
+        	window.localStorage.setItem(DOWNLOAD_ERRORS_COUNT, currentVal + 1);
+        },
 
         // Getters
         getUsername: function() {
@@ -317,6 +322,11 @@ angular.module('portfolio.services', [])
         getDownloadProcessCompleted: function() {
            return window.localStorage.getItem(DOWNLOAD_PROCESS_COMPLETED);
         },
+        getDownloadErrorsCount: function() {
+        	var currentVal = parseInt(window.localStorage.getItem(DOWNLOAD_ERRORS_COUNT));
+        	(!currentVal) ? currentVal = 0 : null;
+        	return currentVal;
+        },
 
         // Removers
         removeProcessDownloadArtworksData: function() {
@@ -328,6 +338,9 @@ angular.module('portfolio.services', [])
         removeDownloadProcessCompleted: function() {
             window.localStorage.removeItem(DOWNLOAD_PROCESS_COMPLETED);
         },
+        removeDownloadErrorsCount: function() {
+            window.localStorage.removeItem(DOWNLOAD_ERRORS_COUNT);
+        },
         purge: function() {
             window.localStorage.removeItem(USER_KEY);
             window.localStorage.removeItem(ARTWORKS_INDEX_KEY);
@@ -337,6 +350,7 @@ angular.module('portfolio.services', [])
             window.localStorage.removeItem(ARTWORK_OVERLAY_FLAG);
             window.localStorage.removeItem(BASE_URL);
             window.localStorage.removeItem(DOWNLOAD_PROCESS_COMPLETED);
+            window.localStorage.removeItem(DOWNLOAD_ERRORS_COUNT);
             cache.BASE_URL = null;
             cache.ARTWORKS = null;
             cache.COLLECTIONS = null;
@@ -351,7 +365,7 @@ angular.module('portfolio.services', [])
 .factory('PersistentStorageProvider', function persistentStorageProvider() {
 
     var DATADIR = 'artp';
-    var QUOTA = 50*1024*1024; // 50MB
+    var QUOTA = 100*1024*1024; // 100MB
     var currentStorageDataDir;
 
     var requestStorageUsingFileStorageApi = function(storageType, grantedBytes, callback) {
