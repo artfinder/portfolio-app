@@ -250,7 +250,7 @@ angular.module('portfolio.controllers', [])
 	window.sessionStorage.removeItem('fullscrenItemIndex');
 	if ($scope.currSlide != 0) {
       $timeout(function() {
-        $ionicSlideBoxDelegate.slide($scope.currSlide);
+        $ionicSlideBoxDelegate.slide($scope.currSlide, 1);
       }, 100);
     }
   }
