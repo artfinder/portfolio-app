@@ -5,12 +5,12 @@
   src: url("../fonts/BrandonText-Regular/260266_7_0.eot?#iefix") format("embedded-opentype"), url("../fonts/BrandonText-Regular/260266_7_0.woff") format("woff"), url("../fonts/BrandonText-Regular/260266_7_0.ttf") format("truetype");
   font-weight: normal; }
 @font-face {
-  font-family: 'BrandonText';
+  font-family: 'BrandonTextBold';
   src: url("../fonts/BrandonText-Bold/260266_1_0.eot");
   src: url("../fonts/BrandonText-Bold/260266_1_0.eot?#iefix") format("embedded-opentype"), url("../fonts/BrandonText-Bold/260266_1_0.woff") format("woff"), url("../fonts/BrandonText-Bold/260266_1_0.ttf") format("truetype");
   font-weight: bold; }
 @font-face {
-  font-family: 'BrandonText';
+  font-family: 'BrandonTextLight';
   src: url("../fonts/BrandonText-Light/260266_A_0.eot");
   src: url("../fonts/BrandonText-Light/260266_A_0.eot?#iefix") format("embedded-opentype"), url("../fonts/BrandonText-Light/260266_A_0.woff") format("woff"), url("../fonts/BrandonText-Light/260266_A_0.ttf") format("truetype");
   font-weight: lighter; }
