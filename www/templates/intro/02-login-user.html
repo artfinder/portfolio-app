@@ -1,0 +1,27 @@
+<ion-view class="blue-bg">
+  <ion-content class="login-main-content" padding="false" scroll="true">
+    <div class="center">
+      <h2 class="main">Let‘s get started!</h2>
+      <p class="main-article">Please enter the following information:</p>
+    </div>
+
+    <div class="padding-page">
+      <form ng-submit="login(user);">
+        <div class="main-input lgn-email no-margin-top">
+          <input type="text" placeholder="your Artfinder slug" ng-model="user.slug">
+          <div class="warning icon ion-alert-circled"></div>
+        </div>
+        <span class="help">This is last part of URL after "artfinder.com/" (i.e. michael-jackson)</span>
+        <div class="main-input lgn-code">
+          <input type="text" placeholder="your unique verification code" ng-model="user.code">
+        </div>
+        <span class="help">You can find this in your Artist Dashboard <a ng-click="openExternalUrl('https://www.artfinder.com/manage/portfolio-app/');">here</a></span>
+
+        <div class="center">
+           <div id="warning"></div>
+           <button id="btnSubmitLoginForm" type="submit" class="btn btn-main" nav-clear>Login</button>
+        </div>
+      </form>
+    </div>
+  </ion-content>
+</ion-view>

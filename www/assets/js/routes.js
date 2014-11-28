@@ -116,29 +116,27 @@ angular.module('portfolio.routes', [])
         views: {
             'intro-content': {
                 templateUrl: 'templates/intro/01-welcome.html',
-                controller: 'LoginController'
+                controller:  'WelcomeController'
             }
         }
     })
     
-    .state('intro.login_user', {
-        url: '/login/:slug/:code',
-        views: {
-            'intro-content': {
-                //templateUrl: 'templates/intro/01-welcome.html',
-                templateUrl: 'templates/login-user-by-url.html',
-                controller: 'LoginController'
-            }
-        }
-    })
-
-    // TODO: Possibly obsolete route/view since intro.welcome is now a slider view
-    // handling two pages at once.
     .state('intro.login', {
         url: '/login',
         views: {
             'intro-content': {
-                templateUrl: 'templates/intro/02-login.html'
+                templateUrl: 'templates/intro/02-login-user.html',
+                controller:  'LoginController'
+            }
+        }
+    })
+    
+    .state('intro.login_user', { //same as login, but with parameters
+        url: '/login/:slug/:code',
+        views: {
+            'intro-content': {
+                templateUrl: 'templates/intro/02-login-user.html',
+                controller:  'LoginController'
             }
         }
     })

@@ -32,28 +32,16 @@
                 <ion-content padding="false"scroll="true">
                     <div class="center">
                         <h2 class="main">Let‘s get started!</h2>
-                        <p class="main-article">Simply log into your Artfinder store and we’ll start downloading your Portfolio. <br> Please enter the following information:</p>
+                        <p class="main-article">You will be asked to log in to your Artfinder account in a separate browser window to authorise access. Once logged in please click "Begin Download" to start downloading your artworks.</p>
                     </div>
 
                     <div class="padding-page">
-                        <form ng-submit="login(user);">
-                            <div class="main-input lgn-email no-margin-top">
-                                <input type="text" placeholder="your Artfinder slug" ng-model="user.slug">
-                                <div class="warning icon ion-alert-circled"></div>
-                            </div>
-                            <span class="help">This is last part of URL after "artfinder.com/" (i.e. michael-jackson)</span>
-                            <div class="main-input lgn-code">
-                                <input type="text" placeholder="your unique verification code" ng-model="user.code">
-                            </div>
-                            <span class="help">You can find this in your Artist Dashboard <a ng-click="openExternalUrl('https://www.artfinder.com/manage/portfolio-app/');">here</a></span>
-
-
-                            <div class="center">
-                                <div id="warning"></div>
-                                <button type="submit" class="btn btn-main" nav-clear>Login</button>
-                            </div>
-                        </form>
+                        <button class="btn btn-main center" ng-click="openExternalUrl('https://www.artfinder.com/login/?next=/manage/portfolio-app-login/');" nav-clear>Login</button>
                     </div>
+                    <div class="padding-page">
+                        <span class="help"><a href="#/intro/login">Manually enter authorisation code</a></span>
+                    </div>
+                    
                 </ion-content>
             </ion-slide>
         </ion-slide-box>

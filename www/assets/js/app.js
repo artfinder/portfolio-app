@@ -64,7 +64,9 @@ function handleOpenURL(url) {
 	
 	if (slug && code) {
       var supportedController = angular.element(supportedIonContent).scope();
-      supportedController.reportAppLaunched({ slug: slug, code: code });
+      if (supportedController && supportedController.reportAppLaunched) {
+        supportedController.reportAppLaunched({ slug: slug, code: code });
+      }
 	}
   }
 }
