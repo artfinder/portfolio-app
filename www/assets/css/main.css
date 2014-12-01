@@ -630,3 +630,9 @@ transform: translate(0, -50%);
     line-height: 30px;
     text-align: center;
     font-size: 19px; }
+
+.btn.btn-share {
+  padding: 20px 30px;
+  margin-bottom: 30px; }
+  .btn.btn-share i {
+    margin-right: 10px; }
