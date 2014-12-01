@@ -194,6 +194,8 @@ ion-nav-view {
   color: white;
   padding: 20px 0px;
   width: 100%; }
+  .swipe-info a {
+    color: white; }
 
 .slider-pager {
   bottom: 0;

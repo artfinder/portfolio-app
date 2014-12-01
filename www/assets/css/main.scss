@@ -261,6 +261,10 @@ ion-nav-view{
   color: white;
   padding:20px 0px;
   width:100%;
+
+  a{
+    color: white;
+  }
 }
 
 .slider-pager{
@@ -714,6 +718,7 @@ $circleSizeHalf: 80px;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.8);
   z-index:5;
+
 
   .big-icon{
     color:white;
