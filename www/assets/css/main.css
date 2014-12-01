@@ -567,17 +567,28 @@ transform: translate(0, -50%);
     color: white;
     font-size: 45px;
     text-align: center;
-    padding: 20px 0px; }
+    padding: 15px 0px; }
     .swipe-info-artwork .big-icon.top {
       margin-top: 100px; }
     .swipe-info-artwork .big-icon.hand {
       font-size: 60px; }
+    @media (max-height: 320px) {
+      .swipe-info-artwork .big-icon {
+        padding: 5px 0;
+        font-size: 34px; }
+        .swipe-info-artwork .big-icon.top {
+          margin-top: 20px; }
+        .swipe-info-artwork .big-icon.hand {
+          font-size: 50px; } }
   .swipe-info-artwork .text-info-swipe {
     color: white;
     text-align: center;
     font-size: 22px;
     line-height: 1.3;
     padding: 10px 0px; }
+    @media (max-height: 320px) {
+      .swipe-info-artwork .text-info-swipe {
+        font-size: 20px; } }
 
 #searchBoxIcon:before {
   line-height: 28px !important; }
