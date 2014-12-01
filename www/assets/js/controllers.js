@@ -251,6 +251,7 @@ angular.module('portfolio.controllers', [])
   $scope.images = artworkImages;
   $scope.hideInfoOverlay = (LocalStorageProvider.getArtworkInstructionsOverlayFlag() === null) ? '' : ' hidden';
   $scope.currSlide = window.sessionStorage.getItem('fullscrenItemIndex');
+  $scioe.artist = 
   if ($scope.currSlide !== null) {
 	window.sessionStorage.removeItem('fullscrenItemIndex');
 	if ($scope.currSlide != 0) {
@@ -322,8 +323,8 @@ angular.module('portfolio.controllers', [])
     $scope.modal.hide();
   };
 
-  $scope.shareArtwork = function(artworkUrl) {
-    window.plugins.socialsharing.share('Hi there, check out my artwork!', null, artworkUrl, 'http://www.artfinder.com');
+  $scope.shareArtwork = function(artworkUrl, artworkName, artworkSlug, artworkCategory) {
+    window.plugins.socialsharing.share('Hi there, check out my artwork!', null, artworkUrl, ('http://www.artfinder.com/product/' + artworkSlug));
   };
 
   $scope.dismissInstructionsOverlay = function() {
