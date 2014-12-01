@@ -22,7 +22,6 @@ angular.module('portfolio.controllers', [])
   };
 
   $scope.submitSubscriber = function(subscriber) {
-
     if (typeof subscriber == 'undefined' || !subscriber.email) {
       MessagesProvider.alertPopup('Please provide an email address', 'Error');
       return;
@@ -32,6 +31,7 @@ angular.module('portfolio.controllers', [])
       return;
     }
 
+
     $ionicLoading.show({
       template: 'Please wait...'
     });
@@ -39,6 +39,11 @@ angular.module('portfolio.controllers', [])
     var username = LocalStorageProvider.getUsername();
     RemoteDataProvider.subscribe(username, subscriber).then(function(data){
       if (data.data.added > 0) {
+        subscriber.first_name = "";
+        subscriber.last_name = "";
+        subscriber.email = "";
+        subscriber.add_permission = "off";
+        subscriber.add_newsletter = "off";
         MessagesProvider.alertPopup('Thank you for your subscription', 'Add subscriber');
       } else {
         MessagesProvider.alertPopup(data.data.error, 'Error');

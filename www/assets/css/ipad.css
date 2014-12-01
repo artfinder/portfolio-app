@@ -77,7 +77,8 @@
   .toogle-af {
     min-height: 40px;
     vertical-align: middle;
-    margin-top: 25px; }
+    margin-top: 25px;
+    font-size: 18px; }
 
   .reduced-padding {
     padding: 40px 70px !important; }
