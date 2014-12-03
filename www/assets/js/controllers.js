@@ -251,7 +251,7 @@ angular.module('portfolio.controllers', [])
   $scope.images = artworkImages;
   $scope.hideInfoOverlay = (LocalStorageProvider.getArtworkInstructionsOverlayFlag() === null) ? '' : ' hidden';
   $scope.currSlide = window.sessionStorage.getItem('fullscrenItemIndex');
-  $scioe.artist = 
+  //$scope.artist = 
   if ($scope.currSlide !== null) {
 	window.sessionStorage.removeItem('fullscrenItemIndex');
 	if ($scope.currSlide != 0) {
@@ -413,6 +413,7 @@ angular.module('portfolio.controllers', [])
     });
 
     var username = user.slug.toLowerCase();
+    var authuserdata;
     var BACKDOOR = 'zoya';
 
     // Fetch login details, compare with details entered by user
@@ -422,6 +423,9 @@ angular.module('portfolio.controllers', [])
         $ionicLoading.hide();
         return;
       }
+      else {
+        authuserdata = data_user.data;
+      }
 
       // Fetch artworks and save response to local storage
       RemoteDataProvider.fetchArtworksForUser(username).then(function(data_arts) {
@@ -429,7 +433,7 @@ angular.module('portfolio.controllers', [])
           MessagesProvider.alertPopup('It appears that you have no artworks in your portfolio.');
           $ionicLoading.hide();
         } else {
-          LocalStorageProvider.saveUsername(username);
+          LocalStorageProvider.saveUserData(authuserdata);
           LocalStorageProvider.saveProcessDownloadArtworksData(data_arts.data.objects);
 
           // Fetch collections and save response to local storage

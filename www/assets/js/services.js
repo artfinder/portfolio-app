@@ -221,7 +221,6 @@ angular.module('portfolio.services', [])
  */
 .factory('LocalStorageProvider', function localStorageProvider() {
 
-    var USER_KEY = 'username';
     var ARTWORKS_PROCESS_DOWNLOAD_INDEX_KEY = 'process_download_artworks';
     var ARTWORKS_INDEX_KEY = 'artworks';
     var COLLECTIONS_PROCESS_DOWNLOAD_INDEX_KEY = 'process_download_collections';
@@ -230,6 +229,7 @@ angular.module('portfolio.services', [])
     var BASE_URL = 'base_url';
     var DOWNLOAD_PROCESS_COMPLETED = 'download_process_completed';
     var DOWNLOAD_ERRORS_COUNT = 'download_errors_count';
+    var USER_DATA = 'user_data';
 
     var cache = {
         ARTWORKS: null,
@@ -239,9 +239,6 @@ angular.module('portfolio.services', [])
 
     return {
         // Setters
-        saveUsername: function(username) {
-            window.localStorage.setItem(USER_KEY, username);
-        },
         saveArtworksData: function(data) {
             cache.ARTWORKS = null;
             window.localStorage.setItem(ARTWORKS_INDEX_KEY, JSON.stringify(data));
@@ -283,10 +280,14 @@ angular.module('portfolio.services', [])
         	currentVal = this.getDownloadErrorsCount();
         	window.localStorage.setItem(DOWNLOAD_ERRORS_COUNT, currentVal + 1);
         },
+        saveUserData: function(data) {
+            window.localStorage.setItem(USER_DATA, JSON.stringify(data));
+        },
 
         // Getters
         getUsername: function() {
-            return window.localStorage.getItem(USER_KEY);
+        	var userData = this.getUserData(); 
+            return userData ? userData.slug : null;
         },
         getArtworksData: function(noCache) {
             if (cache.ARTWORKS === null || noCache) {
@@ -327,6 +328,9 @@ angular.module('portfolio.services', [])
         	(!currentVal) ? currentVal = 0 : null;
         	return currentVal;
         },
+        getUserData: function() {
+            return JSON.parse(window.localStorage.getItem(USER_DATA));
+        },
 
         // Removers
         removeProcessDownloadArtworksData: function() {
@@ -342,7 +346,6 @@ angular.module('portfolio.services', [])
             window.localStorage.removeItem(DOWNLOAD_ERRORS_COUNT);
         },
         purge: function() {
-            window.localStorage.removeItem(USER_KEY);
             window.localStorage.removeItem(ARTWORKS_INDEX_KEY);
             window.localStorage.removeItem(ARTWORKS_PROCESS_DOWNLOAD_INDEX_KEY);
             window.localStorage.removeItem(COLLECTIONS_INDEX_KEY);
@@ -351,6 +354,7 @@ angular.module('portfolio.services', [])
             window.localStorage.removeItem(BASE_URL);
             window.localStorage.removeItem(DOWNLOAD_PROCESS_COMPLETED);
             window.localStorage.removeItem(DOWNLOAD_ERRORS_COUNT);
+            window.localStorage.removeItem(USER_DATA);
             cache.BASE_URL = null;
             cache.ARTWORKS = null;
             cache.COLLECTIONS = null;
