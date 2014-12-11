@@ -528,8 +528,28 @@ angular.module('portfolio.services', [])
       
         for (j in currentArtworks) {
           currenArtwork = currentArtworks[j];
+
           if (loadedArtwork.id == currenArtwork.id) {
             foundMatch = true;
+            
+            //update metadata
+            currenArtwork.category = loadedArtwork.category;
+            currenArtwork.currency = loadedArtwork.currency;
+            currenArtwork.description = loadedArtwork.description;
+            currenArtwork.edition = loadedArtwork.edition;
+            currenArtwork.framed = loadedArtwork.framed;
+            currenArtwork.name = loadedArtwork.name;
+            currenArtwork.order = loadedArtwork.order;
+            currenArtwork.price = loadedArtwork.price;
+            currenArtwork.quantity = loadedArtwork.quantity;
+            currenArtwork.size_cm = loadedArtwork.size_cm;
+            currenArtwork.size_in = loadedArtwork.size_in;
+            //slug isn't updated
+            currenArtwork.style = loadedArtwork.style;
+            currenArtwork.subject = loadedArtwork.subject;
+            currenArtwork.substrate = loadedArtwork.substrate;
+            currenArtwork.unique = loadedArtwork.unique;
+            
             break;
           }
         }
