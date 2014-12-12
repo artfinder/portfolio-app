@@ -66,10 +66,10 @@ angular.module('portfolio.controllers', [])
   };
 
   $scope.refreshArtworks = function() {
-	$ionicLoading.show({
+    $ionicLoading.show({
       template: 'Loading data...'
     });
-	$ionicSideMenuDelegate.toggleLeft();
+    $ionicSideMenuDelegate.toggleLeft();
     RefreshArtworksProvider.handleNewData(
       //everything prepared - process to download new data
       function() {
@@ -167,7 +167,7 @@ angular.module('portfolio.controllers', [])
     else {
       searchBox.classList.remove('hidden');
       searchIcon.classList.add('active');
-	}
+    }
     sessionStorage.setItem('showSearchBox', boxVisibility ? 0 : 1);
   }
 
@@ -191,8 +191,8 @@ angular.module('portfolio.controllers', [])
   $scope.searchBoxVisiblity = sessionStorage.getItem('showSearchBox') == 1 ? '' : 'hidden';
 
   var handleTemplateData = function(artworks, ref, refId) {
-	var baseUrl = LocalStorageProvider.getBaseUrl();
-	
+    var baseUrl = LocalStorageProvider.getBaseUrl();
+    
     for (var i in artworks) {
       //artworks[i].imageOpenHref = '#/artwork/' + artworks[i].id + '/' + ref + '/' + refId; //not necessary due to openArtwork() func
       artworks[i].imageSrc = baseUrl + artworks[i].cover_image.local_file_name;
@@ -212,7 +212,7 @@ angular.module('portfolio.controllers', [])
       if (scrollTo.top) {
         $ionicScrollDelegate.scrollTo(0, scrollTo.top, false);
       }
-	}, 10);
+    }, 10);
   }
 })
 
@@ -258,15 +258,15 @@ angular.module('portfolio.controllers', [])
   $scope.currSlide = window.sessionStorage.getItem('fullscrenItemIndex');
   $scope.artistName = LocalStorageProvider.getUserData().name;
   if ($scope.currSlide !== null) {
-	window.sessionStorage.removeItem('fullscrenItemIndex');
-	if ($scope.currSlide != 0) {
+    window.sessionStorage.removeItem('fullscrenItemIndex');
+    if ($scope.currSlide != 0) {
       $timeout(function() {
         $ionicSlideBoxDelegate.slide($scope.currSlide, 1);
       }, 100);
     }
   }
   else {
-	$scope.currSlide = 0;
+    $scope.currSlide = 0;
   }
 
   // Define artwork set to help browsing
@@ -299,7 +299,7 @@ angular.module('portfolio.controllers', [])
 
   // Handle "Back" button depending whether we're in collections or artworks context
   $scope.goBack = function() {
-	var artId = sessionStorage.getItem('backArtworkId', artId) ? 
+    var artId = sessionStorage.getItem('backArtworkId', artId) ? 
       sessionStorage.getItem('backArtworkId', artId) : $stateParams.artId;
     if ($stateParams.ref !== 'artworks') {
       $state.go('portfolio.bycollection', {collectionSlug: $stateParams.ref, artId: artId});
@@ -604,7 +604,7 @@ angular.module('portfolio.controllers', [])
 
       } else {
         // Carry on to the next artwork
-    	downloadedArtworks.push(rawArts[artIdx]);
+        downloadedArtworks.push(rawArts[artIdx]);
         fetchAndSaveArtworks(artIdx+1, 0);
 
       } // ENDOF: if (rawArts[artIdx].images[imgIdx])
@@ -807,12 +807,12 @@ angular.module('portfolio.controllers', [])
   }, 10);
   
   $scope.tapHandle = function() {
-	if (window.doubleClickStarted) {
+    if (window.doubleClickStarted) {
       doubleTapToZoom();
-	}
-	else {
-	  singleTapToGoBack();
-	}
+    }
+    else {
+      singleTapToGoBack();
+    }
   }
   
   var singleTapToGoBack = function() {
@@ -835,10 +835,10 @@ angular.module('portfolio.controllers', [])
     if (element) {
       var scale = parseFloat(element.style.cssText.match('scale\\((-?\\d*\\.?\\d+)\\)')[1]);
       if (scale > 0.5) {
-    	$ionicScrollDelegate.zoomTo(0.5, true);
+        $ionicScrollDelegate.zoomTo(0.5, true);
       }
       else {
-    	$ionicScrollDelegate.zoomBy(2, true);
+        $ionicScrollDelegate.zoomBy(2, true);
       }
     }
   }
@@ -856,7 +856,7 @@ angular.module('portfolio.controllers', [])
   });
   
   var orientationHandle = function() {
-	calculateImageSizes();
+    calculateImageSizes();
     setViewClientHeight();
   }
   
@@ -877,7 +877,7 @@ angular.module('portfolio.controllers', [])
 .controller('DonwloadCompletedController', function(MessagesProvider, ArtworkProvider, LocalStorageProvider, $timeout) {
   var errorsCount = LocalStorageProvider.getDownloadErrorsCount();
   if (errorsCount > 0) {
-	ArtworkProvider.init();
+    ArtworkProvider.init();
     MessagesProvider.alertPopup(
       'Please note there were unexepcted problems while fetching your artworks and '
         + ArtworkProvider.getAllArtworksCount() 

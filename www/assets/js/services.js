@@ -277,8 +277,8 @@ angular.module('portfolio.services', [])
             window.localStorage.setItem(DOWNLOAD_PROCESS_COMPLETED, 1);
         },
         increaseDownloadErrorsCount: function() {
-        	currentVal = this.getDownloadErrorsCount();
-        	window.localStorage.setItem(DOWNLOAD_ERRORS_COUNT, currentVal + 1);
+            currentVal = this.getDownloadErrorsCount();
+            window.localStorage.setItem(DOWNLOAD_ERRORS_COUNT, currentVal + 1);
         },
         saveUserData: function(data) {
             window.localStorage.setItem(USER_DATA, JSON.stringify(data));
@@ -286,7 +286,7 @@ angular.module('portfolio.services', [])
 
         // Getters
         getUsername: function() {
-        	var userData = this.getUserData(); 
+            var userData = this.getUserData(); 
             return userData ? userData.slug : null;
         },
         getArtworksData: function(noCache) {
@@ -324,9 +324,9 @@ angular.module('portfolio.services', [])
            return window.localStorage.getItem(DOWNLOAD_PROCESS_COMPLETED);
         },
         getDownloadErrorsCount: function() {
-        	var currentVal = parseInt(window.localStorage.getItem(DOWNLOAD_ERRORS_COUNT));
-        	(!currentVal) ? currentVal = 0 : null;
-        	return currentVal;
+            var currentVal = parseInt(window.localStorage.getItem(DOWNLOAD_ERRORS_COUNT));
+            (!currentVal) ? currentVal = 0 : null;
+            return currentVal;
         },
         getUserData: function() {
             return JSON.parse(window.localStorage.getItem(USER_DATA));
@@ -511,11 +511,11 @@ angular.module('portfolio.services', [])
 
   var processArtworks = function() {
     //init variables
-	var currentArtworks = LocalStorageProvider.getArtworksData(true);
-	var artworksToRemove = [];
+    var currentArtworks = LocalStorageProvider.getArtworksData(true);
+    var artworksToRemove = [];
     artworksToAdd = []; filesToRemove = [], removeFilesIndex = 0;
     dataChanged = false;
-	  
+
     ArtworkProvider.init();
     CollectionProvider.init();
 
@@ -538,18 +538,18 @@ angular.module('portfolio.services', [])
             //check images
             allLoadedImagesWithCurrentMatch = true;
             for (k in loadedArtwork.images) {
-            	loadedArtworkImage = loadedArtwork.images[k];
-            	foundImageMatch = false;
-            	for (l in currenArtwork.images) {
-            		currentArtworkImage = currenArtwork.images[l];
-            		if (currentArtworkImage.fluid_large.url == loadedArtworkImage.fluid_large.url) {
-            			foundImageMatch = true;
-            			break;
-            		}
-            	}
-            	if (!foundImageMatch) {
-            		allLoadedImagesWithCurrentMatch = false;
-            	}
+                loadedArtworkImage = loadedArtwork.images[k];
+                foundImageMatch = false;
+                for (l in currenArtwork.images) {
+                    currentArtworkImage = currenArtwork.images[l];
+                    if (currentArtworkImage.fluid_large.url == loadedArtworkImage.fluid_large.url) {
+                        foundImageMatch = true;
+                        break;
+                    }
+                }
+                if (!foundImageMatch) {
+                    allLoadedImagesWithCurrentMatch = false;
+                }
             }
             
             if (allLoadedImagesWithCurrentMatch) {
@@ -558,20 +558,20 @@ angular.module('portfolio.services', [])
               
               //check if some of current images wasn't removed
               for (k in currenArtwork.images) {
-            	currentArtworkImage = currenArtwork.images[k];
-            	foundImageMatch = false;
-            	for (l in loadedArtwork.images) {
-            	  loadedArtworkImage = loadedArtwork.images[l];
-            	  if (loadedArtworkImage.fluid_large.url == currentArtworkImage.fluid_large.url) {
-            	    foundImageMatch = true;
-            	    break;
-            	  }
-            	}
-            	
-            	if (!foundImageMatch) {
-            	  //currentArtowkImage was removed from the server
-            	  currenArtworkImagesToRemove.push(currentArtworkImage);
-            	}
+                currentArtworkImage = currenArtwork.images[k];
+                foundImageMatch = false;
+                for (l in loadedArtwork.images) {
+                  loadedArtworkImage = loadedArtwork.images[l];
+                  if (loadedArtworkImage.fluid_large.url == currentArtworkImage.fluid_large.url) {
+                    foundImageMatch = true;
+                    break;
+                  }
+                }
+
+                if (!foundImageMatch) {
+                  //currentArtowkImage was removed from the server
+                  currenArtworkImagesToRemove.push(currentArtworkImage);
+                }
               }
               if (currenArtworkImagesToRemove.length) {
                 for (k in currenArtworkImagesToRemove) {
@@ -654,7 +654,7 @@ angular.module('portfolio.services', [])
                 collectionArtwork.images[0].small_square.local_file_name :
                 collectionArtwork.images[0].fluid_small.local_file_name;
               collectionObject.cover_image.fluid_large.local_file_name =
-    	        collectionArtwork.images[0].fluid_large.local_file_name;
+                collectionArtwork.images[0].fluid_large.local_file_name;
             }
 
             LocalStorageProvider.saveCollectionsData(data_cols.data.objects);
@@ -696,12 +696,12 @@ angular.module('portfolio.services', [])
 
   var updateArtworkMetadata = function(currenArtwork, loadedArtwork)
   {
-	var changed = false;
-	var fields = ['category', 'currency', 'description', 'edition', 'framed', 'name',
+    var changed = false;
+    var fields = ['category', 'currency', 'description', 'edition', 'framed', 'name',
             'order', 'price', 'quantity', 'size_cm', 'size_in', 'style', 'subject',
             'substrate', 'unique']; //slug isn't updated
 
-	for (var i in fields) {
+    for (var i in fields) {
       if (currenArtwork[fields[i]] !== loadedArtwork[fields[i]]) {
         changed = true;
         currenArtwork[fields[i]] = loadedArtwork[fields[i]];
@@ -715,7 +715,7 @@ angular.module('portfolio.services', [])
     handleNewData: function(callbackDownloadNew, callbackNoNewData) {
       execCallbackDownloadNewImages = callbackDownloadNew;
       execCallbackNoNewDataAvailable = callbackNoNewData;
-   	  processArtworks();
+      processArtworks();
     }
   }
 });
