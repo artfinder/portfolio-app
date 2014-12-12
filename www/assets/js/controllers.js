@@ -77,12 +77,17 @@ angular.module('portfolio.controllers', [])
         $state.go('intro.fetch');
       },
       //there is no new data to download - hide loader
-      function() {
+      function(needReload) {
         $ionicLoading.hide();
-        $ionicPopup.alert({
+        var alertPopup = $ionicPopup.alert({
           title: 'Info',
           template: 'There is no new data to download.'
         });
+        if (needReload) {
+          alertPopup.then(function(res) {
+            $state.go($state.current, {}, {reload: true});
+          });
+        }
       }
     );
   };

@@ -495,7 +495,7 @@ angular.module('portfolio.services', [])
 /**
  * A service for refreshing artworks
  */
-.factory('RefreshArtworksProvider', function refreshArtworksProvider(/*$scope, $state, $ionicViewService,*/ ArtworkProvider, CollectionProvider, LocalStorageProvider, RemoteDataProvider, PersistentStorageProvider) {
+.factory('RefreshArtworksProvider', function refreshArtworksProvider(ArtworkProvider, CollectionProvider, LocalStorageProvider, RemoteDataProvider, PersistentStorageProvider) {
 
   var artworksToAdd, filesToRemove, removeFilesIndex;
   var execCallbackDownloadNewImages, execCallbackNoNewDataAvailable;
@@ -507,6 +507,7 @@ angular.module('portfolio.services', [])
   };
 
   var i, j, loadedArtwork, currenArtwork, foundMatch;
+  var k, l, loadedArtworkImage, currentArtworkImage, foundImageMatch, allLoadedImagesWithCurrentMatch, currenArtworkImagesToRemove;
 
   var processArtworks = function() {
     //init variables
@@ -531,24 +532,74 @@ angular.module('portfolio.services', [])
 
           if (loadedArtwork.id == currenArtwork.id) {
             foundMatch = true;
+            currenArtworkImagesToRemove = [];
             
-            //update metadata
-            currenArtwork.category = loadedArtwork.category;
-            currenArtwork.currency = loadedArtwork.currency;
-            currenArtwork.description = loadedArtwork.description;
-            currenArtwork.edition = loadedArtwork.edition;
-            currenArtwork.framed = loadedArtwork.framed;
-            currenArtwork.name = loadedArtwork.name;
-            currenArtwork.order = loadedArtwork.order;
-            currenArtwork.price = loadedArtwork.price;
-            currenArtwork.quantity = loadedArtwork.quantity;
-            currenArtwork.size_cm = loadedArtwork.size_cm;
-            currenArtwork.size_in = loadedArtwork.size_in;
-            //slug isn't updated
-            currenArtwork.style = loadedArtwork.style;
-            currenArtwork.subject = loadedArtwork.subject;
-            currenArtwork.substrate = loadedArtwork.substrate;
-            currenArtwork.unique = loadedArtwork.unique;
+            //check images
+            allLoadedImagesWithCurrentMatch = true;
+            for (k in loadedArtwork.images) {
+            	loadedArtworkImage = loadedArtwork.images[k];
+            	foundImageMatch = false;
+            	for (l in currenArtwork.images) {
+            		currentArtworkImage = currenArtwork.images[l];
+            		if (currentArtworkImage.fluid_large.url == loadedArtworkImage.fluid_large.url) {
+            			foundImageMatch = true;
+            			break;
+            		}
+            	}
+            	if (!foundImageMatch) {
+            		allLoadedImagesWithCurrentMatch = false;
+            	}
+            }
+            
+            if (allLoadedImagesWithCurrentMatch) {
+              //update metadata
+              currenArtwork.category = loadedArtwork.category;
+              currenArtwork.currency = loadedArtwork.currency;
+              currenArtwork.description = loadedArtwork.description;
+              currenArtwork.edition = loadedArtwork.edition;
+              currenArtwork.framed = loadedArtwork.framed;
+              currenArtwork.name = loadedArtwork.name;
+              currenArtwork.order = loadedArtwork.order;
+              currenArtwork.price = loadedArtwork.price;
+              currenArtwork.quantity = loadedArtwork.quantity;
+              currenArtwork.size_cm = loadedArtwork.size_cm;
+              currenArtwork.size_in = loadedArtwork.size_in;
+              //slug isn't updated
+              currenArtwork.style = loadedArtwork.style;
+              currenArtwork.subject = loadedArtwork.subject;
+              currenArtwork.substrate = loadedArtwork.substrate;
+              currenArtwork.unique = loadedArtwork.unique;
+              
+              //check if some of current images wasn't removed
+              for (k in currenArtwork.images) {
+            	currentArtworkImage = currenArtwork.images[k];
+            	foundImageMatch = false;
+            	for (l in loadedArtwork.images) {
+            	  loadedArtworkImage = loadedArtwork.images[l];
+            	  if (loadedArtworkImage.fluid_large.url == currentArtworkImage.fluid_large.url) {
+            	    foundImageMatch = true;
+            	    break;
+            	  }
+            	}
+            	
+            	if (!foundImageMatch) {
+            	  //currentArtowkImage was removed from the server
+            	  currenArtworkImagesToRemove.push(currentArtworkImage);
+            	}
+              }
+              if (currenArtworkImagesToRemove.length) {
+                for (k in currenArtworkImagesToRemove) {
+                  addImageToRemovesFilesArray(currenArtworkImagesToRemove[k]);
+                  l = currenArtwork.images.indexOf(currenArtworkImagesToRemove[k]);
+                  currenArtwork.images.splice(k, 1);
+                }
+              }
+            }
+            else {
+              //some of new images is missing - download whole artwork
+              foundMatch = false;
+              artworksToRemove.push(currenArtwork);
+            }
             
             break;
           }
@@ -585,17 +636,14 @@ angular.module('portfolio.services', [])
         // remove unused items
         for (i in artworksToRemove) {
           for (j in artworksToRemove[i].images) {
-            filesToRemove.push(artworksToRemove[i].images[j].fluid_large.local_file_name);
-            filesToRemove.push(
-              (artworksToRemove[i].images[j].small_square) ?
-              artworksToRemove[i].images[j].small_square.local_file_name :
-              artworksToRemove[i].images[j].fluid_small.local_file_name
-              );
+            addImageToRemovesFilesArray(artworksToRemove[i].images[j]);
           }
 
           j = currentArtworks.indexOf(artworksToRemove[i]);
           currentArtworks.splice(j, 1);
         }
+      }
+      if (artworksToRemove.length > 0 || filesToRemove.length > 0) {
         LocalStorageProvider.saveArtworksData(currentArtworks);
       }
 
@@ -649,10 +697,15 @@ angular.module('portfolio.services', [])
         execCallbackDownloadNewImages();
       }
       else {
-        execCallbackNoNewDataAvailable();
+        execCallbackNoNewDataAvailable(filesToRemove.length > 0);
       }
     }
   }
+
+  var addImageToRemovesFilesArray = function(image) {
+    filesToRemove.push(image.fluid_large.local_file_name);
+    filesToRemove.push((image.small_square) ? image.small_square.local_file_name : image.fluid_small.local_file_name);
+  } 
     
   return {
     handleNewData: function(callbackDownloadNew, callbackNoNewData) {
