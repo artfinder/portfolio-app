@@ -497,7 +497,7 @@ angular.module('portfolio.services', [])
  */
 .factory('RefreshArtworksProvider', function refreshArtworksProvider(ArtworkProvider, CollectionProvider, LocalStorageProvider, RemoteDataProvider, PersistentStorageProvider) {
 
-  var artworksToAdd, filesToRemove, removeFilesIndex;
+  var artworksToAdd, filesToRemove, removeFilesIndex, dataChanged;
   var execCallbackDownloadNewImages, execCallbackNoNewDataAvailable;
 
   // A generic error handler
@@ -514,6 +514,7 @@ angular.module('portfolio.services', [])
 	var currentArtworks = LocalStorageProvider.getArtworksData(true);
 	var artworksToRemove = [];
     artworksToAdd = []; filesToRemove = [], removeFilesIndex = 0;
+    dataChanged = false;
 	  
     ArtworkProvider.init();
     CollectionProvider.init();
@@ -553,22 +554,7 @@ angular.module('portfolio.services', [])
             
             if (allLoadedImagesWithCurrentMatch) {
               //update metadata
-              currenArtwork.category = loadedArtwork.category;
-              currenArtwork.currency = loadedArtwork.currency;
-              currenArtwork.description = loadedArtwork.description;
-              currenArtwork.edition = loadedArtwork.edition;
-              currenArtwork.framed = loadedArtwork.framed;
-              currenArtwork.name = loadedArtwork.name;
-              currenArtwork.order = loadedArtwork.order;
-              currenArtwork.price = loadedArtwork.price;
-              currenArtwork.quantity = loadedArtwork.quantity;
-              currenArtwork.size_cm = loadedArtwork.size_cm;
-              currenArtwork.size_in = loadedArtwork.size_in;
-              //slug isn't updated
-              currenArtwork.style = loadedArtwork.style;
-              currenArtwork.subject = loadedArtwork.subject;
-              currenArtwork.substrate = loadedArtwork.substrate;
-              currenArtwork.unique = loadedArtwork.unique;
+              dataChanged |= updateArtworkMetadata(currenArtwork, loadedArtwork);
               
               //check if some of current images wasn't removed
               for (k in currenArtwork.images) {
@@ -643,7 +629,7 @@ angular.module('portfolio.services', [])
           currentArtworks.splice(j, 1);
         }
       }
-      if (artworksToRemove.length > 0 || filesToRemove.length > 0) {
+      if (artworksToRemove.length > 0 || filesToRemove.length > 0 || dataChanged) {
         LocalStorageProvider.saveArtworksData(currentArtworks);
       }
 
@@ -697,15 +683,33 @@ angular.module('portfolio.services', [])
         execCallbackDownloadNewImages();
       }
       else {
-        execCallbackNoNewDataAvailable(filesToRemove.length > 0);
+        execCallbackNoNewDataAvailable(filesToRemove.length > 0 || dataChanged);
       }
     }
   }
 
-  var addImageToRemovesFilesArray = function(image) {
+  var addImageToRemovesFilesArray = function(image)
+  {
     filesToRemove.push(image.fluid_large.local_file_name);
     filesToRemove.push((image.small_square) ? image.small_square.local_file_name : image.fluid_small.local_file_name);
-  } 
+  }
+
+  var updateArtworkMetadata = function(currenArtwork, loadedArtwork)
+  {
+	var changed = false;
+	var fields = ['category', 'currency', 'description', 'edition', 'framed', 'name',
+            'order', 'price', 'quantity', 'size_cm', 'size_in', 'style', 'subject',
+            'substrate', 'unique']; //slug isn't updated
+
+	for (var i in fields) {
+      if (currenArtwork[fields[i]] !== loadedArtwork[fields[i]]) {
+        changed = true;
+        currenArtwork[fields[i]] = loadedArtwork[fields[i]];
+      }
+    }
+
+    return changed;
+  }
     
   return {
     handleNewData: function(callbackDownloadNew, callbackNoNewData) {
