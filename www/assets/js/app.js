@@ -35,6 +35,10 @@ angular.module('portfolio', [
     //   StatusBar.styleDefault();
     //   StatusBar.overlaysWebView(true);
     // }
+
+    if (window.analytics) {
+      window.analytics.startTrackerWithId('UA-57477490-1');
+    }
   });
 });
 

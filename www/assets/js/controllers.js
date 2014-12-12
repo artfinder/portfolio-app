@@ -11,6 +11,7 @@ angular.module('portfolio.controllers', [])
       template: 'Logging out will remove all artworks from your device. Are you sure?'
     }).then(function(response) {
       if (response) {
+        (window.analytics) ? window.analytics.trackEvent('App', 'Logout') : '';
         PersistentStorageProvider.purge(function(){
           LocalStorageProvider.purge();
           window.historyCleared = null;
@@ -22,6 +23,7 @@ angular.module('portfolio.controllers', [])
   };
 
   $scope.submitSubscriber = function(subscriber) {
+    (window.analytics) ? window.analytics.trackView('Add follower view') : '';
     if (typeof subscriber == 'undefined' || !subscriber.email) {
       MessagesProvider.alertPopup('Please provide an email address', 'Error');
       return;
@@ -48,6 +50,7 @@ angular.module('portfolio.controllers', [])
       } else {
         MessagesProvider.alertPopup(data.data.error, 'Error');
       }
+      (window.analytics) ? window.analytics.trackEvent('Follower', 'Add', (data.data.added > 0) ? 'Success' : 'Error') : '';
       $ionicLoading.hide();
     }, function(err) {
       console.log('Subscription error');
@@ -66,6 +69,7 @@ angular.module('portfolio.controllers', [])
   };
 
   $scope.refreshArtworks = function() {
+    (window.analytics) ? window.analytics.trackEvent('App', 'Download', 'Refresh') : '';
     $ionicLoading.show({
       template: 'Loading data...'
     });
@@ -97,7 +101,6 @@ angular.module('portfolio.controllers', [])
  * Handles artworks listing
  */
 .controller('ArtworksController', function($scope, $state, $stateParams, $timeout, $ionicViewService, $ionicScrollDelegate, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
-
   //clears the history to prevent back button (to login screen)
   if (!window.historyCleared) {
     $ionicViewService.clearHistory();
@@ -179,6 +182,7 @@ angular.module('portfolio.controllers', [])
         );
       $scope.artworksCount = ($scope.artworks) ? $scope.artworks.length : 0;
       $scope.viewTitle = collection.name+" ("+$scope.artworksCount+")";
+      (window.analytics) ? window.analytics.trackView('Single collection view') : '';
     // ...or display them all
     } else {
       $scope.artworks = handleTemplateData(ArtworkProvider.getItemsRange(0, displayedItems),
@@ -186,6 +190,7 @@ angular.module('portfolio.controllers', [])
         );
       $scope.artworksCount = ArtworkProvider.getAllArtworksCount();
       $scope.viewTitle = "My Artworks (" + $scope.artworksCount + ")";
+      (window.analytics) ? window.analytics.trackView('Artworks listing') : '';
     }
   }
   $scope.searchBoxVisiblity = sessionStorage.getItem('showSearchBox') == 1 ? '' : 'hidden';
@@ -220,6 +225,7 @@ angular.module('portfolio.controllers', [])
  * Handles collections listing
  */
 .controller('CollectionsController', function($scope, CollectionProvider, LocalStorageProvider) {
+    (window.analytics) ? window.analytics.trackView('Collection list view') : '';
     CollectionProvider.init();
     var collections = CollectionProvider.all();
     $scope.collections = collections;
@@ -239,6 +245,7 @@ angular.module('portfolio.controllers', [])
  * A single artwork view controller
  */
 .controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, $ionicLoading, $ionicSlideBoxDelegate, $timeout, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
+  (window.analytics) ? window.analytics.trackView('Artwork view') : '';
 
   ArtworkProvider.init();
   CollectionProvider.init();
@@ -321,6 +328,7 @@ angular.module('portfolio.controllers', [])
   });
 
   $scope.displayArtworkInfo = function($event) {
+	(window.analytics) ? window.analytics.trackEvent('Product', 'InfoOpen', null, $stateParams.artId) : '';
     $scope.modal.show($event);
   };
 
@@ -353,6 +361,7 @@ angular.module('portfolio.controllers', [])
  * - redirects to the next step (FetcherController)
  */
 .controller('LoginController', function($scope, $state, $stateParams, $ionicPopup, $ionicLoading, $ionicViewService, $ionicSlideBoxDelegate, RemoteDataProvider, LocalStorageProvider, MessagesProvider) {
+  (window.analytics) ? window.analytics.trackView('Login view') : '';
 
   //clears the history to prevent back button (when user logged out)
   $ionicViewService.clearHistory();
@@ -481,6 +490,8 @@ angular.module('portfolio.controllers', [])
  * And yes, this code is SHIIEEEEET. Sorry.
  */
 .controller('FetcherController', function($scope, $state, $ionicLoading, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider, MessagesProvider, ArtworkProvider) {
+  (window.analytics) ? window.analytics.trackView('Loading view') : '';
+
   var killswitch = 0;
   var username = LocalStorageProvider.getUsername();
   var rawArts = LocalStorageProvider.getProcessDownloadArtworksData();
@@ -762,6 +773,7 @@ angular.module('portfolio.controllers', [])
  * A single artwork full-screen-view controller
  */
 .controller('ArtworkFullscreenController', function($scope, $state, $stateParams, $ionicViewService, $ionicPlatform, $ionicScrollDelegate, $timeout, ArtworkProvider, LocalStorageProvider, CollectionProvider) {
+  (window.analytics) ? window.analytics.trackView('Zoom view') : '';
 
   ArtworkProvider.init();
   CollectionProvider.init();
@@ -875,6 +887,7 @@ angular.module('portfolio.controllers', [])
  * Controler for handling display of download-complete infos
  */
 .controller('DonwloadCompletedController', function(MessagesProvider, ArtworkProvider, LocalStorageProvider, $timeout) {
+  (window.analytics) ? window.analytics.trackEvent('App', 'DownloadComplete') : '';
   var errorsCount = LocalStorageProvider.getDownloadErrorsCount();
   if (errorsCount > 0) {
     ArtworkProvider.init();
@@ -897,6 +910,8 @@ angular.module('portfolio.controllers', [])
  * Controller of basic screen
  */
 .controller('WelcomeController', function($scope, $state) {
+  (window.analytics) ? window.analytics.trackView('Initial view') : '';
+
   $scope.openExternalUrl = function(url) {
     window.openUrlInAppBrowser(url);
   }
