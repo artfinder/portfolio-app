@@ -6,6 +6,12 @@
         <div class="main-article">
             We’ve finished downloading your Artfinder Portfolio and you can now browse your artworks at your leisure.
             <br><br>
+            <span ng-if="errorsCount">
+              <b>Warning:</b> We have experienced issues downloading {{ errorsCount }} of your artworks. There
+              is {{ downloadedCount }} items downloaded correctly. You may use option "Refresh artworks" to 
+              refetch missing artworks.
+              <br><br>
+            </span>
             Please note, if you add new works to your Artfinder store, you will need to download your Portfolio again.
         </div>
     </div>

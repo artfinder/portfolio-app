@@ -1,5 +1,9 @@
 <div class="fullscreen-box">
-  <ion-scroll zooming="true" direction="xy" locking="false" scrollbar-x="false" scrollbar-y="false">
+  <div class="close-fullscreen">
+      <i class="fa fa-times fa-2x"  on-tap="tapHandle()"></i>
+  </div>
+  <ion-scroll zooming="true" direction="xy" locking="false" scrollbar-x="false" scrollbar-y="false"
+    style="height: {{ calculatedClientHeight }}px; width: {{ calculatedClientWidth }}px;">
     <img id="fullscrImage" ng-src="{{ image.imageUrl }}" on-tap="tapHandle()"
       style="width: {{ image.startWidth }}px; height: {{ image.startHeight }}px;"/>
   </ion-scroll>

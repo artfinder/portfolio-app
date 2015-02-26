@@ -16,6 +16,9 @@
         <ion-item href="" ng-click="menuGo('portfolio.subscriber');">
             <i class="icon ion-plus-circled"></i> Add a follower
         </ion-item>
+        <ion-item href="" ng-click="refreshArtworks();">
+            <i class="icon ion-refresh"></i> Refresh artworks
+        </ion-item>
         <!--ion-item nav-clear menu-close href="#/portfolio/settings">
             Settings
         </ion-item-->
@@ -28,7 +31,7 @@
 
   <!-- Content -->
   <ion-side-menu-content edge-drag-threshold="true">
-    <ion-nav-bar class="bar-blue">
+    <ion-nav-bar class="bar-blue" animation="no-animation">
       <!-- <ion-nav-back-button class="button-clear"><i class="icon ion-ios7-arrow-back"></i> Back</ion-nav-back-button> -->
     </ion-nav-bar>
     <ion-nav-view name="main-content">

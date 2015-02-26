@@ -74,7 +74,7 @@ At the time of writing, the application's appearance is fairly rudimentary and u
 
 ### Backdoor password
 
-For the purpose of quicker development and testing, the backdoor password (verification code) has been implemented to allow bypassing user's verification code. The password is `zoya`, it will be removed for production build.
+For the purpose of quicker development and testing, the backdoor password (verification code) has been implemented to allow bypassing user's verification code. The password is `wielP4o`, it will be removed for production build.
 
 ## Build to Android device
 

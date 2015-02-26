@@ -35,5 +35,42 @@ angular.module('portfolio', [
     //   StatusBar.styleDefault();
     //   StatusBar.overlaysWebView(true);
     // }
+
+    if (window.analytics) {
+      window.analytics.startTrackerWithId('UA-57477490-1');
+    }
   });
 });
+
+/**
+ * Function for handling external URLs
+ * @see http://calendee.com/2014/05/12/custom-urls-in-ionic-cordova-apps/
+ * @param url
+ */
+function handleOpenURL(url) {
+  var supportedIonContent = document.getElementsByClassName('splash-screen-info')[0];
+  if (!supportedIonContent) {
+    supportedIonContent = document.getElementsByClassName('login-main-content')[0];
+  }
+
+  /* this is designed to work only on splash-screen (initial) and login-form pages
+     on other pages it should not be executed */
+  if (supportedIonContent) {
+	var gup = function(url, param) {
+      param = param.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+      var regex = new RegExp("[\\?&]" + param + "=([^&#]*)");
+      var results = regex.exec(url);
+      return (results == null) ? null : results[1]; 
+    }
+	
+	var slug = gup(url, 'slug');
+	var code = gup(url, 'code');
+	
+	if (slug && code) {
+      var supportedController = angular.element(supportedIonContent).scope();
+      if (supportedController && supportedController.reportAppLaunched) {
+        supportedController.reportAppLaunched({ slug: slug, code: code });
+      }
+	}
+  }
+}

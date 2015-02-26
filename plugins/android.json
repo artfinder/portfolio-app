@@ -27,6 +27,18 @@
                         {
                             "xml": "<feature name=\"StatusBar\"><param name=\"android-package\" onload=\"true\" value=\"org.apache.cordova.statusbar.StatusBar\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"LaunchMyApp\"><param name=\"android-package\" value=\"nl.xservices.plugins.LaunchMyApp\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"InAppBrowser\"><param name=\"android-package\" value=\"org.apache.cordova.inappbrowser.InAppBrowser\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"UniversalAnalytics\"><param name=\"android-package\" value=\"com.danielcwilson.plugins.analytics.UniversalAnalyticsPlugin\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -37,11 +49,25 @@
                         {
                             "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
                             "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.INTERNET\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\" />",
+                            "count": 1
                         }
                     ],
                     "/manifest": [
                         {
                             "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
+                            "count": 1
+                        }
+                    ],
+                    "/*/application/activity": [
+                        {
+                            "xml": "<intent-filter><data android:scheme=\"artfinderportfolio\" /><action android:name=\"android.intent.action.VIEW\" /><category android:name=\"android.intent.category.DEFAULT\" /><category android:name=\"android.intent.category.BROWSABLE\" /></intent-filter>",
                             "count": 1
                         }
                     ]
@@ -66,6 +92,16 @@
             "PACKAGE_NAME": "com.zoyalab.artfinder.portfolio.ionic"
         },
         "org.apache.cordova.statusbar": {
+            "PACKAGE_NAME": "com.zoyalab.artfinder.portfolio"
+        },
+        "nl.x-services.plugins.launchmyapp": {
+            "URL_SCHEME": "artfinderportfolio",
+            "PACKAGE_NAME": "com.zoyalab.artfinder.portfolio"
+        },
+        "org.apache.cordova.inappbrowser": {
+            "PACKAGE_NAME": "com.zoyalab.artfinder.portfolio"
+        },
+        "com.danielcwilson.plugins.googleanalytics": {
             "PACKAGE_NAME": "com.zoyalab.artfinder.portfolio"
         }
     },

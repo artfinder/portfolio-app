@@ -3,18 +3,33 @@
     <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
 
-  <ion-content padding="true" class="has-header white-bg">
+  <ion-content padding="false" class="has-header white-bg">
 
   <div class="artworks-listing" ng-if="collections">
-      <div class="artwork-box" ng-repeat="collection in collections">
-          <div class="art-item">
-              <a href="#/portfolio/by-collection/{{ collection.slug }}/">
-                  <img ng-src="{{ baseUrl }}{{ collection.cover_image.fluid_large.local_file_name }}" />
-              </a>
+      <div class="artwork-box collection" ng-repeat="collection in collections">
+          <a href="#/portfolio/by-collection/{{ collection.slug }}/" class="art-item">
+              <div class="main-image">
+                  <img ng-src="{{ collection.cover_image.imageUrl }}" />
+              </div>
+              <div class="sub-images clearfix">
+                  <div class="image" ng-repeat="sub_image in collection.sub_images">
+                      <img ng-src="{{ sub_image.imageUrl }}" />
+                  </div>
+                  <div class="image" ng-if="collection.sub_images.length < 3">
+                      <img src="assets/images/placeholder.png">
+                  </div>
+                  <div class="image" ng-if="collection.sub_images.length < 2">
+                      <img src="assets/images/placeholder.png">
+                  </div>
+                  <div class="image" ng-if="collection.sub_images.length < 1">
+                      <img src="assets/images/placeholder.png">
+                  </div>
+              </div>
+
               <div class="artwork-description">
                   <span class="title">{{ collection.name }}</span>
               </div>
-          </div>
+          </a>
       </div>
   </div>
     <div ng-if="collectionsCount == 0" class="center">

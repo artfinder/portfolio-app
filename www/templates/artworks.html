@@ -3,13 +3,13 @@
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
     <ion-nav-buttons side="right">
-        <a on-tap="searchBoxToggle()" class="button button-icon icon ion-search"></a>
+        <a on-tap="searchBoxToggle()" class="button button-icon icon ion-search" id="searchBoxIcon"></a>
     </ion-nav-buttons>
     <div id="searchBox" class="search-box {{ searchBoxVisiblity }}">
         <input id="input_search" value="{{ search }}" placeholder="Search" ng-keyup="searchArtworks()"/>
-        <a ng-click="clearSearch()" class="icon ion-close-circled"></a>
+        <a ng-click="clearSearch()" class="icon ion-close-circled" ng-if="search.length > 0"></a>
     </div>
-    <ion-content padding="true" class="has-header white-bg" paging="true">
+    <ion-content padding="false" class="has-header white-bg" paging="true">
         <div class="artworks-listing">
             <div class="artwork-box" ng-repeat="art in artworks">
                 <div class="art-item">

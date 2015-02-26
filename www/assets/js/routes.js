@@ -62,6 +62,16 @@ angular.module('portfolio.routes', [])
         }
       }
     })
+    
+    .state('portfolio.updateArtworks', {
+      url: '/update-artworks',
+      views: {
+        'main-content': {
+            templateUrl: 'templates/update-data.html',
+            controller: 'RefreshArtworksController'
+        }
+      }
+    })
 
     /*
      * Single artwork route
@@ -106,18 +116,27 @@ angular.module('portfolio.routes', [])
         views: {
             'intro-content': {
                 templateUrl: 'templates/intro/01-welcome.html',
-                controller: 'LoginController'
+                controller:  'WelcomeController'
             }
         }
     })
-
-    // TODO: Possibly obsolete route/view since intro.welcome is now a slider view
-    // handling two pages at once.
+    
     .state('intro.login', {
         url: '/login',
         views: {
             'intro-content': {
-                templateUrl: 'templates/intro/02-login.html'
+                templateUrl: 'templates/intro/02-login-user.html',
+                controller:  'LoginController'
+            }
+        }
+    })
+    
+    .state('intro.login_user', { //same as login, but with parameters
+        url: '/login/:slug/:code',
+        views: {
+            'intro-content': {
+                templateUrl: 'templates/intro/02-login-user.html',
+                controller:  'LoginController'
             }
         }
     })
@@ -136,7 +155,8 @@ angular.module('portfolio.routes', [])
         url: '/complete',
         views: {
             'intro-content': {
-                templateUrl: 'templates/intro/04-complete.html'
+                templateUrl: 'templates/intro/04-complete.html',
+                controller:	 'DonwloadCompletedController'
             }
         }
     })

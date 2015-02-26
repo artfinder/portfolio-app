@@ -7,7 +7,7 @@ angular.module('portfolio.services', [])
 
     var arts = [];
     var index = [];
-    var itemsPerPage = 5;
+    var itemsPerPage = 6;
 
     var executeSearchBy = function(search) {
         var allArts = LocalStorageProvider.getArtworksData(); //this is cached
@@ -221,14 +221,15 @@ angular.module('portfolio.services', [])
  */
 .factory('LocalStorageProvider', function localStorageProvider() {
 
-    var USER_KEY = 'username';
-    var ARTWORKS_RAW_INDEX_KEY = 'raw_artworks';
+    var ARTWORKS_PROCESS_DOWNLOAD_INDEX_KEY = 'process_download_artworks';
     var ARTWORKS_INDEX_KEY = 'artworks';
-    var COLLECTIONS_RAW_INDEX_KEY = 'raw_collections';
+    var COLLECTIONS_PROCESS_DOWNLOAD_INDEX_KEY = 'process_download_collections';
     var COLLECTIONS_INDEX_KEY = 'collections';
     var ARTWORK_OVERLAY_FLAG = 'artwork_overlay_flag';
     var BASE_URL = 'base_url';
     var DOWNLOAD_PROCESS_COMPLETED = 'download_process_completed';
+    var DOWNLOAD_ERRORS_COUNT = 'download_errors_count';
+    var USER_DATA = 'user_data';
 
     var cache = {
         ARTWORKS: null,
@@ -238,20 +239,33 @@ angular.module('portfolio.services', [])
 
     return {
         // Setters
-        saveUsername: function(username) {
-            window.localStorage.setItem(USER_KEY, username);
-        },
         saveArtworksData: function(data) {
+            cache.ARTWORKS = null;
             window.localStorage.setItem(ARTWORKS_INDEX_KEY, JSON.stringify(data));
         },
-        saveRawArtworksData: function(data) {
-            window.localStorage.setItem(ARTWORKS_RAW_INDEX_KEY, JSON.stringify(data));
+        saveNewArtwoksData: function(data) {
+            var currData = this.getArtworksData();
+            for (var i in data) {
+                currData.push(data[i]);
+            }
+            this.saveArtworksData(currData);
+        },
+        saveProcessDownloadArtworksData: function(data) {
+            window.localStorage.setItem(ARTWORKS_PROCESS_DOWNLOAD_INDEX_KEY, JSON.stringify(data));
         },
         saveCollectionsData: function(data) {
+            cache.COLLECTIONS = null;
             window.localStorage.setItem(COLLECTIONS_INDEX_KEY, JSON.stringify(data));
         },
-        saveRawCollectionsData: function(data) {
-            window.localStorage.setItem(COLLECTIONS_RAW_INDEX_KEY, JSON.stringify(data));
+        saveNewCollectionsData: function(data) {
+            var currData = this.getCollectionsData();
+            for (var i in data) {
+                currData.push(data[i]);
+            }
+            this.saveCollectionsData(currData);
+        },
+        saveProcessDownloadCollectionsData: function(data) {
+            window.localStorage.setItem(COLLECTIONS_PROCESS_DOWNLOAD_INDEX_KEY, JSON.stringify(data));
         },
         setArtworkInstructionsOverlayFlag: function() {
             window.localStorage.setItem(ARTWORK_OVERLAY_FLAG, 1);
@@ -259,31 +273,43 @@ angular.module('portfolio.services', [])
         setBaseUrl: function(data) {
             window.localStorage.setItem(BASE_URL, data);
         },
-        saveDownloadProcessCompleted: function(data) {
-            window.localStorage.setItem(DOWNLOAD_PROCESS_COMPLETED, data);
+        saveDownloadProcessCompleted: function() {
+            window.localStorage.setItem(DOWNLOAD_PROCESS_COMPLETED, 1);
+        },
+        increaseDownloadErrorsCount: function() {
+            currentVal = this.getDownloadErrorsCount();
+            window.localStorage.setItem(DOWNLOAD_ERRORS_COUNT, currentVal + 1);
+        },
+        saveUserData: function(data) {
+            window.localStorage.setItem(USER_DATA, JSON.stringify(data));
         },
 
         // Getters
         getUsername: function() {
-            return window.localStorage.getItem(USER_KEY);
+            var userData = this.getUserData(); 
+            return userData ? userData.slug : null;
         },
-        getArtworksData: function() {
-            if (cache.ARTWORKS === null) {
-                cache.ARTWORKS = JSON.parse(window.localStorage.getItem(ARTWORKS_INDEX_KEY));
+        getArtworksData: function(noCache) {
+            if (cache.ARTWORKS === null || noCache) {
+                var strData = window.localStorage.getItem(ARTWORKS_INDEX_KEY);
+                (!strData) ? strData = '[]' : null;
+                cache.ARTWORKS = JSON.parse(strData);
             }
             return cache.ARTWORKS;
         },
-        getRawArtworksData: function() {
-            return JSON.parse(window.localStorage.getItem(ARTWORKS_RAW_INDEX_KEY));
+        getProcessDownloadArtworksData: function() {
+            return JSON.parse(window.localStorage.getItem(ARTWORKS_PROCESS_DOWNLOAD_INDEX_KEY));
         },
         getCollectionsData: function() {
             if (cache.COLLECTIONS === null) {
-                cache.COLLECTIONS = JSON.parse(window.localStorage.getItem(COLLECTIONS_INDEX_KEY));
+                var strData = window.localStorage.getItem(COLLECTIONS_INDEX_KEY);
+                (!strData) ? strData = '[]' : null;
+                cache.COLLECTIONS = JSON.parse(strData);
             }
             return cache.COLLECTIONS;
         },
-        getRawCollectionsData: function() {
-            return JSON.parse(window.localStorage.getItem(COLLECTIONS_RAW_INDEX_KEY));
+        getProcessDownloadCollectionsData: function() {
+            return JSON.parse(window.localStorage.getItem(COLLECTIONS_PROCESS_DOWNLOAD_INDEX_KEY));
         },
         getArtworkInstructionsOverlayFlag: function() {
             return window.localStorage.getItem(ARTWORK_OVERLAY_FLAG);
@@ -297,23 +323,38 @@ angular.module('portfolio.services', [])
         getDownloadProcessCompleted: function() {
            return window.localStorage.getItem(DOWNLOAD_PROCESS_COMPLETED);
         },
+        getDownloadErrorsCount: function() {
+            var currentVal = parseInt(window.localStorage.getItem(DOWNLOAD_ERRORS_COUNT));
+            (!currentVal) ? currentVal = 0 : null;
+            return currentVal;
+        },
+        getUserData: function() {
+            return JSON.parse(window.localStorage.getItem(USER_DATA));
+        },
 
         // Removers
-        removeRawArtworksData: function() {
-            window.localStorage.removeItem(ARTWORKS_RAW_INDEX_KEY);
+        removeProcessDownloadArtworksData: function() {
+            window.localStorage.removeItem(ARTWORKS_PROCESS_DOWNLOAD_INDEX_KEY);
         },
-        removeRawCollectionsData: function() {
-            window.localStorage.removeItem(COLLECTIONS_RAW_INDEX_KEY);
+        removeProcessDownloadCollectionsData: function() {
+            window.localStorage.removeItem(COLLECTIONS_PROCESS_DOWNLOAD_INDEX_KEY);
+        },
+        removeDownloadProcessCompleted: function() {
+            window.localStorage.removeItem(DOWNLOAD_PROCESS_COMPLETED);
+        },
+        removeDownloadErrorsCount: function() {
+            window.localStorage.removeItem(DOWNLOAD_ERRORS_COUNT);
         },
         purge: function() {
-            window.localStorage.removeItem(USER_KEY);
             window.localStorage.removeItem(ARTWORKS_INDEX_KEY);
-            window.localStorage.removeItem(ARTWORKS_RAW_INDEX_KEY);
+            window.localStorage.removeItem(ARTWORKS_PROCESS_DOWNLOAD_INDEX_KEY);
             window.localStorage.removeItem(COLLECTIONS_INDEX_KEY);
-            window.localStorage.removeItem(COLLECTIONS_RAW_INDEX_KEY);
+            window.localStorage.removeItem(COLLECTIONS_PROCESS_DOWNLOAD_INDEX_KEY);
             window.localStorage.removeItem(ARTWORK_OVERLAY_FLAG);
             window.localStorage.removeItem(BASE_URL);
             window.localStorage.removeItem(DOWNLOAD_PROCESS_COMPLETED);
+            window.localStorage.removeItem(DOWNLOAD_ERRORS_COUNT);
+            window.localStorage.removeItem(USER_DATA);
             cache.BASE_URL = null;
             cache.ARTWORKS = null;
             cache.COLLECTIONS = null;
@@ -328,7 +369,7 @@ angular.module('portfolio.services', [])
 .factory('PersistentStorageProvider', function persistentStorageProvider() {
 
     var DATADIR = 'artp';
-    var QUOTA = 50*1024*1024; // 50MB
+    var QUOTA = 100*1024*1024; // 100MB
     var currentStorageDataDir;
 
     var requestStorageUsingFileStorageApi = function(storageType, grantedBytes, callback) {
@@ -421,10 +462,18 @@ angular.module('portfolio.services', [])
 
                 callback(baseUrl);
             }, errorHandler);
+        },
+        removeBlob: function(filename, callback) {
+            requestStorage(function(dir) {
+                dir.getFile(filename, { create: true }, function(file) {
+                    file.remove(callback, errorHandler);
+                });
+            }, errorHandler);
         }
     };
 
 })
+
 
 /**
  * A service for displaying user messages, alerts
@@ -440,4 +489,233 @@ angular.module('portfolio.services', [])
             });
         }
     };
+})
+
+
+/**
+ * A service for refreshing artworks
+ */
+.factory('RefreshArtworksProvider', function refreshArtworksProvider(ArtworkProvider, CollectionProvider, LocalStorageProvider, RemoteDataProvider, PersistentStorageProvider) {
+
+  var artworksToAdd, filesToRemove, removeFilesIndex, dataChanged;
+  var execCallbackDownloadNewImages, execCallbackNoNewDataAvailable;
+
+  // A generic error handler
+  var errorHandler = function(err) {
+    console.log('Generic error in update-data');
+    console.log(angular.toJson(err));
+  };
+
+  var i, j, loadedArtwork, currenArtwork, foundMatch;
+  var k, l, loadedArtworkImage, currentArtworkImage, foundImageMatch, allLoadedImagesWithCurrentMatch, currenArtworkImagesToRemove;
+
+  var processArtworks = function() {
+    //init variables
+    var currentArtworks = LocalStorageProvider.getArtworksData(true);
+    var artworksToRemove = [];
+    artworksToAdd = []; filesToRemove = [], removeFilesIndex = 0;
+    dataChanged = false;
+
+    ArtworkProvider.init();
+    CollectionProvider.init();
+
+    
+    //Fetch artworks and save response to local storage
+    RemoteDataProvider.fetchArtworksForUser(LocalStorageProvider.getUsername()).then(function(data_arts) {
+    
+      // artworks to add
+      for (i in data_arts.data.objects) {
+        loadedArtwork = data_arts.data.objects[i];
+        foundMatch = false;
+      
+        for (j in currentArtworks) {
+          currenArtwork = currentArtworks[j];
+
+          if (loadedArtwork.id == currenArtwork.id) {
+            foundMatch = true;
+            currenArtworkImagesToRemove = [];
+            
+            //check images
+            allLoadedImagesWithCurrentMatch = true;
+            for (k in loadedArtwork.images) {
+                loadedArtworkImage = loadedArtwork.images[k];
+                foundImageMatch = false;
+                for (l in currenArtwork.images) {
+                    currentArtworkImage = currenArtwork.images[l];
+                    if (currentArtworkImage.fluid_large.url == loadedArtworkImage.fluid_large.url) {
+                        foundImageMatch = true;
+                        break;
+                    }
+                }
+                if (!foundImageMatch) {
+                    allLoadedImagesWithCurrentMatch = false;
+                }
+            }
+            
+            if (allLoadedImagesWithCurrentMatch) {
+              //update metadata
+              dataChanged |= updateArtworkMetadata(currenArtwork, loadedArtwork);
+              
+              //check if some of current images wasn't removed
+              for (k in currenArtwork.images) {
+                currentArtworkImage = currenArtwork.images[k];
+                foundImageMatch = false;
+                for (l in loadedArtwork.images) {
+                  loadedArtworkImage = loadedArtwork.images[l];
+                  if (loadedArtworkImage.fluid_large.url == currentArtworkImage.fluid_large.url) {
+                    foundImageMatch = true;
+                    break;
+                  }
+                }
+
+                if (!foundImageMatch) {
+                  //currentArtowkImage was removed from the server
+                  currenArtworkImagesToRemove.push(currentArtworkImage);
+                }
+              }
+              if (currenArtworkImagesToRemove.length) {
+                for (k in currenArtworkImagesToRemove) {
+                  addImageToRemovesFilesArray(currenArtworkImagesToRemove[k]);
+                  l = currenArtwork.images.indexOf(currenArtworkImagesToRemove[k]);
+                  currenArtwork.images.splice(k, 1);
+                }
+              }
+            }
+            else {
+              //some of new images is missing - download whole artwork
+              foundMatch = false;
+              artworksToRemove.push(currenArtwork);
+            }
+            
+            break;
+          }
+        }
+        
+        if (!foundMatch) {
+          artworksToAdd.push(loadedArtwork);
+        }
+      }
+      if (artworksToAdd.length > 0) {
+        LocalStorageProvider.saveProcessDownloadArtworksData(artworksToAdd);
+      }
+
+
+      // artworks to remove
+      for (i in currentArtworks) {
+        currenArtwork = currentArtworks[i];
+        foundMatch = false;
+
+        for (j in data_arts.data.objects) {
+          loadedArtwork = data_arts.data.objects[j];
+          if (loadedArtwork.id == currenArtwork.id) {
+            foundMatch = true;
+            break;
+          }
+        }
+
+        if (!foundMatch) {
+          artworksToRemove.push(currenArtwork);
+        }
+      }
+
+      if (artworksToRemove.length > 0) {
+        // remove unused items
+        for (i in artworksToRemove) {
+          for (j in artworksToRemove[i].images) {
+            addImageToRemovesFilesArray(artworksToRemove[i].images[j]);
+          }
+
+          j = currentArtworks.indexOf(artworksToRemove[i]);
+          currentArtworks.splice(j, 1);
+        }
+      }
+      if (artworksToRemove.length > 0 || filesToRemove.length > 0 || dataChanged) {
+        LocalStorageProvider.saveArtworksData(currentArtworks);
+      }
+
+
+      //fetch collections
+      RemoteDataProvider.fetchCollectionsForUser(LocalStorageProvider.getUsername()).then(function(data_cols){
+        if (data_cols.data.objects && data_cols.data.objects.length > 0) {
+          if (artworksToAdd.length > 0) {
+            //collections will be updated by fetcher
+            LocalStorageProvider.saveCollectionsData([]);
+            LocalStorageProvider.saveProcessDownloadCollectionsData(data_cols.data.objects);
+          }
+          else {
+            //collection must be updated as fetcher wouldnt be called
+            for (i in data_cols.data.objects) {            
+              var collectionObject = data_cols.data.objects[i];
+
+              var collectionArtwork = ArtworkProvider.findById(collectionObject.artwork_ids[0]);
+
+              collectionObject.cover_image.grid_medium.local_file_name =
+                (collectionArtwork.images[0].small_square) ?
+                collectionArtwork.images[0].small_square.local_file_name :
+                collectionArtwork.images[0].fluid_small.local_file_name;
+              collectionObject.cover_image.fluid_large.local_file_name =
+                collectionArtwork.images[0].fluid_large.local_file_name;
+            }
+
+            LocalStorageProvider.saveCollectionsData(data_cols.data.objects);
+          }
+        }
+
+        removeArtworksFiles();
+      }, function(e) { errorHandler(e); });
+
+
+    }, function(e) { errorHandler(e); });    
+  }
+
+
+  var removeArtworksFiles = function() {
+    if (filesToRemove[removeFilesIndex]) {
+      PersistentStorageProvider.removeBlob(filesToRemove[removeFilesIndex], function() {
+        ++removeFilesIndex;
+        removeArtworksFiles();
+      });
+    }
+    else {
+      if (artworksToAdd.length > 0) {
+        LocalStorageProvider.removeDownloadProcessCompleted();
+        //Redirect to intro.fetch view to begin artwork/collections fetching
+        execCallbackDownloadNewImages();
+      }
+      else {
+        execCallbackNoNewDataAvailable(filesToRemove.length > 0 || dataChanged);
+      }
+    }
+  }
+
+  var addImageToRemovesFilesArray = function(image)
+  {
+    filesToRemove.push(image.fluid_large.local_file_name);
+    filesToRemove.push((image.small_square) ? image.small_square.local_file_name : image.fluid_small.local_file_name);
+  }
+
+  var updateArtworkMetadata = function(currenArtwork, loadedArtwork)
+  {
+    var changed = false;
+    var fields = ['category', 'currency', 'description', 'edition', 'framed', 'name',
+            'order', 'price', 'quantity', 'size_cm', 'size_in', 'style', 'subject',
+            'substrate', 'unique']; //slug isn't updated
+
+    for (var i in fields) {
+      if (currenArtwork[fields[i]] !== loadedArtwork[fields[i]]) {
+        changed = true;
+        currenArtwork[fields[i]] = loadedArtwork[fields[i]];
+      }
+    }
+
+    return changed;
+  }
+    
+  return {
+    handleNewData: function(callbackDownloadNew, callbackNoNewData) {
+      execCallbackDownloadNewImages = callbackDownloadNew;
+      execCallbackNoNewDataAvailable = callbackNoNewData;
+      processArtworks();
+    }
+  }
 });

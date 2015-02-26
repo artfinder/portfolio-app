@@ -3,7 +3,7 @@ angular.module('portfolio.controllers', [])
 /**
  * Generic application controller
  */
-.controller('AppController', function($scope, $state, $ionicPopup, $ionicLoading, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider, MessagesProvider) {
+.controller('AppController', function($scope, $state, $ionicPopup, $ionicLoading, $ionicSideMenuDelegate, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider, MessagesProvider, RefreshArtworksProvider) {
 
   $scope.logout = function() {
     $ionicPopup.confirm({
@@ -11,8 +11,10 @@ angular.module('portfolio.controllers', [])
       template: 'Logging out will remove all artworks from your device. Are you sure?'
     }).then(function(response) {
       if (response) {
+        (window.analytics) ? window.analytics.trackEvent('App', 'Logout') : '';
         PersistentStorageProvider.purge(function(){
           LocalStorageProvider.purge();
+          window.historyCleared = null;
           $state.go('intro.welcome');
         });
       }
@@ -21,7 +23,7 @@ angular.module('portfolio.controllers', [])
   };
 
   $scope.submitSubscriber = function(subscriber) {
-
+    (window.analytics) ? window.analytics.trackView('Add follower view') : '';
     if (typeof subscriber == 'undefined' || !subscriber.email) {
       MessagesProvider.alertPopup('Please provide an email address', 'Error');
       return;
@@ -31,6 +33,7 @@ angular.module('portfolio.controllers', [])
       return;
     }
 
+
     $ionicLoading.show({
       template: 'Please wait...'
     });
@@ -38,10 +41,16 @@ angular.module('portfolio.controllers', [])
     var username = LocalStorageProvider.getUsername();
     RemoteDataProvider.subscribe(username, subscriber).then(function(data){
       if (data.data.added > 0) {
+        subscriber.first_name = "";
+        subscriber.last_name = "";
+        subscriber.email = "";
+        subscriber.add_permission = "off";
+        subscriber.add_newsletter = "off";
         MessagesProvider.alertPopup('Thank you for your subscription', 'Add subscriber');
       } else {
         MessagesProvider.alertPopup(data.data.error, 'Error');
       }
+      (window.analytics) ? window.analytics.trackEvent('Follower', 'Add', (data.data.added > 0) ? 'Success' : 'Error') : '';
       $ionicLoading.hide();
     }, function(err) {
       console.log('Subscription error');
@@ -56,14 +65,42 @@ angular.module('portfolio.controllers', [])
     sessionStorage.removeItem('searchKeyword');
     sessionStorage.removeItem('displayedItems');
     $state.go(url, null, { reload: true });
-  }
+    
+  };
+
+  $scope.refreshArtworks = function() {
+    (window.analytics) ? window.analytics.trackEvent('App', 'Download', 'Refresh') : '';
+    $ionicLoading.show({
+      template: 'Loading data...'
+    });
+    $ionicSideMenuDelegate.toggleLeft();
+    RefreshArtworksProvider.handleNewData(
+      //everything prepared - process to download new data
+      function() {
+        $ionicLoading.hide();
+        $state.go('intro.fetch');
+      },
+      //there is no new data to download - hide loader
+      function(needReload) {
+        $ionicLoading.hide();
+        var alertPopup = $ionicPopup.alert({
+          title: 'Info',
+          template: 'There is no new data to download.'
+        });
+        if (needReload) {
+          alertPopup.then(function(res) {
+            $state.go($state.current, {}, {reload: true});
+          });
+        }
+      }
+    );
+  };
 })
 
 /**
  * Handles artworks listing
  */
 .controller('ArtworksController', function($scope, $state, $stateParams, $timeout, $ionicViewService, $ionicScrollDelegate, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
-
   //clears the history to prevent back button (to login screen)
   if (!window.historyCleared) {
     $ionicViewService.clearHistory();
@@ -99,7 +136,7 @@ angular.module('portfolio.controllers', [])
     $state.go('artwork.artwork', {
       artId: artId,
       ref: ($stateParams.collectionSlug) ? $stateParams.collectionSlug : 'artworks',
-      refId: ($stateParams.refId) ? $stateParams.refId : 0 
+      refId: ($stateParams.refId) ? $stateParams.refId : 0
     });
   };
   
@@ -120,6 +157,7 @@ angular.module('portfolio.controllers', [])
   
   $scope.searchBoxToggle = function() {
     var searchBox = document.getElementById('searchBox');
+    var searchIcon = document.getElementById('searchBoxIcon');
     if (!searchBox) {
       throw new Error('Cannot find searchBox element');
     }
@@ -127,10 +165,12 @@ angular.module('portfolio.controllers', [])
     
     if (boxVisibility) {
       searchBox.classList.add('hidden');
+      searchIcon.classList.remove('active');
     }
     else {
       searchBox.classList.remove('hidden');
-	}
+      searchIcon.classList.add('active');
+    }
     sessionStorage.setItem('showSearchBox', boxVisibility ? 0 : 1);
   }
 
@@ -142,6 +182,7 @@ angular.module('portfolio.controllers', [])
         );
       $scope.artworksCount = ($scope.artworks) ? $scope.artworks.length : 0;
       $scope.viewTitle = collection.name+" ("+$scope.artworksCount+")";
+      (window.analytics) ? window.analytics.trackView('Single collection view') : '';
     // ...or display them all
     } else {
       $scope.artworks = handleTemplateData(ArtworkProvider.getItemsRange(0, displayedItems),
@@ -149,13 +190,14 @@ angular.module('portfolio.controllers', [])
         );
       $scope.artworksCount = ArtworkProvider.getAllArtworksCount();
       $scope.viewTitle = "My Artworks (" + $scope.artworksCount + ")";
+      (window.analytics) ? window.analytics.trackView('Artworks listing') : '';
     }
   }
   $scope.searchBoxVisiblity = sessionStorage.getItem('showSearchBox') == 1 ? '' : 'hidden';
 
   var handleTemplateData = function(artworks, ref, refId) {
-	var baseUrl = LocalStorageProvider.getBaseUrl();
-	
+    var baseUrl = LocalStorageProvider.getBaseUrl();
+    
     for (var i in artworks) {
       //artworks[i].imageOpenHref = '#/artwork/' + artworks[i].id + '/' + ref + '/' + refId; //not necessary due to openArtwork() func
       artworks[i].imageSrc = baseUrl + artworks[i].cover_image.local_file_name;
@@ -175,7 +217,7 @@ angular.module('portfolio.controllers', [])
       if (scrollTo.top) {
         $ionicScrollDelegate.scrollTo(0, scrollTo.top, false);
       }
-	}, 10);
+    }, 10);
   }
 })
 
@@ -183,17 +225,27 @@ angular.module('portfolio.controllers', [])
  * Handles collections listing
  */
 .controller('CollectionsController', function($scope, CollectionProvider, LocalStorageProvider) {
+    (window.analytics) ? window.analytics.trackView('Collection list view') : '';
     CollectionProvider.init();
     var collections = CollectionProvider.all();
     $scope.collections = collections;
     $scope.collectionsCount = (collections) ? collections.length : 0;
-    $scope.baseUrl = LocalStorageProvider.getBaseUrl();
+    var baseUrl = LocalStorageProvider.getBaseUrl();
+    for (var i in collections) {
+      collections[i].cover_image.imageUrl = baseUrl + ((collections[i].cover_image.grid_medium.local_file_name) ?
+        collections[i].cover_image.grid_medium.local_file_name : collections[i].cover_image.fluid_large. local_file_name);
+
+      for (var j in collections[i].sub_images) {
+        collections[i].sub_images[j].imageUrl = baseUrl + collections[i].sub_images[j].local_file_name;
+      }
+    }
 })
 
 /**
  * A single artwork view controller
  */
-.controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, $ionicLoading, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
+.controller('ArtworkDetailsController', function($scope, $state, $stateParams, $ionicModal, $ionicLoading, $ionicSlideBoxDelegate, $timeout, ArtworkIteratorProvider, ArtworkProvider, CollectionProvider, LocalStorageProvider) {
+  (window.analytics) ? window.analytics.trackView('Artwork view') : '';
 
   ArtworkProvider.init();
   CollectionProvider.init();
@@ -210,6 +262,19 @@ angular.module('portfolio.controllers', [])
   $scope.title = artwork.name;
   $scope.images = artworkImages;
   $scope.hideInfoOverlay = (LocalStorageProvider.getArtworkInstructionsOverlayFlag() === null) ? '' : ' hidden';
+  $scope.currSlide = window.sessionStorage.getItem('fullscrenItemIndex');
+  $scope.artistName = LocalStorageProvider.getUserData().name;
+  if ($scope.currSlide !== null) {
+    window.sessionStorage.removeItem('fullscrenItemIndex');
+    if ($scope.currSlide != 0) {
+      $timeout(function() {
+        $ionicSlideBoxDelegate.slide($scope.currSlide, 1);
+      }, 100);
+    }
+  }
+  else {
+    $scope.currSlide = 0;
+  }
 
   // Define artwork set to help browsing
   var artworkSet = [];
@@ -241,7 +306,7 @@ angular.module('portfolio.controllers', [])
 
   // Handle "Back" button depending whether we're in collections or artworks context
   $scope.goBack = function() {
-	var artId = sessionStorage.getItem('backArtworkId', artId) ? 
+    var artId = sessionStorage.getItem('backArtworkId', artId) ? 
       sessionStorage.getItem('backArtworkId', artId) : $stateParams.artId;
     if ($stateParams.ref !== 'artworks') {
       $state.go('portfolio.bycollection', {collectionSlug: $stateParams.ref, artId: artId});
@@ -263,6 +328,7 @@ angular.module('portfolio.controllers', [])
   });
 
   $scope.displayArtworkInfo = function($event) {
+	(window.analytics) ? window.analytics.trackEvent('Product', 'InfoOpen', null, $stateParams.artId) : '';
     $scope.modal.show($event);
   };
 
@@ -270,13 +336,17 @@ angular.module('portfolio.controllers', [])
     $scope.modal.hide();
   };
 
-  $scope.shareArtwork = function(artworkUrl) {
-    window.plugins.socialsharing.share('Hi there, check out my artwork!', null, artworkUrl, 'http://www.artfinder.com');
+  $scope.shareArtwork = function(artworkUrl, artworkName, artworkSlug, artworkCategory, artistName) {
+    window.plugins.socialsharing.share((artworkName + ' by ' + artistName + '\n' + artworkCategory + '\n'), null, artworkUrl, ('http://www.artfinder.com/product/' + artworkSlug));
   };
 
   $scope.dismissInstructionsOverlay = function() {
     LocalStorageProvider.setArtworkInstructionsOverlayFlag();
     document.getElementById('artworkDisplayInfoOverlay').className += ' hidden';
+  };
+  
+  $scope.slideChange = function() {
+    $scope.currSlide = $ionicSlideBoxDelegate.currentIndex();
   };
 })
 
@@ -290,7 +360,8 @@ angular.module('portfolio.controllers', [])
  * - saves data into local storage
  * - redirects to the next step (FetcherController)
  */
-.controller('LoginController', function($scope, $state, $ionicPopup, $ionicLoading, $ionicViewService, RemoteDataProvider, LocalStorageProvider, MessagesProvider) {
+.controller('LoginController', function($scope, $state, $stateParams, $ionicPopup, $ionicLoading, $ionicViewService, $ionicSlideBoxDelegate, RemoteDataProvider, LocalStorageProvider, MessagesProvider) {
+  (window.analytics) ? window.analytics.trackView('Login view') : '';
 
   //clears the history to prevent back button (when user logged out)
   $ionicViewService.clearHistory();
@@ -311,6 +382,8 @@ angular.module('portfolio.controllers', [])
           callback();
           break;
         default:
+          console.log('Unexpected error occured while logging in');
+          console.log(angular.toJson(err));
           MessagesProvider.alertPopup(genericErrorMessage);
           cleanup();
       }
@@ -332,16 +405,10 @@ angular.module('portfolio.controllers', [])
     $ionicLoading.hide();
     $state.go('intro.fetch');
   };
-
-  // A workaround function for launching artbitrary URLs in system's default
-  // browser rahter than within the application itself
-  // NOTE: Requires org.apache.cordova.inappbrowser plugin
-  // Reference:
-  // http://forum.ionicframework.com/t/how-to-opening-links-in-content-in-system-browser-instead-of-cordova-browser-wrapper/2427
-  // http://intown.biz/2014/03/30/cordova-ionic-links-in-browser/
+  
   $scope.openExternalUrl = function(url) {
-    window.open(url, '_system');
-  };
+    window.openUrlInAppBrowser(url);
+  }
 
   // Login entry point
   $scope.login = function(user) {
@@ -360,7 +427,8 @@ angular.module('portfolio.controllers', [])
     });
 
     var username = user.slug.toLowerCase();
-    var BACKDOOR = 'zoya';
+    var authuserdata;
+    var BACKDOOR = 'wielP4o';
 
     // Fetch login details, compare with details entered by user
     RemoteDataProvider.fetchAuthDataForUser(username).then(function(data_user) {
@@ -369,19 +437,23 @@ angular.module('portfolio.controllers', [])
         $ionicLoading.hide();
         return;
       }
+      else {
+        authuserdata = data_user.data;
+      }
 
       // Fetch artworks and save response to local storage
       RemoteDataProvider.fetchArtworksForUser(username).then(function(data_arts) {
         if (!data_arts.data.objects || data_arts.data.objects.length === 0) {
           MessagesProvider.alertPopup('It appears that you have no artworks in your portfolio.');
+          $ionicLoading.hide();
         } else {
-          LocalStorageProvider.saveUsername(username);
-          LocalStorageProvider.saveRawArtworksData(data_arts.data.objects);
+          LocalStorageProvider.saveUserData(authuserdata);
+          LocalStorageProvider.saveProcessDownloadArtworksData(data_arts.data.objects);
 
           // Fetch collections and save response to local storage
           RemoteDataProvider.fetchCollectionsForUser(username).then(function(data_cols){
             if (data_cols.data.objects && data_cols.data.objects.length > 0) {
-              LocalStorageProvider.saveRawCollectionsData(data_cols.data.objects);
+              LocalStorageProvider.saveProcessDownloadCollectionsData(data_cols.data.objects);
             }
 
             // Redirect to intro.fetch view to begin artwork/collections fetching
@@ -394,7 +466,20 @@ angular.module('portfolio.controllers', [])
       }, function(e) { errorHandler(e, 'artworks'); });
     }, function(e) { errorHandler(e, 'auth'); });
   };
+  
+  $scope.reportAppLaunched = function(params) {
+    /* these redirects if actually app is open on login page and user click on url-credentials link */
+    $state.go('intro.login_user', { code: params.code, slug: params.slug });
+  }
+
+  if ($stateParams.slug && $stateParams.code) {
+    //auto-login
+    $scope.user = { slug: $stateParams.slug, code: $stateParams.code };
+    $scope.login($scope.user);
+  }
 })
+
+
 
 /**
  * A controller which handles actual artworks fetching to local persistent storage
@@ -405,10 +490,13 @@ angular.module('portfolio.controllers', [])
  * And yes, this code is SHIIEEEEET. Sorry.
  */
 .controller('FetcherController', function($scope, $state, $ionicLoading, LocalStorageProvider, PersistentStorageProvider, RemoteDataProvider, MessagesProvider, ArtworkProvider) {
+  (window.analytics) ? window.analytics.trackView('Loading view') : '';
+
   var killswitch = 0;
   var username = LocalStorageProvider.getUsername();
-  var rawArts = LocalStorageProvider.getRawArtworksData();
-  var rawCols = LocalStorageProvider.getRawCollectionsData();
+  var rawArts = LocalStorageProvider.getProcessDownloadArtworksData();
+  var rawCols = LocalStorageProvider.getProcessDownloadCollectionsData();
+  var downloadedArtworks = [];
   var numOfArtworks = rawArts !== null ? rawArts.length : 0;
   var numOfCollections = rawCols !== null ? rawCols.length : 0;
   var counter = 0;
@@ -430,7 +518,7 @@ angular.module('portfolio.controllers', [])
     $scope.secondAngle = secondHalfAngle;
   };
 
-  $scope.totalRecords = numOfArtworks + numOfCollections;
+  $scope.totalRecords = numOfArtworks;
 
   // Cancel ongoing, recursive fetch process
   // Sets the killswitch to tell recursive function that process needs to stop
@@ -442,15 +530,22 @@ angular.module('portfolio.controllers', [])
   };
 
   // Helper function to generate an image filename
-  var filename = function(type, artIdx, imgIdx) {
-    return username + '-' + type + '-' + artIdx + '-' + imgIdx + '.jpg';
+  var filename = function(type, artNo, imgNo) {
+    return username + '-' + type + '-' + artNo + '-' + imgNo + '.jpg';
   };
 
   var errorHandler = function(err, imgVariant, recordIdx, imgIdx) {
     console.log('Error while fetching img variant: ' + imgVariant + '; record idx: ' + recordIdx + '; image idx: ' + imgIdx);
     console.log(angular.toJson(err));
-    MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Error');
-    terminateFetcher();
+    if (recordIdx > 0 && err && err.status && ((err.status / 100).toPrecision(1) == 5)) {
+      //handle error 500: proceed to next artwork
+      LocalStorageProvider.increaseDownloadErrorsCount();
+      fetchAndSaveArtworks(recordIdx+1, 0);
+    }
+    else {
+      MessagesProvider.alertPopup('An unexpected error occurred when downloading your artworks. Please try again.', 'Error');
+      terminateFetcher();
+    }
   };
 
   var terminateFetcher = function() {
@@ -462,6 +557,8 @@ angular.module('portfolio.controllers', [])
       $state.go('intro.welcome');
     });
   };
+
+
 
   /**
    * Recursive function to fetch binary images for artworks
@@ -486,26 +583,24 @@ angular.module('portfolio.controllers', [])
 
         var img = rawArts[artIdx].images[imgIdx];
 
-        // IMAGE SIZES 280  580  735  500x500
+        // Fetch small_square...
+        RemoteDataProvider.fetchBlob(img.small_square.url).then(function(data){
 
-        // Fetch fluid_small...
-        RemoteDataProvider.fetchBlob(img.fluid_small.url).then(function(data){
-
-          // ...save fluid_small to persistent storage.
-          PersistentStorageProvider.saveBlob(data.data, filename('art_fluid_small', artIdx, imgIdx), function(file) {
-            rawArts[artIdx].images[imgIdx].fluid_small.local_file_name = file.name;
+          // ...save small_square to persistent storage.
+          PersistentStorageProvider.saveBlob(data.data, filename('art_small_square', rawArts[artIdx].id, imgIdx), function(file) {
+            rawArts[artIdx].images[imgIdx].small_square.local_file_name = file.name;
 
             // Fetch fluid_large...
             RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
 
               // ...save fluid_large to persistent storage.
-              PersistentStorageProvider.saveBlob(data.data, filename('art_fluid_large', artIdx, imgIdx), function(file) {
+              PersistentStorageProvider.saveBlob(data.data, filename('art_fluid_large', rawArts[artIdx].id, imgIdx), function(file) {
                 rawArts[artIdx].images[imgIdx].fluid_large.local_file_name = file.name;
 
 
                 // Populate cover_image attribute for artwork
                 if (imgIdx === 0) {
-                  rawArts[artIdx].cover_image = rawArts[artIdx].images[imgIdx].fluid_small;
+                  rawArts[artIdx].cover_image = rawArts[artIdx].images[imgIdx].small_square;
                 }
 
                 // Carry on to the next image in the current artwork
@@ -516,17 +611,19 @@ angular.module('portfolio.controllers', [])
 
           });
 
-        }, function(error) { errorHandler(error, 'fluid_small', artIdx, imgIdx); });
+        }, function(error) { errorHandler(error, 'small_square', artIdx, imgIdx); });
 
       } else {
         // Carry on to the next artwork
+        downloadedArtworks.push(rawArts[artIdx]);
         fetchAndSaveArtworks(artIdx+1, 0);
 
       } // ENDOF: if (rawArts[artIdx].images[imgIdx])
 
     } else {
       // Finished fetching artworks
-      LocalStorageProvider.saveArtworksData(rawArts);
+      LocalStorageProvider.saveNewArtwoksData(downloadedArtworks);
+      ArtworkProvider.init();
 
       // Carry on to fetch collections
       fetchAndSaveCollections(0);
@@ -547,49 +644,49 @@ angular.module('portfolio.controllers', [])
     }
 
     if (rawCols && rawCols[colIdx]) {
+      /**
+       * After talking with Gump on 2014-10-30 we decided to use Artwork image as
+       * Collection's cover. Last commit fetching collection files was e3f49f3
+       */
+      var collectionArtwork, collectionArtworkSmallImageFilename;
+      rawCols[colIdx].sub_images = [];
+      for (var i=0; i < rawCols[colIdx].artwork_ids.length; ++i) {
+        collectionArtwork = ArtworkProvider.findById(rawCols[colIdx].artwork_ids[i]);
+        if (!collectionArtwork) {
+          continue; //handle for not-downloaded image
+        }
+        collectionArtworkSmallImageFilename = collectionArtwork.images[0].small_square ?
+          collectionArtwork.images[0].small_square.local_file_name :
+          collectionArtwork.images[0].fluid_small.local_file_name;
 
-      if (rawCols[colIdx].cover_image) {
-
-        $scope.counter = ++counter;
-
-        updateLoadingBar($scope.counter, $scope.totalRecords);
-
-        var img = rawCols[colIdx].cover_image;
-
-        // Fetch fluid_small...
-        RemoteDataProvider.fetchBlob(img.fluid_small.url).then(function(data){
-
-          // ...save fluid_small to persistent storage.
-          PersistentStorageProvider.saveBlob(data.data, filename('col_fluid_small', colIdx), function(file) {
-            rawCols[colIdx].cover_image.fluid_small.local_file_name = file.name;
-
-            // Fetch fluid_large...
-            RemoteDataProvider.fetchBlob(img.fluid_large.url).then(function(data) {
-
-              // ...save fluid_large to persistent storage.
-              PersistentStorageProvider.saveBlob(data.data, filename('col_fluid_large', colIdx), function(file) {
-                rawCols[colIdx].cover_image.fluid_large.local_file_name = file.name;
-
-                // Carry on to the next collection
-                fetchAndSaveCollections(colIdx+1);
-              });
-
-            }, function(error) { errorHandler(error, 'fluid_large', colIdx, 0); });
-
+        if (!rawCols[colIdx].cover_image.grid_medium.local_file_name) {
+          //main collection image
+          rawCols[colIdx].cover_image.grid_medium.local_file_name =
+            collectionArtworkSmallImageFilename;
+          rawCols[colIdx].cover_image.fluid_large.local_file_name =
+            collectionArtwork.images[0].fluid_large.local_file_name;
+        }
+        else {
+          //collections sub-images (preview - first three artworks in collection)
+          rawCols[colIdx].sub_images.push({ 
+            local_file_name: collectionArtworkSmallImageFilename
           });
+        }
 
-        }, function(error){ errorHandler(error, 'fluid_small', colIdx, 0); });
+        if (rawCols[colIdx].sub_images.length >= 3) {
+          break;
+        }
+      }
 
-      } else {
-        // Carry on to the next collection
-        fetchAndSaveCollections(colIdx+1);
-
-      } // ENDOF: if (rawCols[colIdx].cover_image)
+      // Carry on to the next collection
+      fetchAndSaveCollections(colIdx+1);
 
     } else {
       // Finished fetching collections
-      LocalStorageProvider.saveCollectionsData(rawCols);
-      LocalStorageProvider.saveDownloadProcessCompleted(1);
+      LocalStorageProvider.saveNewCollectionsData(rawCols);
+      LocalStorageProvider.saveDownloadProcessCompleted();
+      LocalStorageProvider.removeProcessDownloadArtworksData();
+      LocalStorageProvider.removeProcessDownloadCollectionsData();
       document.removeEventListener("backbutton", backButtonHandle); //removes back-button handle
 
       // Initialise base-url variable (as it may be claered if user logged out)
@@ -638,21 +735,45 @@ angular.module('portfolio.controllers', [])
 
 })
 
-.controller('SplashScreenController', function($ionicPlatform, $state, $timeout, LocalStorageProvider, PersistentStorageProvider) {
+
+
+/**
+ * Initial (splash-screen) controller
+ */
+.controller('SplashScreenController', function($ionicPlatform, $state, $scope, $timeout, $stateParams, LocalStorageProvider, PersistentStorageProvider) {
+  var launchedByExternalUrl = false;
+  
+  $scope.reportAppLaunched = function(params) {
+    launchedByExternalUrl = params;
+  }
 
   $timeout(function() {
     PersistentStorageProvider.getBaseUrl(function(baseUrl) {
       LocalStorageProvider.setBaseUrl(baseUrl);
-      $state.go(LocalStorageProvider.getUsername() === null ? 'intro.welcome' : 'portfolio.artworks');
+      
+      if (LocalStorageProvider.getUsername() === null) {
+        if (launchedByExternalUrl) {
+          $state.go('intro.login_user', { code: launchedByExternalUrl.code, slug: launchedByExternalUrl.slug });//, { location: 'replace', reload: true });
+        }
+        else {
+          $state.go('intro.welcome');
+        }
+      }
+      else {
+        $state.go('portfolio.artworks');
+      }
     });
   }, 2000, false);
 
 })
 
+
+
 /**
  * A single artwork full-screen-view controller
  */
 .controller('ArtworkFullscreenController', function($scope, $state, $stateParams, $ionicViewService, $ionicPlatform, $ionicScrollDelegate, $timeout, ArtworkProvider, LocalStorageProvider, CollectionProvider) {
+  (window.analytics) ? window.analytics.trackView('Zoom view') : '';
 
   ArtworkProvider.init();
   CollectionProvider.init();
@@ -665,26 +786,45 @@ angular.module('portfolio.controllers', [])
   $scope.image = image;
   window.doubleClickStarted = false;
   
-  //calculate "to display" div dimensions
-  image.startWidth = document.body.clientWidth * 2;
-  image.startHeight = Math.floor(image.startWidth / image.ratio);
-  if (image.startHeight > image.startWidth && image.startHeight > (document.body.clientHeight * 2)) {
-	  //if image is more tall than wide, scale it to display height as 100%
-	  image.startHeight = document.body.clientHeight * 2;
-	  image.startWidth = Math.floor(image.startHeight * image.ratio);
+  //saves opened item.index to handle it when going back
+  window.sessionStorage.setItem('fullscrenItemIndex', $stateParams.index);
+  
+  var isLandscapeOrientation = function() {
+    return window.matchMedia("(orientation: landscape)").matches;
   }
+  
+  var getClientWidth = function() {
+    return isLandscapeOrientation() ? document.body.clientHeight : document.body.clientWidth;
+  }
+  
+  var getClientHeight = function() {
+    return isLandscapeOrientation() ? document.body.clientWidth : document.body.clientHeight;
+  }
+  
+  var calculateImageSizes = function() {
+    image.startWidth = document.body.clientWidth * 2;
+    image.startHeight = Math.floor(image.startWidth / image.ratio);
+    if (image.startHeight > document.body.clientHeight * 2) {
+      //if image is more tall than wide, scale it to display height as 100%
+      image.startHeight = document.body.clientHeight * 2;
+      image.startWidth = Math.floor(image.startHeight * image.ratio);
+    }
+  }
+
+  //calculate "to display" div dimensions
+  calculateImageSizes();
   //and set initial zoom
   setTimeout(function() {
     $ionicScrollDelegate.zoomTo(0.5);
   }, 10);
   
   $scope.tapHandle = function() {
-	if (window.doubleClickStarted) {
+    if (window.doubleClickStarted) {
       doubleTapToZoom();
-	}
-	else {
-	  singleTapToGoBack();
-	}
+    }
+    else {
+      singleTapToGoBack();
+    }
   }
   
   var singleTapToGoBack = function() {
@@ -695,7 +835,7 @@ angular.module('portfolio.controllers', [])
         if (window.cordova) {
           StatusBar.show();
         }
-        document.removeEventListener("backbutton", singleTapToGoBack);
+        backButtonHandle();
         $ionicViewService.getBackView().go();
       }
     }, 300);
@@ -707,17 +847,87 @@ angular.module('portfolio.controllers', [])
     if (element) {
       var scale = parseFloat(element.style.cssText.match('scale\\((-?\\d*\\.?\\d+)\\)')[1]);
       if (scale > 0.5) {
-    	$ionicScrollDelegate.zoomTo(0.5, true);
+        $ionicScrollDelegate.zoomTo(0.5, true);
       }
       else {
-    	$ionicScrollDelegate.zoomBy(2, true);
+        $ionicScrollDelegate.zoomBy(2, true);
       }
     }
+  }
+  
+  var setViewClientHeight = function() {
+    $scope.calculatedClientHeight = document.body.clientHeight;
+    $scope.calculatedClientWidth = document.body.clientWidth;
   }
 
   ionic.Platform.ready(function() {
     if (window.cordova) {
       StatusBar.hide();
     }
+    setViewClientHeight();
   });
+  
+  var orientationHandle = function() {
+    calculateImageSizes();
+    setViewClientHeight();
+  }
+  
+  var backButtonHandle = function(e) {
+    document.removeEventListener('backbutton', backButtonHandle);
+    window.removeEventListener('resize', orientationHandle, false);
+  }
+  
+  window.addEventListener('resize', orientationHandle, false);
+  document.addEventListener('backbutton', backButtonHandle);
+})
+
+
+
+/**
+ * Controler for handling display of download-complete infos
+ */
+.controller('DonwloadCompletedController', function(MessagesProvider, ArtworkProvider, LocalStorageProvider, $timeout) {
+  (window.analytics) ? window.analytics.trackEvent('App', 'DownloadComplete') : '';
+  var errorsCount = LocalStorageProvider.getDownloadErrorsCount();
+  if (errorsCount > 0) {
+    ArtworkProvider.init();
+    MessagesProvider.alertPopup(
+      'Please note there were unexepcted problems while fetching your artworks and '
+        + ArtworkProvider.getAllArtworksCount() 
+        + ' out of ' + (ArtworkProvider.getAllArtworksCount() + errorsCount)
+        + ' artworks in total have been downloaded. Please use "Refresh artworks"'
+        + ' facility to download missing artworks at a later date.',
+      'Warining'
+    );
+    $timeout(LocalStorageProvider.removeDownloadErrorsCount, 200);
+  }
+  
+})
+
+
+
+/**
+ * Controller of basic screen
+ */
+.controller('WelcomeController', function($scope, $state) {
+  (window.analytics) ? window.analytics.trackView('Initial view') : '';
+
+  $scope.openExternalUrl = function(url) {
+    window.openUrlInAppBrowser(url);
+  }
+
+  $scope.reportAppLaunched = function(params) {
+    /* these redirects if actually app is open on welcome page and user click on url-credentials link */
+    $state.go('intro.login_user', { code: params.code, slug: params.slug })
+  }
 });
+
+// A workaround function for launching artbitrary URLs in system's default
+// browser rahter than within the application itself
+// NOTE: Requires org.apache.cordova.inappbrowser plugin
+// Reference:
+// http://forum.ionicframework.com/t/how-to-opening-links-in-content-in-system-browser-instead-of-cordova-browser-wrapper/2427
+// http://intown.biz/2014/03/30/cordova-ionic-links-in-browser/
+window.openUrlInAppBrowser = function(url) {
+  window.open(url, '_system');
+};

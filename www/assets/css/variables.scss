@@ -9,7 +9,7 @@
 }
 
 @font-face {
-  font-family: 'BrandonText';
+  font-family: 'BrandonTextBold';
   src: url('../fonts/BrandonText-Bold/260266_1_0.eot');
   src: url('../fonts/BrandonText-Bold/260266_1_0.eot?#iefix') format('embedded-opentype'),
        url('../fonts/BrandonText-Bold/260266_1_0.woff') format('woff'),
@@ -18,7 +18,7 @@
 }
 
 @font-face {
-  font-family: 'BrandonText';
+  font-family: 'BrandonTextLight';
   src: url('../fonts/BrandonText-Light/260266_A_0.eot');
   src: url('../fonts/BrandonText-Light/260266_A_0.eot?#iefix') format('embedded-opentype'),
        url('../fonts/BrandonText-Light/260266_A_0.woff') format('woff'),
@@ -35,21 +35,15 @@
 
 $defaultFont:       "BrandonText", Arial;
 
-$accentColor:       #1285b5; //#02adcc
-$accentDarkColor:   #0071a0; //#009fbb
-$unActiveDotColor:  #00A6CA; //#00839f
-$accentLightColor:  #139bd4; //#71d1e2
+$accentColor:       #1285b5;
+$accentDarkColor:   #0071a0;
+$unActiveDotColor:  #00A6CA;
+$accentLightColor:  #139bd4;
 $mainOrange:        #f26c4f;
 $mainShadow:        #c7492e;
 $mainOrangeDark:    #ea6245;
 $darkGrey:          #414141;
 
-/*
-$accentColor:       #02adcc;
-$accentDarkColor:   #009fbb;
-$unActiveDotColor:  #00839f;
-$accentLightColor:  #71d1e2;
-*/
 
 /* FONT SIZES */
 $smallFont:         13px;
