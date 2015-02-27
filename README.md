@@ -93,3 +93,19 @@ cordova platform rm android
 cordova platform add android
 cordova run android
 ```
+
+
+## Build to APK 
+
+* Copy `www` into xwalk project dir `assets/www/`
+* Build APK (-> `ArtfinderPortfolio-release-unsigned.apk`)
+* Sign APK with `android-release-key`, and rename it (`-unsigned.apk` -> `-signed.apk`)
+* Zipalign signed file
+```
+cp -R artfinder-portfolio/www/* artfinder-portfolio-xwalk/assets/www/
+artfinder-portfolio-xwalk/cordova/build --release
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore android-release-key.keystore ArtfinderPortfolio-release-unsigned.apk release-key
+rename 's/unsigned.apk/signed.apk/g' ArtfinderPortfolio-release-unsigned.apk
+zipalign -v 4 ArtfinderPortfolio-release-signed.apk ArtfinderPortfolio-release-signed-zipaligned.apk
+```
+
